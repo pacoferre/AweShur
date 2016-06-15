@@ -1,0 +1,161 @@
+﻿<link rel="import" href="../../../lib/polymer/polymer.html">
+<link rel="import" href="../../../lib/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../../lib/neon-animation/neon-animated-pages.html">
+<link rel="import" href="../../../lib/neon-animation/neon-animatable.html">
+<link rel="import" href="../../../lib/neon-animation/neon-animations.html">
+<link rel="import" href="../../../lib/iron-ajax/iron-ajax.html">
+<link rel="import" href="../../../lib/iron-list/iron-list.html">
+<link rel="import" href="../../../lib/paper-fab/paper-fab.html">
+
+<link rel="import" href="awsl-editor.html">
+
+<dom-module id="awsl-listeditor">
+    <template>
+        <style>
+            iron-list {
+                background-color: var(--paper-grey-200, #eee);
+                padding-bottom: 16px;
+                @apply(--layout-flex);
+                @apply(--layout-scroll);
+                margin: 8px;
+            }
+            .item {
+                cursor: pointer;
+                padding: 16px 22px;
+                border-bottom: 1px solid #DDD;
+            }
+
+            .item:hover {
+                outline: 0;
+                background-color: var(--google-grey-300);
+                border-bottom: 1px solid #ccc;
+            }
+
+            #listContent {
+                height: calc(100vh - 64px);
+                overflow-x: hidden;
+                overflow-y: auto;
+            }
+
+            paper-fab {
+                position: fixed;
+                right: 50px;
+                bottom: 50px;
+            }
+        </style>
+
+        <iron-ajax last-response="{{data}}" handle-as="json"
+                   content-type="application/json" id="ajaxlist"
+                   method='GET'></iron-ajax>
+
+        <neon-animated-pages id="pages" class="flex" selected="0" entry-animation="slide-from-right-animation" exit-animation="slide-left-animation">
+            <neon-animatable>
+                <div id="listContent">
+                    <paper-fab icon="add" on-tap="_onAdd" hidden="[[hideadd]]"></paper-fab>
+                    <iron-list id="itemsList" items="[[data]]" as="item">
+                    </iron-list>
+                </div>
+            </neon-animatable>
+            <neon-animatable>
+                <div>
+                    <awsl-editor id="editor" on-saved="_onSaved" on-close="_onClose" oname="{{oname}}" idobject="{{idobject}}"
+                                 hiderefresh="[[hiderefresh]]" hideadd="[[hideadd]]" hideokcancel="[[hideokcancel]]"
+                                 edithref="[[edithref]]" editelement="[[editelement]]">
+                    </awsl-editor>
+                </div>
+            </neon-animatable>
+        </neon-animated-pages>
+    </template>
+    <script>
+        Polymer({
+            is: 'awsl-listeditor',
+            properties: {
+                idobject: {
+                    type: String,
+                },
+                data: {
+                    type: Object,
+                },
+                oname: {
+                    type: String,
+                },
+                listhref: {
+                    type: String,
+                },
+                listelement: {
+                    type: String,
+                },
+                edithref: {
+                    type: String,
+                },
+                editelement: {
+                    type: String,
+                },
+                hiderefresh: {
+                    type: Boolean,
+                    value: false
+                },
+                hideadd: {
+                    type: Boolean,
+                    value: false
+                },
+                hideokcancel: {
+                    type: Boolean,
+                    value: false
+                }
+            },
+            attached: function () {
+                this.importHref(this.listhref, function (e) {
+                    var ironlisttemplate = document.createElement('template');
+                    ironlisttemplate.id = "tempList";
+                    ironlisttemplate.innerHTML = "<div class='item style-scope awsl-listeditor' on-click='_selectedItemChanged'>"
+                        + "<" + this.listelement + " item='[[item]]' />"
+                        + "</div>";
+
+                    Polymer.dom(this.$.itemsList).appendChild(ironlisttemplate);
+
+                    this.$.ajaxlist.url = "/api/" + this.oname;
+                    this.$.ajaxlist.generateRequest();
+                }, function (e) {
+                    debugger;
+                });
+            },
+            reset: function () {
+                if (this.$.pages.selected != 0) {
+                    this.$.pages.entryAnimation = "slide-from-left-animation";
+                    this.$.pages.exitAnimation = "slide-right-animation";
+                    this.$.pages.selected = 0;
+                }
+            },
+            _computedClass: function (isSelected) {
+                var classes = 'item';
+                if (isSelected) {
+                    classes += ' selected';
+                }
+                return classes;
+            },
+            _selectedItemChanged: function (e) {
+                this.idobject = e.model.item.id;
+                this.$.editor.load();
+                this.$.pages.entryAnimation = "slide-from-right-animation";
+                this.$.pages.exitAnimation = "slide-left-animation";
+                this.$.pages.selected = 1;
+            },
+            _onAdd: function () {
+                this.idobject = "0";
+                this.$.editor.load();
+                this.$.pages.entryAnimation = "slide-from-right-animation";
+                this.$.pages.exitAnimation = "slide-left-animation";
+                this.$.pages.selected = 1;
+            },
+            _onClose: function () {
+                this.$.pages.entryAnimation = "slide-from-left-animation";
+                this.$.pages.exitAnimation = "slide-right-animation";
+                this.$.pages.selected = 0;
+            },
+            _onSaved: function () {
+                this.$.ajaxlist.generateRequest()
+            }
+        });
+    </script>
+</dom-module>

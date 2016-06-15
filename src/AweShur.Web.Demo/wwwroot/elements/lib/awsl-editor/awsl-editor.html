@@ -1,0 +1,145 @@
+﻿<link rel="import" href="../../../lib/app-layout/app-toolbar/app-toolbar.html">
+<link rel="import" href="../../../lib/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../../lib/iron-ajax/iron-ajax.html">
+
+<dom-module id="awsl-editor">
+    <template>
+        <style>
+            :host {
+                @apply(--layout-vertical);
+            }
+
+            #main {
+                padding: 0px 28px;
+                height: calc(100vh - 128px);
+                overflow-y: auto;
+            }
+
+            .sp {
+                @apply(--layout-flex);
+            }
+
+            #toastError {
+                --paper-toast-background-color: red;
+                --paper-toast-color: white;
+            }
+        </style>
+
+        <iron-ajax id="ajax"
+                   method="POST"
+                   content-type="application/json"
+                   url="/api/AppUser"
+                   handle-as="json"
+                   on-response="responseHandler">
+        </iron-ajax>
+        <iron-ajax id="ajaxread"
+                   method="GET"
+                   content-type="application/json"
+                   url="/api/AppUser"
+                   handle-as="json"
+                   on-response="responseHandlerRead">
+        </iron-ajax>
+
+        <app-toolbar hidden="[[hideokcancel]]">
+            <paper-icon-button icon="refresh" on-click="load" hidden="[[hiderefresh]]"></paper-icon-button>
+            <paper-icon-button icon="add" on-click="_new" hidden="[[hideadd]]">+</paper-icon-button>
+            <span class="sp">&nbsp;</span>
+            <paper-icon-button icon="done" on-click="_onOK" hidden="[[hideokcancel]]"></paper-icon-button>
+            <paper-icon-button icon="close" on-click="_onClear" hidden="[[hideokcancel]]"></paper-icon-button>
+        </app-toolbar>
+        <div id="main">
+        </div>
+        <paper-toast id="toastOk" text=""></paper-toast>
+        <paper-toast id="toastError" text=""></paper-toast>
+    </template>
+    <script>
+    Polymer({
+        is: 'awsl-editor',
+        properties: {
+            idobject: {
+                type: String,
+            },
+            item: {
+                type: Object,
+                notify: true
+            },
+            edithref: {
+                type: String,
+            },
+            editelement: {
+                type: String,
+            },
+            oname: {
+                type: String,
+            },
+            hiderefresh: {
+                type: Boolean,
+                value: false
+            },
+            hideadd: {
+                type: Boolean,
+                value: false
+            },
+            hideokcancel: {
+                type: Boolean,
+                value: false
+            }
+        },
+        attached: function () {
+            this.importHref(this.edithref, function (e) {
+                var newElement = document.createElement(this.editelement);
+                newElement.id = "theelement";
+
+                this.$.theelement = Polymer.dom(this.$.main).appendChild(newElement);
+
+                this.fire('elementready');
+            }, function (e) {
+                debugger;
+            });
+        },
+        ready: function () {
+        },
+        load: function() {
+            this.$.ajax.url = "/api/" + this.oname;
+            this.$.ajaxread.url = "/api/" + this.oname + "/" + this.idobject;
+
+            this.$.ajaxread.generateRequest();
+        },
+        responseHandlerRead: function (a, b) {
+            this.item = this.$.ajaxread.lastResponse;
+            this.$.theelement.item = this.item;
+        },
+        _new: function () {
+            this.idobject = "0";
+            this.load();
+        },
+        _onOK: function () {
+            this.$.ajax.body = this.item;
+            this.$.ajax.generateRequest();
+        },
+        _onClear: function () {
+            this.load();
+            this.fire('close');
+        },
+        responseHandler: function (a, b) {
+            if (this.$.ajax.lastResponse.ok) {
+                this.item = this.$.ajax.lastResponse.model;
+                this.$.toastOk.text = this.$.ajax.lastResponse.message;
+                this.$.toastOk.fitInto = this.$.main;
+                this.$.toastOk.open();
+                this.fire('saved');
+            }
+            else {
+                if (this.$.ajax.lastResponse.reload) {
+                    window.location.reload();
+                }
+                else {
+                    this.$.toastError.text = this.$.ajax.lastResponse.message;
+                    this.$.toastError.fitInto = this.$.main;
+                    this.$.toastError.open();
+                }
+            }
+        }
+    });
+    </script>
+</dom-module>

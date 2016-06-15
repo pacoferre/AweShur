@@ -1,0 +1,147 @@
+﻿@{
+    int? idappuser = Context.Session.GetInt32("idappuser");
+
+    string firstMenu = "Users";
+}
+<link rel="import" href="/lib/polymer/polymer.html">
+<link rel="import" href="/lib/app-route/app-location.html">
+<link rel="import" href="/lib/app-route/app-route.html">
+<link rel="import" href="/lib/app-layout/app-scroll-effects/app-scroll-effects.html">
+<link rel="import" href="/lib/app-layout/app-layout.html">
+<link rel="import" href="/elements/lib/awsl-editor/awsl-listeditor.html">
+
+<link rel="import" href="/Elements/UserProfile/1">
+
+<dom-module id="aswd-main">
+    <template>
+        <style>
+            paper-menu {
+                background-color: #fafafa;
+            }
+
+            app-header {
+              background-color: #4285f4;
+              color: #fff;
+            }
+            app-header paper-icon-button {
+              --paper-icon-button-ink-color: #fff;
+            }
+            app-drawer-layout {
+              --app-drawer-layout-content-transition: margin 0.2s;
+            }
+            app-drawer {
+              --app-drawer-content-container: {
+                background-color: #eee;
+              }
+            }
+            .drawer-content {
+              margin-top: 64px;
+              height: calc(100vh - 64px);
+              overflow: auto;
+            }
+
+            iron-pages {
+              height: calc(100vh - 64px);
+              overflow: hidden;
+            }
+            .page-title {
+              font-size: 24px !important;
+            }
+
+            paper-menu {
+                background-color: #eee;
+            }
+
+            paper-menu a > *, paper-menu paper-item > *, paper-menu paper-icon-item > * {
+                pointer-events: none;
+            }
+
+            @@media (max-width: 600px) {
+                .page-title {
+                    font-size: 22px !important;
+                }
+            }
+        </style>
+        <app-location use-hash-as-path route="{{route}}" id="lation"></app-location>
+
+        <!-- Two routes, one for the home page, and one for the tabs page. -->
+        <app-route route="{{route}}" pattern="/:actual" data="{{data}}"></app-route>
+
+        <app-header-layout>
+            <app-drawer-layout id="drawerLayout">
+                <app-drawer swipe-open>
+                    <paper-menu selected="{{data.actual}}" attr-for-selected='key' selectable="paper-icon-item"
+                                class="drawer-content">
+                        <paper-icon-item role="menuitem" key="Users" on-tap="menuSelected">
+                            <iron-icon icon="social:people" item-icon></iron-icon><span>Users</span>
+                        </paper-icon-item>
+                    </paper-menu>
+                </app-drawer>
+
+                <iron-pages selected="{{data.actual}}" attr-for-selected='key'>
+                    <div key="Users">
+                        <awsl-listeditor id="users" oname="AppUser"
+                                            listhref='@("/Elements/Load/UserListItem/" + idappuser)' listelement="aswd-userlistitem"
+                                            edithref='@("/Elements/Load/UserEdit/" + idappuser)' editelement="aswd-useredit"></awsl-listeditor>
+                    </div>
+                </iron-pages>
+            </app-drawer-layout>
+
+            <app-header fixed effects="waterfall">
+                <app-toolbar>
+                    <paper-icon-button id="toggle" icon="menu"></paper-icon-button>
+                    <div title class="page-title">{{computeFullName(data.actual)}}</div>
+                    <paper-icon-button id="exit" icon="exit-to-app" on-tap="_exit"></paper-icon-button>
+                </app-toolbar>
+            </app-header>
+
+        </app-header-layout>
+    </template>
+    <script>
+    Polymer({
+        is: 'aswd-main',
+        properties: {
+            route: {
+                type: Object,
+            },
+            data: {
+                type: Object,
+            },
+        },
+        _exit: function () {
+            window.location = "/Home/Exit";
+        },
+        menuSelected: function (e) {
+            var key = e.currentTarget.getAttribute('key');
+
+            if (key == "Users")
+            {
+                this.$.users.reset();
+            }
+        },
+        computeFullName: function (key) {
+            if (key === undefined)
+            {
+                return "";
+            }
+            return key.replace(/_/g, " ");
+        },
+        ready: function() {
+            var drawerLayout = this.$.drawerLayout;
+            this.$.toggle.addEventListener('tap', function () {
+                if (drawerLayout.forceNarrow || !drawerLayout.narrow) {
+                    drawerLayout.forceNarrow = !drawerLayout.forceNarrow;
+                } else {
+                    drawerLayout.drawer.toggle();
+                }
+            });
+            this.async(function () {
+                if (!this.route.path) {
+                    this.set('data.actual', '@(firstMenu)');
+                    window.location = ("" + window.location).replace(/\#.*$/, "") + '@("#/" + firstMenu)';
+                }
+            });
+        },
+    });
+    </script>
+</dom-module>

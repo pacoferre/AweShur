@@ -1,0 +1,24 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+@if (AweShur.Web.Demo.Controllers.HomeController.IsAuthenticated(this.Context))
+{
+    <aswd-main></aswd-main>
+}
+else
+{
+    <aswd-login></aswd-login>
+}
+
+@section subelements
+{
+@if (AweShur.Web.Demo.Controllers.HomeController.IsAuthenticated(this.Context))
+{
+    @Html.Raw("<link rel='import' href='/Elements/Load/Main/" + Context.Session.GetInt32("idappuser") + "'>")
+}
+else
+{
+    <link rel="import" href="~/elements/aswd-login.html">
+}
+}
