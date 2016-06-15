@@ -63,6 +63,14 @@ namespace AweShur.Core
             return Dialect.GetConnection(connectionString);
         }
 
+        public IEnumerable<T> Query<T>(string sql, object param = null, bool buffered = true, int? commandTimeout = null, CommandType? commandType = null)
+        {
+            using (IDbConnection conn = Open())
+            {
+                return conn.Query<T>(sql, param, null, buffered, commandTimeout, commandType);
+            }
+        }
+
         public void ReadBusinessObject(BusinessBase obj)
         {
             using (IDbConnection conn = Open())
@@ -70,6 +78,8 @@ namespace AweShur.Core
                 BusinessBaseDefinition def = obj.Definition;
 
                 conn.ReadBusinessObject(obj, def.SelectQuery, def.GetPrimaryKeyParameters(obj));
+
+                conn.Close();
             }
         }
     }
