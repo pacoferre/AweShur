@@ -182,6 +182,45 @@ namespace AweShur.Core
             return result;
         }
 
+        public IEnumerable<dynamic> Query(string sql, object param = null, bool buffered = true, int? commandTimeout = null, CommandType? commandType = null)
+        {
+            IEnumerable<dynamic> result;
+
+            OpenConnection();
+
+            result = conn.Query(sql, param, trans, buffered, commandTimeout, commandType);
+
+            CloseConnection();
+
+            return result;
+        }
+
+        public T QuerySingle<T>(string sql, object param = null, int? commandTimeout = null, CommandType? commandType = null)
+        {
+            T result;
+
+            OpenConnection();
+
+            result = conn.QuerySingle<T>(sql, param, trans, commandTimeout, commandType);
+
+            CloseConnection();
+
+            return result;
+        }
+
+        public dynamic QuerySingle(string sql, object param = null, int? commandTimeout = null, CommandType? commandType = null)
+        {
+            dynamic result;
+
+            OpenConnection();
+
+            result = conn.QuerySingle(sql, param, trans, commandTimeout, commandType);
+
+            CloseConnection();
+
+            return result;
+        }
+
         public void ReadBusinessObject(BusinessBase obj)
         {
             BusinessBaseDefinition def = obj.Definition;

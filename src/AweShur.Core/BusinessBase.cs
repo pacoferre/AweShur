@@ -7,7 +7,7 @@ using System.Data;
 
 namespace AweShur.Core
 {
-    public class BusinessBase
+    public partial class BusinessBase
     {
         private Lazy<DB> lazyDB;
 
@@ -25,6 +25,14 @@ namespace AweShur.Core
             dataItem = Definition.New(this);
 
             lazyDB = new Lazy<DB>(() => DB.InstanceNumber(DBNumber));
+        }
+
+        public virtual string Key
+        {
+            get
+            {
+                return dataItem.Key;
+            }
         }
 
         #region Status and Properties
@@ -96,17 +104,6 @@ namespace AweShur.Core
         }
         #endregion
 
-        #region Security
-        public virtual AppUser CurrentUser
-        {
-            get
-            {
-                return null;
-            }
-        }
-        #endregion
-
-        #region Store management
         protected DB CurrentDB
         {
             get
@@ -115,34 +112,18 @@ namespace AweShur.Core
             }
         }
 
-        public virtual bool ReadFromDB()
+        private AppUser _currentUser = null;
+        public AppUser CurrentUser
         {
-            bool readed = true;
-
-            try
+            get
             {
-                CurrentDB.ReadBusinessObject(this);
+                if (_currentUser == null)
+                {
+                    _currentUser = AppUser.GetAppUserWithoutHttpContext();
+                }
 
-                IsNew = false;
-                IsModified = false;
-                IsDeleting = false;
-
-                AfterReadFromDB();
+                return _currentUser;
             }
-            catch
-            {
-                readed = false;
-            }
-
-
-            return readed;
         }
-
-        protected virtual void AfterReadFromDB()
-        {
-
-        }
-
-        #endregion
     }
 }

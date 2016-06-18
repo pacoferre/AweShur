@@ -5,6 +5,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Framework.Runtime.Infrastructure;
+using Microsoft.AspNetCore.Http;
+using AweShur.Core.Security;
 
 namespace AweShur.Core
 {
@@ -75,6 +78,38 @@ namespace AweShur.Core
             definition.SetProperties(tableName, dbNumber);
 
             return definition;
+        }
+
+        private static string SessionKey(string objectName, int dbNumber, string key)
+        {
+            return "O_" + objectName + "_" + dbNumber + "_" + key;
+        }
+
+        public static void StoreToSession(BusinessBase obj, string objectName, ISession session)
+        {
+            string sessionKey = SessionKey(objectName, obj.DBNumber, obj.Key);
+
+            session.Set(sessionKey, obj.Serialize());
+        }
+
+        public static BusinessBase RetreiveFromSession(string objectName, string key, ISession session)
+        {
+            return RetreiveFromSession(objectName, 0, key, session);
+        }
+
+        public static BusinessBase RetreiveFromSession(string objectName, int dbNumber, string key, ISession session)
+        {
+            string sessionKey = SessionKey(objectName, dbNumber, key);
+            BusinessBase obj = null;
+            byte[] data;
+
+            if (session.TryGetValue(sessionKey, out data))
+            {
+                obj = Instance.CreateObject(objectName, dbNumber);
+                obj.Deserialize(data);
+            }
+
+            return obj;
         }
     }
 }

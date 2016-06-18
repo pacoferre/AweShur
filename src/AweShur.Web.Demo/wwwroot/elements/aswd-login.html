@@ -4,12 +4,7 @@
 <link rel="import" href="../lib/iron-ajax/iron-ajax.html">
 <link rel="import" href="../lib/iron-flex-layout/iron-flex-layout-classes.html">
 <link rel="import" href="../lib/paper-button/paper-button.html">
-<link rel="import" href="../lib/neon-animation/neon-animation-runner-behavior.html">
-<link rel="import" href="../lib/neon-animation/neon-animated-pages.html">
-<link rel="import" href="../lib/neon-animation/neon-animatable.html">
-<link rel="import" href="../lib/neon-animation/neon-animations.html">
 <link rel="import" href="../lib/gold-email-input/gold-email-input.html">
-<link rel="import" href="../lib/re-captcha/re-captcha.html">
 
 <dom-module id="aswd-login">
     <style>
@@ -38,58 +33,23 @@
                     <paper-toolbar>
                         <div title>Wellcome to AweShur Web Demo - [[title]]</div>
                     </paper-toolbar>
-                    <neon-animated-pages id="pages" class="flex" selected="0" entry-animation="slide-from-right-animation" exit-animation="slide-left-animation">
-                        <neon-animatable>
-                            <form is="iron-form" id="loginForm">
-                                <div class="layout vertical">
-                                    <gold-email-input id="username" label="Email" required auto-validate on-keydown="checkForEnterA"></gold-email-input>
-                                    <paper-input id="password" type="password" label="Password" password required auto-validate on-keydown="checkForEnter"></paper-input>
-                                </div>
-                                <div>&nbsp;</div>
-                                <div class="layout horizontal bottom">
-                                    <div class="layout vertical">
-                                        <div class="flex"></div>
-                                        <a id="registerButton">register?</a>
-                                        <a id="lostButton">lost password?</a>
-                                        <div class="flex"></div>
-                                    </div>
-                                    <div class="flex"></div>
-                                    <paper-button submit raised id="loginButton">Login</paper-button>
-                                </div>
-                            </form>
-                        </neon-animatable>
-                        <neon-animatable>
+                    <form is="iron-form" id="loginForm">
+                        <div class="layout vertical">
+                            <gold-email-input id="username" label="Email" required auto-validate on-keydown="checkForEnterA"></gold-email-input>
+                            <paper-input id="password" type="password" label="Password" password required auto-validate on-keydown="checkForEnter"></paper-input>
+                        </div>
+                        <div>&nbsp;</div>
+                        <div class="layout horizontal bottom">
                             <div class="layout vertical">
-                                <form is="iron-form" id="regForm">
-                                    <gold-email-input id="reemail" label="Email" required auto-validate></gold-email-input>
-                                    <paper-input id="repass" label="Password" type="password" required auto-validate></paper-input>
-                                    <paper-input id="rerepass" label="Repeat password" type="password" required auto-validate></paper-input>
-                                    <paper-input id="rename" label="Name" required auto-validate></paper-input>
-                                    <paper-input id="resurname" label="Surname" required auto-validate></paper-input>
-                                    <re-captcha sitekey="6LcaRx8TAAAAACycAHkY7uBuCjzxP_mwe0xjd_HV" on-captcha-response="_reCap"></re-captcha>
-                                </form>
-                            </div>
-                            <div>&nbsp;</div>
-                            <div class="layout horizontal bottom">
-                                <paper-button raised on-tap="_backLogin"><< back</paper-button>
                                 <div class="flex"></div>
-                                <paper-button raised id="createButton" disabled="true">Register</paper-button>
-                            </div>
-                        </neon-animatable>
-                        <neon-animatable>
-                            <div class="layout vertical" id="lostForm">
-                                <form is="iron-form">
-                                    <gold-email-input id="remail" label="Email" required auto-validate></gold-email-input>
-                                </form>
-                            </div>
-                            <div>&nbsp;</div>
-                            <div class="layout horizontal bottom">
-                                <paper-button raised on-tap="_backLogin"><< back</paper-button>
+                                <a id="registerButton">register?</a>
+                                <a id="lostButton">lost password?</a>
                                 <div class="flex"></div>
-                                <paper-button raised id="rememberButton">Recover password</paper-button>
                             </div>
-                        </neon-animatable>
-                    </neon-animated-pages>
+                            <div class="flex"></div>
+                            <paper-button submit raised id="loginButton">Login</paper-button>
+                        </div>
+                    </form>
                 </paper-header-panel>
             </div>
         </div>
@@ -113,39 +73,18 @@
       },
       listeners: {
           'loginButton.tap': 'onLogin',
-          'createButton.tap': 'onCreate',
-          'registerButton.tap': 'onRegister',
-          'lostButton.tap': 'onLostPassword'
       },
       ready: function () {
       },
       showError: function(errorMessage) {
           this.$.toastError.text = errorMessage;
-          this.$.toastError.fitInto = this.$.pages;
+          this.$.toastError.fitInto = this.$.main;
           this.$.toastError.open();
       },
       showMessage: function (message) {
           this.$.toastOk.text = message;
-          this.$.toastOk.fitInto = this.$.pages;
+          this.$.toastOk.fitInto = this.$.main;
           this.$.toastOk.open();
-      },
-      onRegister: function () {
-          this.$.pages.entryAnimation = "slide-from-right-animation";
-          this.$.pages.exitAnimation = "slide-left-animation";
-          this.$.pages.selected = 1;
-          this.title = "New user";
-      },
-      onLostPassword: function () {
-          this.$.pages.entryAnimation = "slide-from-right-animation";
-          this.$.pages.exitAnimation = "slide-left-animation";
-          this.$.pages.selected = 2;
-          this.title = "New password";
-      },
-      _backLogin: function () {
-          this.$.pages.entryAnimation = "slide-from-left-animation";
-          this.$.pages.exitAnimation = "slide-right-animation";
-          this.$.pages.selected = 0;
-          this.title = "Login";
       },
       checkForEnterA: function (e) {
           if (e.keyCode === 13) {
@@ -192,50 +131,6 @@
               me.showError("Error connecting server");
           });
       },
-      _reCap: function () {
-          createButton.disabled = false;
-      },
-      onCreate: function () {
-          var request;
-
-          if (!this.$.regForm.validate()) {
-              this.showError("Missing data");
-
-              return;
-          }
-          if (this.$.rerepass.value != this.$.repass.value)
-          {
-              this.showError("Passwords are not the same");
-
-              return;
-          }
-
-          var me = this;
-
-          this.$.loginService.body = {
-            email: this.$.reemail.value,
-            pass: this.$.repass.value,
-            name: this.$.rename.value,
-            surname: this.$.resurname.value,
-          };
-          this.$.loginService.url = "/Home/Register";
-
-          request = this.$.loginService.generateRequest();
-          request.completes.then(function (response) {
-              if (response.response.ok) {
-                  me.showMessage("User created succesfully")
-                  window.setTimeout(function () {
-                      window.location.reload();
-                  }, 3500);
-              }
-              else {
-                  me.showError("Incorrect data or user already registered");
-              }
-          })
-          .catch(function (error) {
-              me.showError("Error connecting server");
-          });
-      }
     });
     </script>
 </dom-module>

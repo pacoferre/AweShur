@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AweShur.Core.Security;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using System;
 using System.Collections.Generic;
@@ -16,18 +17,13 @@ namespace AweShur.Web.Demo.Controllers
 
             base.OnActionExecuting(context);
 
-            if (HomeController.IsAuthenticated(context.HttpContext))
+            if (AppUser.UserIsAuthenticated(context.HttpContext))
             {
                 object id = RouteData.Values["id"];
 
                 if (id != null)
                 {
-                    int idappuser;
-
-                    if (Int32.TryParse(id.ToString(), out idappuser))
-                    {
-                        ok = idappuser == HomeController.IDAppUser(HttpContext);
-                    }
+                    ok = (id.ToString() == AppUser.IDAppUser(HttpContext).ToString());
                 }
             }
  
@@ -40,7 +36,7 @@ namespace AweShur.Web.Demo.Controllers
         // GET: /<controller>/
         public IActionResult Load(string component, int? idappuser)
         {
-            return PartialView("~/Elements/" + component);
+            return PartialView("~/Elements/" + component, idappuser);
         }
     }
 }

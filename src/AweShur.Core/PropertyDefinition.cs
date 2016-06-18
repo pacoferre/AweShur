@@ -45,6 +45,7 @@ namespace AweShur.Core
         public BasicType BasicType { get; } = BasicType.Text;
         private PropertyInputType inputType = PropertyInputType.text;
 
+        public int Index { get; internal set; } = 0;
         public bool IsDBField { get; } = false;
 
         public bool IsNullable { get; } = false;
@@ -233,7 +234,7 @@ namespace AweShur.Core
                 }
             }
 
-            if (Type == PropertyInputType.checkbox)
+            else if (Type == PropertyInputType.checkbox)
             {
                 if (obj[PropertyName].NoNullBool() != (value == "1"))
                 {
@@ -241,7 +242,7 @@ namespace AweShur.Core
                 }
             }
 
-            if (Type == PropertyInputType.datetimeHHmm || Type == PropertyInputType.datetimeHHmmss || Type == PropertyInputType.date)
+            else if (Type == PropertyInputType.datetimeHHmm || Type == PropertyInputType.datetimeHHmmss || Type == PropertyInputType.date)
             {
                 try
                 {
@@ -288,7 +289,7 @@ namespace AweShur.Core
                 }
             }
 
-            if (BasicType == BasicType.GUID)
+            else if (BasicType == BasicType.GUID)
             {
                 Guid newGuid = Guid.Empty;
 

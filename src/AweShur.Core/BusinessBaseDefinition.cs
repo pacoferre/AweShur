@@ -12,12 +12,18 @@ namespace AweShur.Core
 {
     public class BusinessBaseDefinition
     {
+        public Dictionary<string, PropertyDefinition> Properties { get; } = new Dictionary<string, PropertyDefinition>();
+        public List<PropertyDefinition> ListProperties { get; } = new List<PropertyDefinition>();
+        public List<int> PrimaryKeys { get; } = new List<int>();
+        public bool primaryKeyIsOneInt { get; internal set; }
+        public bool primaryKeyIsOneLong { get; internal set; }
+        public bool primaryKeyIsOneGuid { get; internal set; }
+
         private Dictionary<string, int> fieldNameLookup;
         protected DBDialect dialect;
         protected string tableName;
-        protected Dictionary<string, PropertyDefinition> properties;
         protected string[] names;
-        protected List<int> primaryKeys;
+        protected PropertyDefinition firstStringProperty;
 
         private Lazy<string> selectBuilder;
         private Lazy<string> insertBuilder;
@@ -26,7 +32,6 @@ namespace AweShur.Core
 
         public BusinessBaseDefinition()
         {
-
             selectBuilder = new Lazy<string>(PrepareSelectQuery);
             insertBuilder = new Lazy<string>(PrepareInsertQuery);
             updateBuilder = new Lazy<string>(PrepareUpdateQuery);
@@ -50,25 +55,34 @@ namespace AweShur.Core
             {
                 PropertyDefinition def = new PropertyDefinition(column);
 
-                properties[column.ColumnName] = def;
+                Properties[column.ColumnName] = def;
             }
 
             SetCustomProperties();
 
-            fieldNameLookup = new Dictionary<string, int>(properties.Count, StringComparer.Ordinal);
+            ListProperties.AddRange(Properties.Values.ToList());
+            fieldNameLookup = new Dictionary<string, int>(Properties.Count, StringComparer.Ordinal);
 
-            names = properties.Keys.ToArray();
-            for (int i = 0; i < properties.Count; i++)
+            firstStringProperty = ListProperties.Find(prop => prop.BasicType == BasicType.Text);
+
+            names = Properties.Keys.ToArray();
+            for (int i = 0; i < Properties.Count; i++)
             {
-                PropertyDefinition prop = properties.ElementAt(i).Value;
+                PropertyDefinition prop = Properties.ElementAt(i).Value;
 
                 fieldNameLookup[names[i]] = i;
 
                 if (prop.IsPrimaryKey)
                 {
-                    primaryKeys.Add(i);
+                    PrimaryKeys.Add(i);
                 }
+
+                prop.Index = i;
             }
+
+            primaryKeyIsOneInt = PrimaryKeys.Count == 1 && ListProperties[PrimaryKeys[0]].DataType == typeof(Int32);
+            primaryKeyIsOneLong = PrimaryKeys.Count == 1 && ListProperties[PrimaryKeys[0]].DataType == typeof(Int64);
+            primaryKeyIsOneGuid = PrimaryKeys.Count == 1 && ListProperties[PrimaryKeys[0]].DataType == typeof(Guid);
         }
 
         protected virtual void SetCustomProperties()
@@ -77,23 +91,31 @@ namespace AweShur.Core
 
         public virtual DataItem New(BusinessBase owner)
         {
-            object[] values = new object[properties.Count];
+            object[] values = new object[Properties.Count];
 
-            for (int i = 0; i < properties.Count; i++)
+            for (int i = 0; i < Properties.Count; i++)
             {
-                values[i] = properties.ElementAt(i).Value.DefaultValue;
+                values[i] = Properties.ElementAt(i).Value.DefaultValue;
             }
 
             return new DataItem(owner, values);
+        }
+
+        public PropertyDefinition FirstStringProperty
+        {
+            get
+            {
+                return firstStringProperty;
+            }
         }
 
         protected virtual string PrepareSelectQuery()
         {
             StringBuilder sql = new StringBuilder("select ");
 
-            sql.Append(dialect.SQLAllColumns(properties.Values.ToList()));
+            sql.Append(dialect.SQLAllColumns(ListProperties));
             sql.Append(" from " + dialect.Encapsulate(tableName));
-            sql.Append(" where " + dialect.SQLWherePrimaryKey(properties.Values.ToList()));
+            sql.Append(" where " + dialect.SQLWherePrimaryKey(ListProperties));
 
             return sql.ToString();
         }
@@ -155,7 +177,7 @@ namespace AweShur.Core
         {
             DynamicParameters dynParms = new DynamicParameters();
 
-            foreach (int pos in primaryKeys)
+            foreach (int pos in PrimaryKeys)
             {
                 dynParms.Add("@" + names[pos], obj[pos]);
             }
