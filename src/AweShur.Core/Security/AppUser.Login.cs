@@ -12,7 +12,7 @@ namespace AweShur.Core.Security
     public partial class AppUser
     {
         private static string CurrentUserIDSessionKey = "USER_ID";
-        private static byte[] SALT = null;
+        public static byte[] SALT;
 
         public static AppUser Login(string login, string password, ISession session)
         {
@@ -23,7 +23,7 @@ namespace AweShur.Core.Security
 
         protected virtual AppUser LoginInternal(string login, string password, ISession session)
         {
-            dynamic userData = DB.Instance.QuerySingle("Select IDUserApp, Login, Password From UserApp Where Login = @Login", new { Login = login });
+            dynamic userData = DB.Instance.QueryFirstOrDefault("Select IDAppUser, Login, Password From AppUser Where Login = @Login", new { Login = login });
             AppUser usu = null;
 
             if (userData != null)
@@ -34,7 +34,7 @@ namespace AweShur.Core.Security
                 {
                     usu = (AppUser)BusinessBaseProvider.Instance.CreateObject("AppUser");
 
-                    usu.ReadFromDB((int)userData.IDUserApp);
+                    usu.ReadFromDB((int)userData.IDAppUser);
                 }
 
                 // Hack to 
@@ -44,7 +44,7 @@ namespace AweShur.Core.Security
                     {
                         usu = (AppUser)BusinessBaseProvider.Instance.CreateObject("AppUser");
 
-                        usu.ReadFromDB((int)userData.IDUserApp);
+                        usu.ReadFromDB((int)userData.IDAppUser);
 
                         usu["Password"] = enc;
 
@@ -92,18 +92,6 @@ namespace AweShur.Core.Security
 
         public static string PasswordDerivedString(string password)
         {
-            if (SALT == null)
-            {
-                lock (SALT)
-                {
-                    if (SALT == null)
-                    {
-                        SALT = Encoding.Unicode.GetBytes(DB.Configuration.GetSection("Security")["SALT"]).Take(16).ToArray();
-                    }
-                }
-            }
-
-            // derive a 256-bit subkey (use HMACSHA1 with 10,000 iterations)
             return Convert.ToBase64String(KeyDerivation.Pbkdf2(
                 password: password,
                 salt: SALT,
@@ -134,8 +122,7 @@ namespace AweShur.Core.Security
 
         public static AppUser GetAppUserWithoutHttpContext()
         {
-            IHttpContextAccess‌​or accesor = (IHttpContextAccess‌​or)CallContextServiceLocator.Locator.ServiceProvider.GetService(typeof(IHttpContextAccess‌​or));
-            HttpContext context = accesor.HttpContext;
+            HttpContext context = BusinessBaseProvider.HttpContext;
             int idAppUser = context.Session.GetInt32(CurrentUserIDSessionKey).NoNullInt();
 
             if (idAppUser > 0)

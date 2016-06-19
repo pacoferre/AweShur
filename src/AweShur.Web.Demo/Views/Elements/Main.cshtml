@@ -1,5 +1,5 @@
 ﻿@{
-    int? idappuser = Context.Session.GetInt32("idappuser");
+    int? idappuser = AppUser.IDAppUser(Context);
 
     string firstMenu = "Users";
 }

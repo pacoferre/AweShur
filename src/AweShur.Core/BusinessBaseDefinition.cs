@@ -18,6 +18,7 @@ namespace AweShur.Core
         public bool primaryKeyIsOneInt { get; internal set; }
         public bool primaryKeyIsOneLong { get; internal set; }
         public bool primaryKeyIsOneGuid { get; internal set; }
+        private bool primaryKeyIsReturned = false;
 
         private Dictionary<string, int> fieldNameLookup;
         protected DBDialect dialect;
@@ -91,11 +92,11 @@ namespace AweShur.Core
 
         public virtual DataItem New(BusinessBase owner)
         {
-            object[] values = new object[Properties.Count];
+            object[] values = new object[ListProperties.Count];
 
-            for (int i = 0; i < Properties.Count; i++)
-            {
-                values[i] = Properties.ElementAt(i).Value.DefaultValue;
+            foreach(PropertyDefinition prop in ListProperties)
+            { 
+                values[prop.Index] = prop.DefaultValue;
             }
 
             return new DataItem(owner, values);
@@ -130,9 +131,27 @@ namespace AweShur.Core
 
         protected virtual string PrepareInsertQuery()
         {
-            string sql = "";
+            StringBuilder sql = new StringBuilder("insert into " + dialect.Encapsulate(tableName));
 
-            return sql;
+            sql.Append(" (" + dialect.SQLInsertProperties(ListProperties) + ")");
+            sql.Append(" values (" + dialect.SQLInsertValues(ListProperties) + ") ");
+
+            primaryKeyIsReturned = false;
+            if (primaryKeyIsOneInt || primaryKeyIsOneLong)
+            {
+                primaryKeyIsReturned = true;
+
+                if (dialect.Dialect == DBDialectEnum.PostgreSQL) //???
+                {
+                    sql.Append(" RETURNING lastval() as id");
+                }
+                else
+                {
+                    sql.Append(";" + dialect.GetIdentitySql);
+                }
+            }
+
+            return sql.ToString();
         }
 
         public string InsertQuery
@@ -180,6 +199,22 @@ namespace AweShur.Core
             foreach (int pos in PrimaryKeys)
             {
                 dynParms.Add("@" + names[pos], obj[pos]);
+            }
+
+            return dynParms;
+        }
+
+        public DynamicParameters GetInsertParameters(BusinessBase obj)
+        {
+            DynamicParameters dynParms = new DynamicParameters();
+
+            for (int index = 0; index < names.Length; ++index)
+            {
+                PropertyDefinition prop = ListProperties[index];
+                if (prop.IsDBField && !prop.IsIdentity)
+                {
+                    dynParms.Add("@" + names[index], obj[index]);
+                }
             }
 
             return dynParms;

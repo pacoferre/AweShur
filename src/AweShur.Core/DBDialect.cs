@@ -47,6 +47,7 @@ namespace AweShur.Core
 
         private static Dictionary<string, Type> typesDict = new Dictionary<string, Type>() {
             { "int", typeof(Int32) },
+            { "bit", typeof(bool) },
             { "bigint", typeof(Int64) },
             { "smallint", typeof(Int16) },
             { "tinyint", typeof(Byte) },
@@ -207,6 +208,72 @@ ORDER BY col.ORDINAL_POSITION";
                     if (addedAny)
                     {
                         sb.Append(" AND ");
+                    }
+                    sb.Append(Encapsulate(prop.PropertyName) + "=@" + prop.PropertyName);
+
+                    addedAny = true;
+                }
+            }
+
+            return sb.ToString();
+        }
+
+        public string SQLInsertProperties(List<PropertyDefinition> properties)
+        {
+            StringBuilder sb = new StringBuilder();
+            var addedAny = false;
+
+            foreach (PropertyDefinition prop in properties)
+            {
+                if (prop.IsDBField && !prop.IsIdentity)
+                {
+                    if (addedAny)
+                    {
+                        sb.Append(", ");
+                    }
+                    sb.Append(Encapsulate(prop.PropertyName));
+
+                    addedAny = true;
+                }
+            }
+
+            return sb.ToString();
+        }
+
+        public string SQLInsertValues(List<PropertyDefinition> properties)
+        {
+            StringBuilder sb = new StringBuilder();
+            var addedAny = false;
+
+            foreach (PropertyDefinition prop in properties)
+            {
+                if (prop.IsDBField && !prop.IsIdentity)
+                {
+                    if (addedAny)
+                    {
+                        sb.Append(", ");
+                    }
+                    sb.Append("@" + prop.PropertyName);
+
+                    addedAny = true;
+                }
+            }
+
+            return sb.ToString();
+        }
+
+        public string SQLUpdateValues(List<PropertyDefinition> properties)
+        {
+            StringBuilder sb = new StringBuilder();
+            var addedAny = false;
+
+            foreach (PropertyDefinition prop in properties)
+            {
+                if (prop.IsDBField && !prop.IsIdentity && !prop.IsReadOnly && !prop.IsComputed)
+                {
+                    if (addedAny)
+                    {
+                        sb.Append(", ");
                     }
                     sb.Append(Encapsulate(prop.PropertyName) + "=@" + prop.PropertyName);
 

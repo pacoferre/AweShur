@@ -2,7 +2,7 @@
     ViewData["Title"] = "Home Page";
 }
 
-@if (AweShur.Web.Demo.Controllers.HomeController.IsAuthenticated(this.Context))
+@if (AppUser.UserIsAuthenticated(this.Context))
 {
     <aswd-main></aswd-main>
 }
@@ -13,9 +13,9 @@ else
 
 @section subelements
 {
-@if (AweShur.Web.Demo.Controllers.HomeController.IsAuthenticated(this.Context))
+@if (AppUser.UserIsAuthenticated(this.Context))
 {
-    @Html.Raw("<link rel='import' href='/Elements/Load/Main/" + Context.Session.GetInt32("idappuser") + "'>")
+    @Html.Raw("<link rel='import' href='/Elements/Load/Main/" + AppUser.IDAppUser(this.Context) + "'>")
 }
 else
 {

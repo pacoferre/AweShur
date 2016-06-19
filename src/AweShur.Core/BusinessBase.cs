@@ -35,7 +35,19 @@ namespace AweShur.Core
             }
         }
 
-        #region Status and Properties
+        #region Validation & Status & Indexer
+        public string LastErrorProperty = "";
+        public string LastErrorMessage = "";
+        
+        public virtual bool Validate()
+        {
+            LastErrorProperty = "";
+            LastErrorMessage = "";
+
+            return dataItem.Validate(ref LastErrorMessage, ref LastErrorProperty);
+        }
+
+
         public virtual bool IsReadOnly(string property)
         {
             return false;

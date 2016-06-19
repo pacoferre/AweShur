@@ -74,7 +74,14 @@ namespace AweShur.Core
             {
                 if (!IsModified)
                 {
-                    IsModified = ((IComparable)values[index]).CompareTo(value) != 0;
+                    if (value != null && values[index] != null)
+                    {
+                        IsModified = ((IComparable)values[index]).CompareTo(value) != 0;
+                    }
+                    else
+                    {
+                        IsModified = !(value == null && values[index] == null);
+                    }
                 }
 
                 values[index] = value;
@@ -119,14 +126,18 @@ namespace AweShur.Core
             //private bool isNew = true;
             //private bool isModified = false;
             //private bool isDeleting = false;
-            JObject obj = new JObject(isNew, isModified, IsDeleting);
+            JObject obj = new JObject();
+
+            obj.Add("isNew", JToken.FromObject(isNew));
+            obj.Add("isModified", JToken.FromObject(isModified));
+            obj.Add("IsDeleting", JToken.FromObject(IsDeleting));
 
             foreach (PropertyDefinition prop in owner.Definition.ListProperties)
             {
                 int index = prop.Index;
                 object value = values[index];
 
-                obj["n" + prop.Index] = JToken.FromObject(value);
+                obj["n" + prop.Index] = JToken.FromObject(value == null);
                 obj["v" + prop.Index] = JToken.FromObject(value ?? 0);
             }
 
@@ -157,6 +168,15 @@ namespace AweShur.Core
             }
 
             keyIsDirty = true;
+        }
+
+        public bool Validate(ref string LastErrorMessage, ref string LastErrorProperty)
+        {
+            bool validated = true;
+
+            // Null validations and something more...
+
+            return validated;
         }
     }
 }

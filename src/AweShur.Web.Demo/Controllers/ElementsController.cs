@@ -34,9 +34,9 @@ namespace AweShur.Web.Demo.Controllers
         }
 
         // GET: /<controller>/
-        public IActionResult Load(string component, int? idappuser)
+        public IActionResult Load(string component, int? id)
         {
-            return PartialView("~/Elements/" + component, idappuser);
+            return PartialView("~/Views/Elements/" + component + ".cshtml", id);
         }
     }
 }

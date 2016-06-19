@@ -61,7 +61,7 @@ namespace AweShur.Core
         public static DB InstanceNumber(int dbNumber)
         {
             string key = "DB_" + dbNumber.ToString();
-            HttpContext context = (new HttpContextAccessor()).HttpContext;
+            HttpContext context = BusinessBaseProvider.HttpContext;
 
             if (context.Items[key] == null)
             {
@@ -195,26 +195,26 @@ namespace AweShur.Core
             return result;
         }
 
-        public T QuerySingle<T>(string sql, object param = null, int? commandTimeout = null, CommandType? commandType = null)
+        public T QueryFirstOrDefault<T>(string sql, object param = null, int? commandTimeout = null, CommandType? commandType = null)
         {
             T result;
 
             OpenConnection();
 
-            result = conn.QuerySingle<T>(sql, param, trans, commandTimeout, commandType);
+            result = conn.QueryFirstOrDefault<T>(sql, param, trans, commandTimeout, commandType);
 
             CloseConnection();
 
             return result;
         }
 
-        public dynamic QuerySingle(string sql, object param = null, int? commandTimeout = null, CommandType? commandType = null)
+        public dynamic QueryFirstOrDefault(string sql, object param = null, int? commandTimeout = null, CommandType? commandType = null)
         {
             dynamic result;
 
             OpenConnection();
 
-            result = conn.QuerySingle(sql, param, trans, commandTimeout, commandType);
+            result = conn.QueryFirstOrDefault(sql, param, trans, commandTimeout, commandType);
 
             CloseConnection();
 
@@ -230,6 +230,70 @@ namespace AweShur.Core
             conn.ReadBusinessObject(obj, def.SelectQuery, def.GetPrimaryKeyParameters(obj), trans);
 
             CloseConnection();
+        }
+
+        public void StoreBusinessObject(BusinessBase obj)
+        {
+            bool isValidated = obj.Validate();
+
+
+
+            BusinessBaseDefinition def = obj.Definition;
+
+            OpenConnection();
+
+            if (obj.IsNew)
+            {
+                if (def.primaryKeyIsOneGuid)
+                {
+                    obj[def.PrimaryKeys[0]] = GenerateComb();
+                }
+
+                var result = conn.QuerySingle(def.InsertQuery, def.GetInsertParameters(obj), trans);
+
+                if (def.primaryKeyIsOneInt)
+                {
+                    obj[def.PrimaryKeys[0]] = Convert.ToInt32(result.id);
+                }
+                if (def.primaryKeyIsOneLong)
+                {
+                    obj[def.PrimaryKeys[0]] = Convert.ToInt64(result.id);
+                }
+
+
+            }
+            else
+
+            CloseConnection();
+        }
+
+        // From NHibernate
+        private static readonly long BaseDateTicks = new DateTime(1900, 1, 1).Ticks;
+
+        private Guid GenerateComb()
+        {
+            byte[] guidArray = Guid.NewGuid().ToByteArray();
+
+            DateTime now = DateTime.UtcNow;
+
+            // Get the days and milliseconds which will be used to build the byte string 
+            TimeSpan days = new TimeSpan(now.Ticks - BaseDateTicks);
+            TimeSpan msecs = now.TimeOfDay;
+
+            // Convert to a byte array 
+            // Note that SQL Server is accurate to 1/300th of a millisecond so we divide by 3.333333 
+            byte[] daysArray = BitConverter.GetBytes(days.Days);
+            byte[] msecsArray = BitConverter.GetBytes((long)(msecs.TotalMilliseconds / 3.333333));
+
+            // Reverse the bytes to match SQL Servers ordering 
+            Array.Reverse(daysArray);
+            Array.Reverse(msecsArray);
+
+            // Copy the bytes into the guid 
+            Array.Copy(daysArray, daysArray.Length - 2, guidArray, guidArray.Length - 6, 2);
+            Array.Copy(msecsArray, msecsArray.Length - 4, guidArray, guidArray.Length - 4, 4);
+
+            return new Guid(guidArray);
         }
     }
 }

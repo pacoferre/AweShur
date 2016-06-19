@@ -52,6 +52,7 @@ namespace AweShur.Core
         public bool IsComputed { get; } = false;
         public bool IsIdentity { get; } = false;
         public bool IsPrimaryKey { get; } = false;
+        public bool IsReadOnly { get; set; } = false;
         public string DBDataType { get; } = "";
         public string PropertyName { get; } = "";
         public Type DataType { get; }

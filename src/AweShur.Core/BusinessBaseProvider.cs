@@ -8,6 +8,8 @@ using System.Threading.Tasks;
 using Microsoft.Framework.Runtime.Infrastructure;
 using Microsoft.AspNetCore.Http;
 using AweShur.Core.Security;
+using Microsoft.Extensions.Configuration;
+using System.Text;
 
 namespace AweShur.Core
 {
@@ -18,6 +20,27 @@ namespace AweShur.Core
         private ConcurrentDictionary<string, Lazy<BusinessBaseDefinition>>
             definitionsCache = new ConcurrentDictionary<string, Lazy<BusinessBaseDefinition>>();
         public static BusinessBaseProvider Instance { get; set; }
+        private static IHttpContextAccessor HttpContextAccessor;
+
+        public static void Configure(IHttpContextAccessor httpContextAccessor, BusinessBaseProvider instance, IConfigurationRoot configuration)
+        {
+            HttpContextAccessor = httpContextAccessor;
+            Instance = instance;
+            DB.Configuration = configuration;
+
+            Instance.RegisterBusinessCreators();
+            Instance.RegisterCustomDecorators();
+
+            AppUser.SALT = Encoding.ASCII.GetBytes(DB.Configuration.GetSection("Security")["SALT"]).Take(16).ToArray();
+        }
+
+        public static HttpContext HttpContext
+        {
+            get
+            {
+                return HttpContextAccessor.HttpContext;
+            }
+        }
 
         public virtual void RegisterBusinessCreators()
         {
