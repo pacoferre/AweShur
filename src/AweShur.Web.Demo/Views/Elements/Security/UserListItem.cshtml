@@ -1,0 +1,42 @@
+﻿@{
+    Layout = "";
+}
+<link rel="import" href="/lib/polymer/polymer.html">
+
+<dom-module id="swd-userlistitem">
+    <template>
+        <style>
+            .primary {
+                font-size: 16px;
+                display: block;
+            }
+
+            .secondary {
+                font-size: 14px;
+            }
+
+            .dim {
+                color: gray;
+            }
+
+            .act {
+                font-style: italic;
+            }
+        </style>
+
+        <div class="primary">
+            [[item.name]] [[item.surname]]
+        </div>
+        <div class="secondary dim">[[item.AppUserType]] <span class="act">[[item.AppUserActive]]</span></div>
+    </template>
+    <script>
+        Polymer({
+            is: 'swd-userlistitem',
+            properties: {
+                item: {
+                    type: Object,
+                },
+            },
+        });
+    </script>
+</dom-module>
