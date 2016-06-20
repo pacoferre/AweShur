@@ -37,6 +37,7 @@ namespace AweShur.Web.Controllers
         {
             return PartialView("~/Views/Elements/" + component + ".cshtml");
         }
+
         public IActionResult LoadFolder(string folder, string component, int? id)
         {
             return PartialView("~/Views/Elements/" + folder + "/" + component + ".cshtml");

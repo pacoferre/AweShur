@@ -11,7 +11,7 @@ using AweShur.Core.Security;
 namespace AweShur.Web.Controllers
 {
     [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
-    public class HomeController : Controller
+    public class HomeController :  Controller
     {
         public class LoginObject
         {
