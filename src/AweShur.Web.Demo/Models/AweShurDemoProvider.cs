@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 
 namespace AweShur.Web.Demo.Models
 {
-    public class AweShurDemoProvider : BusinessBaseProvider
+    public class AweShurDemoProvider :  BusinessBaseProvider
     {
+
     }
 }
