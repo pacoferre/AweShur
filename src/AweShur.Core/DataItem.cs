@@ -14,54 +14,15 @@ namespace AweShur.Core
         private string key = "";
 
         private object[] values;
-        private bool isNew = true;
-        private bool isModified = false;
-        private bool isDeleting = false;
+        public bool IsNew { get; set; } = true;
+        public bool IsModified { get; set; } = false;
+        public bool IsDeleting { get; set; } = false;
         private BusinessBase owner = null;
 
         public DataItem(BusinessBase owner, object[] values)
         {
             this.owner = owner;
             this.values = values;
-        }
-
-        public bool IsNew
-        {
-            get
-            {
-                return isNew;
-            }
-
-            set
-            {
-                isNew = value;
-            }
-        }
-
-        public bool IsModified
-        {
-            get
-            {
-                return isModified;
-            }
-
-            set
-            {
-                isModified = value;
-            }
-        }
-
-        public bool IsDeleting
-        {
-            get
-            {
-                return isDeleting;
-            }
-
-            set
-            {
-                isDeleting = value;
-            }
         }
 
         public object this[int index]
@@ -122,23 +83,26 @@ namespace AweShur.Core
 
         public virtual byte[] Serialize()
         {
-            //private object[] values;
-            //private bool isNew = true;
-            //private bool isModified = false;
-            //private bool isDeleting = false;
             JObject obj = new JObject();
 
-            obj.Add("isNew", JToken.FromObject(isNew));
-            obj.Add("isModified", JToken.FromObject(isModified));
-            obj.Add("IsDeleting", JToken.FromObject(IsDeleting));
+            obj.Add("IsNew", JToken.FromObject(IsNew ? "1" : ""));
+            obj.Add("IsModified", JToken.FromObject(IsModified ? "1" : ""));
+            obj.Add("IsDeleting", JToken.FromObject(IsDeleting ? "1" : ""));
 
             foreach (PropertyDefinition prop in owner.Definition.ListProperties)
             {
                 int index = prop.Index;
                 object value = values[index];
 
-                obj["n" + prop.Index] = JToken.FromObject(value == null);
-                obj["v" + prop.Index] = JToken.FromObject(value ?? 0);
+                obj["n" + prop.Index] = JToken.FromObject(value == null ? "1" : "");
+                if (prop.BasicType == BasicType.Bit)
+                {
+                    obj["v" + prop.Index] = JToken.FromObject(value.NoNullBool() ? "1" : "");
+                }
+                else
+                {
+                    obj["v" + prop.Index] = JToken.FromObject(value ?? "");
+                }
             }
 
             return Encoding.Unicode.GetBytes(obj.ToString(Newtonsoft.Json.Formatting.None));
@@ -149,13 +113,13 @@ namespace AweShur.Core
             string json = Encoding.Unicode.GetString(data);
             JObject obj = JObject.Parse(json);
 
-            isNew = (bool)obj["isNew"].ToObject(typeof(bool));
-            isModified = (bool)obj["isModified"].ToObject(typeof(bool));
-            isDeleting = (bool)obj["isDeleting"].ToObject(typeof(bool));
+            IsNew = obj["IsNew"].ToObject(typeof(string)).ToString() == "1";
+            IsModified = obj["IsModified"].ToObject(typeof(string)).ToString() == "1";
+            IsDeleting = obj["IsDeleting"].ToObject(typeof(string)).ToString() == "1";
             foreach (PropertyDefinition prop in owner.Definition.ListProperties)
             {
                 int index = prop.Index;
-                bool isNull = (bool)obj["n" + prop.Index].ToObject(typeof(bool));
+                bool isNull = obj["n" + prop.Index].ToObject(typeof(string)).ToString() == "1";
 
                 if (isNull)
                 {
@@ -163,7 +127,14 @@ namespace AweShur.Core
                 }
                 else
                 {
-                    values[index] = obj["n" + prop.Index].ToObject(prop.DataType);
+                    if (prop.BasicType == BasicType.Bit)
+                    {
+                        values[index] = obj["v" + prop.Index].ToObject(typeof(string)).ToString() == "1";
+                    }
+                    else
+                    {
+                        values[index] = obj["v" + prop.Index].ToObject(prop.DataType);
+                    }
                 }
             }
 

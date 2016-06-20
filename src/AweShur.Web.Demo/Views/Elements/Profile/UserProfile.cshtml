@@ -1,23 +1,23 @@
 ﻿@{
     Layout = "";
 
-    int? idappuser = Context.Session.GetInt32("idappuser");
+    int? idappuser = AppUser.IDAppUser(Context);
 }
 <link rel="import" href="/lib/polymer/polymer.html">
-<link rel="import" href="/elements/lib/awsh-editor/awsh-editor.html">
+<link rel="import" href="/elements/lib/awsl-editor/awsl-editor.html">
 
-<dom-module id="swd-profile">
+<dom-module id="aswd-profile">
     <template>
         <style>
         </style>
 
-        <awsh-editor id="editor" oname="AppUserProfile" idobject="@idappuser" on-elementready="_elementready" hiderefresh="true" hideadd="true"
-                     edithref='@("/Elements/UserProfileEdit/" + idappuser)' editelement="swd-userprofileedit">
-        </awsh-editor>
+        <awsl-editor id="editor" oname="AppUserProfile" idobject="@idappuser" on-elementready="_elementready" hiderefresh="true" hideadd="true"
+                     edithref='@("/Elements/Load/Profile/UserProfileEdit/" + idappuser)' editelement="aswd-userprofileedit">
+        </awsl-editor>
     </template>
     <script>
         Polymer({
-            is: 'swd-profile',
+            is: 'aswd-profile',
             properties: {
             },
             _elementready: function () {

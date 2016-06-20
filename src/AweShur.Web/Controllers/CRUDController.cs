@@ -16,7 +16,7 @@ namespace AweShur.Web.Controllers
         {
             base.OnActionExecuting(context);
 
-            if (AppUser.UserIsAuthenticated(context.HttpContext))
+            if (!AppUser.UserIsAuthenticated(context.HttpContext))
             {
                 context.Result = new JsonResult(BusinessBaseResponse.ErrorResponse);
             }
@@ -29,9 +29,9 @@ namespace AweShur.Web.Controllers
         }
 
         [HttpPost]
-        public JsonResult Get(string objectName, int id)
+        public JsonResult Get(string objectName, string id)
         {
-            return new JsonResult(BusinessBaseProvider.RetreiveObject(objectName, "0", HttpContext).ToJson());
+            return new JsonResult(BusinessBaseProvider.RetreiveObject(objectName, id, HttpContext).ToJson());
         }
 
         [HttpPost]

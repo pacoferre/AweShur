@@ -86,7 +86,13 @@ namespace AweShur.Core
             DBDataType = colDef.DBDataType;
             PropertyName = colDef.ColumnName;
             DataType = DBDialect.GetColumnType(colDef.DBDataType);
+            BasicType = DBDialect.GetBasicType(DataType);
             MaxLength = colDef.MaxLength;
+
+            if (BasicType == BasicType.Text && MaxLength == 10000)
+            {
+                BasicType = BasicType.TextLong;
+            }
         }
 
         public PropertyDefinition(string propertyName, string label, BasicType basicType = BasicType.Text, PropertyInputType type = PropertyInputType.text)

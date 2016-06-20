@@ -1,7 +1,5 @@
 ﻿@{
     Layout = "";
-
-    AppUserType type = HomeController.UserType(Context);
 }
 <link rel="import" href="/lib/paper-input/paper-input.html">
 <link rel="import" href="/lib/paper-radio-button/paper-radio-button.html">
@@ -9,7 +7,7 @@
 <link rel="import" href="/lib/paper-checkbox/paper-checkbox.html">
 <link rel="import" href="/lib/gold-email-input/gold-email-input.html">
 
-<dom-module id="swd-useredit">
+<dom-module id="aswd-useredit">
     <template>
         <style>
             paper-checkbox {
@@ -17,24 +15,15 @@
                 display: block;
             }
         </style>
-@if (type == AppUserType.GlobalAdministrator)
-{
-    <paper-radio-group selected="{{item.idappusertype}}">
-        <paper-radio-button name="1">Global administrator</paper-radio-button>
-        <paper-radio-button name="2">Deck administrator</paper-radio-button>
-        <paper-radio-button name="3">Moderator</paper-radio-button>
-        <paper-radio-button name="4">User</paper-radio-button>
-    </paper-radio-group>
-    <paper-checkbox checked="{{item.active}}">Active</paper-checkbox>
-    <gold-email-input value="{{item.email}}" label="Email" always-float-label></gold-email-input>
-    <paper-input value="{{item.pass}}" label="Password" always-float-label type="password"></paper-input>
-    <paper-input value="{{item.name}}" label="Name" always-float-label></paper-input>
-    <paper-input value="{{item.surname}}" label="Surname" always-float-label></paper-input>
-}
+        <paper-checkbox checked="{{item.deactivated}}">Deactivated</paper-checkbox>
+        <gold-email-input value="{{item.email}}" label="Email" always-float-label></gold-email-input>
+        <paper-input value="{{item.password}}" label="Password" always-float-label type="password"></paper-input>
+        <paper-input value="{{item.name}}" label="Name" always-float-label></paper-input>
+        <paper-input value="{{item.surname}}" label="Surname" always-float-label></paper-input>
     </template>
     <script>
     Polymer({
-        is: 'swd-useredit',
+        is: 'aswd-useredit',
         properties: {
             item: {
                 type: Object,

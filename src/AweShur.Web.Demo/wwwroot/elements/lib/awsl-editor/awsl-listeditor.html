@@ -114,7 +114,7 @@
 
                     Polymer.dom(this.$.itemsList).appendChild(ironlisttemplate);
 
-                    this.$.ajaxlist.url = "/api/" + this.oname;
+                    this.$.ajaxlist.url = "/CRUD/List/" + this.oname;
                     this.$.ajaxlist.generateRequest();
                 }, function (e) {
                     debugger;

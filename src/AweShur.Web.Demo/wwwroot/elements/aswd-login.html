@@ -35,17 +35,11 @@
                     </paper-toolbar>
                     <form is="iron-form" id="loginForm">
                         <div class="layout vertical">
-                            <gold-email-input id="username" label="Email" required auto-validate on-keydown="checkForEnterA"></gold-email-input>
+                            <gold-email-input id="email" label="Email" required auto-validate on-keydown="checkForEnterA"></gold-email-input>
                             <paper-input id="password" type="password" label="Password" password required auto-validate on-keydown="checkForEnter"></paper-input>
                         </div>
                         <div>&nbsp;</div>
                         <div class="layout horizontal bottom">
-                            <div class="layout vertical">
-                                <div class="flex"></div>
-                                <a id="registerButton">register?</a>
-                                <a id="lostButton">lost password?</a>
-                                <div class="flex"></div>
-                            </div>
                             <div class="flex"></div>
                             <paper-button submit raised id="loginButton">Login</paper-button>
                         </div>
@@ -103,7 +97,7 @@
           if (!this.$.loginForm.validate())
           {
               this.showError("You must enter an email and password");
-              this.$.username.focus();
+              this.$.email.focus();
 
               return;
           }
@@ -111,7 +105,7 @@
           var me = this;
 
           this.$.loginService.body = {
-              username: this.$.username.value, password: this.$.password.value
+              email: this.$.email.value, password: this.$.password.value
           };
           this.$.loginService.url = "/Home/Login";
 

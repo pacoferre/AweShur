@@ -13,7 +13,7 @@ namespace AweShur.Core
             return dataItem.Serialize();
         }
 
-        public void Deserialize(byte[] data)
+        public virtual void Deserialize(byte[] data)
         {
             dataItem.Deserialize(data);
         }

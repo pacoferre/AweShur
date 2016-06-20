@@ -108,31 +108,51 @@ namespace AweShur.Core
             return "O_" + objectName + "_" + dbNumber + "_" + key;
         }
 
-        public static void StoreToSession(BusinessBase obj, string objectName, ISession session)
+        public static void StoreObject(BusinessBase obj, string objectName, HttpContext context)
         {
             string sessionKey = SessionKey(objectName, obj.DBNumber, obj.Key);
 
-            session.Set(sessionKey, obj.Serialize());
+            context.Session.Set(sessionKey, obj.Serialize());
         }
 
-        public static BusinessBase RetreiveFromSession(string objectName, string key, ISession session)
+        public static BusinessBase RetreiveObject(string objectName, string key, HttpContext context)
         {
-            return RetreiveFromSession(objectName, 0, key, session);
+            return RetreiveObject(objectName, 0, key, context);
         }
 
-        public static BusinessBase RetreiveFromSession(string objectName, int dbNumber, string key, ISession session)
+        public static BusinessBase RetreiveObject(string objectName, int dbNumber, string key, HttpContext context)
         {
             string sessionKey = SessionKey(objectName, dbNumber, key);
-            BusinessBase obj = null;
             byte[] data;
 
-            if (session.TryGetValue(sessionKey, out data))
+            if (context.Items[sessionKey] == null)
             {
-                obj = Instance.CreateObject(objectName, dbNumber);
-                obj.Deserialize(data);
+                lock (context)
+                {
+                    if (context.Items[sessionKey] == null)
+                    {
+                        BusinessBase obj = Instance.CreateObject(objectName, dbNumber);
+
+                        if (context.Session.TryGetValue(sessionKey, out data))
+                        {
+                            obj.Deserialize(data);
+                        }
+                        else
+                        {
+                            if (key != "0")
+                            {
+                                obj.ReadFromDB(key);
+                            }
+
+                            StoreObject(obj, objectName, context);
+                        }
+
+                        context.Items[sessionKey] = obj;
+                    }
+                }
             }
 
-            return obj;
+            return (BusinessBase)context.Items[sessionKey];
         }
     }
 }

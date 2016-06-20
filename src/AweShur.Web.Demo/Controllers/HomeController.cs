@@ -36,31 +36,5 @@ namespace AweShur.Web.Demo.Controllers
 
             return Redirect("/");
         }
-
-        public class LoginObject
-        {
-            public string username;
-            public string password;
-        }
-
-        [HttpPost]
-        public JsonResult Login([FromBody]LoginObject login)
-        {
-            AppUser user;
-
-            Request.HttpContext.Session.Clear();
-
-            user = AppUser.Login(login.username, login.password, HttpContext.Session);
-
-            if (user == null)
-            {
-                HttpContext.Session.Clear();
-            }
-
-            return new JsonResult(new
-            {
-                result = user != null
-            });
-        }
     }
 }

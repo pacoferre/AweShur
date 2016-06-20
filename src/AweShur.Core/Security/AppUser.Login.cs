@@ -14,39 +14,40 @@ namespace AweShur.Core.Security
         private static string CurrentUserIDSessionKey = "USER_ID";
         public static byte[] SALT;
 
-        public static AppUser Login(string login, string password, ISession session)
+        public static bool Login(string email, string password, HttpContext context)
         {
             AppUser theUser = (AppUser)BusinessBaseProvider.Instance.CreateObject("AppUser");
 
-            return theUser.LoginInternal(login, password, session);
+            return theUser.LoginInternal(email, password, context);
         }
 
-        protected virtual AppUser LoginInternal(string login, string password, ISession session)
+        protected bool LoginInternal(string email, string password, HttpContext context)
         {
-            dynamic userData = DB.Instance.QueryFirstOrDefault("Select IDAppUser, Login, Password From AppUser Where Login = @Login", new { Login = login });
+            dynamic userData = DB.Instance.QueryFirstOrDefault("Select idAppUser, email, password From AppUser Where email = @Email", new { Email = email });
             AppUser usu = null;
+            bool valid = false;
 
             if (userData != null)
             {
-                string enc = PasswordDerivedString(userData.Login + "akj121hkj" + password);
+                string enc = PasswordDerivedString(userData.email, password);
 
-                if (enc == userData.Password)
+                if (enc == userData.password)
                 {
                     usu = (AppUser)BusinessBaseProvider.Instance.CreateObject("AppUser");
 
-                    usu.ReadFromDB((int)userData.IDAppUser);
+                    usu.ReadFromDB((int)userData.idAppUser);
                 }
 
                 // Hack to 
                 if (usu == null)
                 {
-                    if (userData.Password == password)
+                    if (userData.password == password)
                     {
                         usu = (AppUser)BusinessBaseProvider.Instance.CreateObject("AppUser");
 
-                        usu.ReadFromDB((int)userData.IDAppUser);
+                        usu.ReadFromDB((int)userData.idAppUser);
 
-                        usu["Password"] = enc;
+                        //usu["password"] = password;
 
                         //usu.StoreToDB();
                     }
@@ -56,7 +57,7 @@ namespace AweShur.Core.Security
                     }
                 }
 
-                if (usu != null && usu["Deactivated"].NoNullBool())
+                if (usu != null && usu["deactivated"].NoNullBool())
                 {
                     usu = null;
                 }
@@ -69,11 +70,11 @@ namespace AweShur.Core.Security
                 //    usu = (UserApp)BusinessProviderBase.Provider.NewObject("UserApp");
 
                 //    usu.NuevoEnBlanco();
-                //    usu["Name"] = "UserApp";
-                //    usu["SurName"] = "Administrador";
-                //    usu["SU"] = true;
-                //    usu["Login"] = "admin";
-                //    usu["Password"] = "admin";
+                //    usu["name"] = "UserApp";
+                //    usu["surname"] = "Administrador";
+                //    usu["su"] = true;
+                //    usu["email"] = "admin@local";
+                //    usu["password"] = "admin";
                 //    usu.creacionAutomatica = true;
                 //    usu.Guardar(false);
                 //    usu.creacionAutomatica = false;
@@ -82,18 +83,19 @@ namespace AweShur.Core.Security
 
             if (usu != null)
             {
-                SetAppUser(usu, session);
+                SetAppUser(usu, context);
+                valid = true;
             }
 
             //LogUserEntry(ref user, login);
 
-            return usu;
+            return valid;
         }
 
-        public static string PasswordDerivedString(string password)
+        public static string PasswordDerivedString(string email, string password)
         {
             return Convert.ToBase64String(KeyDerivation.Pbkdf2(
-                password: password,
+                password: email + "_fsk53g5djfskj_" + password,
                 salt: SALT,
                 prf: KeyDerivationPrf.HMACSHA1,
                 iterationCount: 200,
@@ -110,24 +112,28 @@ namespace AweShur.Core.Security
             return req.Session.GetInt32(CurrentUserIDSessionKey);
         }
 
-        private static void SetAppUser(AppUser user, ISession session)
+        private static void SetAppUser(AppUser user, HttpContext context)
         {
             // New user logon.
-            session.Clear();
+            context.Session.Clear();
 
-            session.SetInt32(CurrentUserIDSessionKey, (int)user[0]);
+            context.Session.SetInt32(CurrentUserIDSessionKey, (int)user[0]);
 
-            BusinessBaseProvider.StoreToSession(user, "AppUser", session);
+            BusinessBaseProvider.StoreObject(user, "AppUser", context);
         }
 
         public static AppUser GetAppUserWithoutHttpContext()
         {
-            HttpContext context = BusinessBaseProvider.HttpContext;
+            return GetAppUser(BusinessBaseProvider.HttpContext);
+        }
+
+        public static AppUser GetAppUser(HttpContext context)
+        {
             int idAppUser = context.Session.GetInt32(CurrentUserIDSessionKey).NoNullInt();
 
             if (idAppUser > 0)
             {
-                return (AppUser)BusinessBaseProvider.RetreiveFromSession("AppUser", idAppUser.ToString(), context.Session);
+                return (AppUser)BusinessBaseProvider.RetreiveObject("AppUser", idAppUser.ToString(), context);
             }
 
             return null;

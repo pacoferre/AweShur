@@ -65,9 +65,15 @@ namespace AweShur.Core
 
             if (context.Items[key] == null)
             {
-                DB d = new DB(dbNumber);
+                lock (context)
+                {
+                    if (context.Items[key] == null)
+                    {
+                        DB d = new DB(dbNumber);
 
-                context.Items[key] = d;
+                        context.Items[key] = d;
+                    }
+                }
             }
 
             return (DB)context.Items[key];
@@ -175,7 +181,7 @@ namespace AweShur.Core
 
             OpenConnection();
 
-            result = conn.Query<T>(sql, param, trans, buffered, commandTimeout, commandType);
+            result = conn.Query<T>(sql, param, trans, buffered, commandTimeout ?? secondsTimeOut, commandType);
 
             CloseConnection();
 
@@ -188,7 +194,7 @@ namespace AweShur.Core
 
             OpenConnection();
 
-            result = conn.Query(sql, param, trans, buffered, commandTimeout, commandType);
+            result = conn.Query(sql, param, trans, buffered, commandTimeout ?? secondsTimeOut, commandType);
 
             CloseConnection();
 
@@ -201,7 +207,7 @@ namespace AweShur.Core
 
             OpenConnection();
 
-            result = conn.QueryFirstOrDefault<T>(sql, param, trans, commandTimeout, commandType);
+            result = conn.QueryFirstOrDefault<T>(sql, param, trans, commandTimeout ?? secondsTimeOut, commandType);
 
             CloseConnection();
 
@@ -214,7 +220,7 @@ namespace AweShur.Core
 
             OpenConnection();
 
-            result = conn.QueryFirstOrDefault(sql, param, trans, commandTimeout, commandType);
+            result = conn.QueryFirstOrDefault(sql, param, trans, commandTimeout ?? secondsTimeOut, commandType);
 
             CloseConnection();
 
@@ -235,34 +241,42 @@ namespace AweShur.Core
         public void StoreBusinessObject(BusinessBase obj)
         {
             bool isValidated = obj.Validate();
-
-
-
-            BusinessBaseDefinition def = obj.Definition;
-
-            OpenConnection();
-
-            if (obj.IsNew)
+            
+            if (isValidated)
             {
-                if (def.primaryKeyIsOneGuid)
+                BusinessBaseDefinition def = obj.Definition;
+
+                OpenConnection();
+
+                if (obj.IsNew)
                 {
-                    obj[def.PrimaryKeys[0]] = GenerateComb();
+                    if (def.primaryKeyIsOneGuid)
+                    {
+                        obj[def.PrimaryKeys[0]] = GenerateComb();
+                    }
+
+                    var result = conn.QuerySingle(def.InsertQuery, def.GetInsertParameters(obj), trans);
+
+                    if (def.primaryKeyIsOneInt)
+                    {
+                        obj[def.PrimaryKeys[0]] = Convert.ToInt32(result.id);
+                    }
+                    if (def.primaryKeyIsOneLong)
+                    {
+                        obj[def.PrimaryKeys[0]] = Convert.ToInt64(result.id);
+                    }
+
+
                 }
-
-                var result = conn.QuerySingle(def.InsertQuery, def.GetInsertParameters(obj), trans);
-
-                if (def.primaryKeyIsOneInt)
+                else
                 {
-                    obj[def.PrimaryKeys[0]] = Convert.ToInt32(result.id);
-                }
-                if (def.primaryKeyIsOneLong)
-                {
-                    obj[def.PrimaryKeys[0]] = Convert.ToInt64(result.id);
-                }
 
-
+                }
             }
             else
+            {
+                throw new Exception("Errro");
+            }
 
             CloseConnection();
         }

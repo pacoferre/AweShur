@@ -82,6 +82,18 @@ namespace AweShur.Core
 
         }
 
+        public virtual void StoreToDB()
+        {
+            if (Validate())
+            {
+                CurrentDB.StoreBusinessObject(this);
 
+                IsNew = false;
+                IsModified = false;
+                IsDeleting = false;
+
+                AfterReadFromDB();
+            }
+        }
     }
 }

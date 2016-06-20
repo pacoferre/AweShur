@@ -1,39 +1,20 @@
 ﻿@{
     Layout = "";
-
-    int? idappuser = Context.Session.GetInt32("idappuser");
-    AppUserType type = HomeController.UserType(Context);
 }
 <link rel="import" href="/lib/paper-input/paper-input.html">
 <link rel="import" href="/lib/gold-email-input/gold-email-input.html">
 <link rel="import" href="/lib/iron-ajax/iron-ajax.html">
-<link rel="import" href="@("/Elements/UserProfileEditAccount/" + idappuser)">
 
-<dom-module id="swd-userprofileedit">
+<dom-module id="aswd-userprofileedit">
     <template>
-        @if (type != AppUserType.Error)
-        {
-            <gold-email-input value="{{item.email}}" label="Email" always-float-label></gold-email-input>
-            <paper-input value="{{item.pass}}" label="Password" always-float-label type="password"></paper-input>
-            <paper-input value="{{item.name}}" label="Name" always-float-label></paper-input>
-            <paper-input value="{{item.surname}}" label="Surname" always-float-label></paper-input>
-
-            <template is="dom-repeat" items="{{item.accounts}}">
-                <swd-userprofileeditaccount account="{{item}}">
-                </swd-userprofileeditaccount>
-            </template>
-
-            <iron-ajax id="ajaxread"
-                       method="GET"
-                       content-type="application/json"
-                       handle-as="json"
-                       last-response="{{item.accounts}}">
-            </iron-ajax>
-        }
+        <gold-email-input value="{{item.email}}" label="Email" always-float-label readonly></gold-email-input>
+        <paper-input value="{{item.password}}" label="Password" always-float-label type="password"></paper-input>
+        <paper-input value="{{item.name}}" label="Name" always-float-label></paper-input>
+        <paper-input value="{{item.surname}}" label="Surname" always-float-label></paper-input>
     </template>
     <script>
     Polymer({
-        is: 'swd-userprofileedit',
+        is: 'aswd-userprofileedit',
         properties: {
             item: {
                 type: Object,
@@ -42,11 +23,6 @@
             },
         },
         _itemChanged: function () {
-            //this.$.ajaxread.url = "/api/AppUserProfile/GetAccounts/" + this.item.idappuser;
-
-            //this.async(function () {
-            //    this.$.ajaxread.generateRequest();
-            //});
         }
     });
     </script>

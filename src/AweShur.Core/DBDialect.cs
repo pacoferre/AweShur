@@ -68,9 +68,29 @@ namespace AweShur.Core
             { "uniqueidentifier", typeof(Guid) },
         };
 
+        private static Dictionary<Type, BasicType> basicTypesDict = new Dictionary<Type, BasicType>() {
+            { typeof(Int32), BasicType.Number },
+            { typeof(bool), BasicType.Bit },
+            { typeof(Int64), BasicType.Number },
+            { typeof(Int16), BasicType.Number },
+            { typeof(Byte), BasicType.Number },
+            { typeof(Single), BasicType.Number },
+            { typeof(Double), BasicType.Number },
+            { typeof(string), BasicType.Text },
+            { typeof(DateTime), BasicType.DateTime },
+            { typeof(Decimal), BasicType.Number },
+            { typeof(Byte[]), BasicType.Bynary },
+            { typeof(Guid), BasicType.GUID },
+        };
+
         public static Type GetColumnType(string dbDataType)
         {
             return typesDict[dbDataType];
+        }
+
+        public static BasicType GetBasicType(Type type)
+        {
+            return basicTypesDict[type];
         }
 
         public IEnumerable<ColumnDefinition> GetSchema(string tableName, int dbNumber = 0)

@@ -16,7 +16,40 @@ namespace AweShur.Core.Security
         {
             get
             {
-                return this["Name"] + " " + this["SurName"];
+                return this["name"] + " " + this["surname"];
+            }
+        }
+
+        private string _newPassword = null;
+        public override object this[string property]
+        {
+            get
+            {
+                if (property == "password")
+                {
+                    return "";
+                }
+                return base[property];
+            }
+            set
+            {
+                if (property == "password")
+                {
+                    if (value.NoNullString() != "")
+                    {
+                        string enc = PasswordDerivedString(this["email"].NoNullString(), value.ToString());
+
+                        if (base[property].NoNullString() != enc)
+                        {
+                            base[property] = value;
+                            _newPassword = enc;
+                        }
+                    }
+                }
+                else
+                {
+                    base[property] = value;
+                }
             }
         }
 
