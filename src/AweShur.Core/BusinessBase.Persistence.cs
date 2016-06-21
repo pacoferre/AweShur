@@ -9,11 +9,16 @@ namespace AweShur.Core
     {
         public virtual bool ReadFromDB(string key)
         {
-            string[] keys = key.Split();
+            string[] keys = DataItem.SplitKey(key);
 
-            for (int index = 0; index < keys.Length; ++index)
+            if (key.Length != Definition.PrimaryKeys.Count)
             {
-                Definition.ListProperties[Definition.PrimaryKeys[index]].SetValue(this, keys[index]);
+                throw new Exception("Invalid key (" + key + ") for object " + Description);
+            }
+
+            foreach (int index in Definition.PrimaryKeys)
+            {
+                Definition.ListProperties[index].SetValue(this, keys[index]);
             }
 
             return ReadFromDB();

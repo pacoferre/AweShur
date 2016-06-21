@@ -104,20 +104,27 @@
                     value: false
                 }
             },
+            wasAttached: false,
             attached: function () {
-                this.importHref(this.listhref, function (e) {
-                    var ironlisttemplate = document.createElement('template');
-                    ironlisttemplate.id = "tempList";
-                    ironlisttemplate.innerHTML = "<div class='item style-scope awsl-listeditor' on-click='_selectedItemChanged'>"
-                        + "<" + this.listelement + " item='[[item]]' />"
-                        + "</div>";
+                if (this.wasAttached) {
+                    return;
+                }
+                this.wasAttached = true;
+                this.async(function () {
+                    this.importHref(this.listhref, function (e) {
+                        var ironlisttemplate = document.createElement('template');
+                        ironlisttemplate.id = "tempList";
+                        ironlisttemplate.innerHTML = "<div class='item style-scope awsl-listeditor' on-click='_selectedItemChanged'>"
+                            + "<" + this.listelement + " item='[[item]]' />"
+                            + "</div>";
 
-                    Polymer.dom(this.$.itemsList).appendChild(ironlisttemplate);
+                        Polymer.dom(this.$.itemsList).appendChild(ironlisttemplate);
 
-                    this.$.ajaxlist.url = "/CRUD/List/" + this.oname;
-                    this.$.ajaxlist.generateRequest();
-                }, function (e) {
-                    debugger;
+                        this.$.ajaxlist.url = "/CRUD/List/" + this.oname;
+                        this.$.ajaxlist.generateRequest();
+                    }, function (e) {
+                        debugger;
+                    });
                 });
             },
             reset: function () {

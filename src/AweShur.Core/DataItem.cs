@@ -68,6 +68,11 @@ namespace AweShur.Core
             }
         }
 
+        public static string[] SplitKey(string key)
+        {
+            return key.Split('_');
+        }
+
         public string Key
         {
             get

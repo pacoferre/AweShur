@@ -33,7 +33,7 @@
                    on-response="responseHandler">
         </iron-ajax>
         <iron-ajax id="ajaxread"
-                   method="GET"
+                   method="POST"
                    content-type="application/json"
                    url="/api/AppUser"
                    handle-as="json"
@@ -85,23 +85,29 @@
                 value: false
             }
         },
+        wasAttached: false,
         attached: function () {
-            this.importHref(this.edithref, function (e) {
-                var newElement = document.createElement(this.editelement);
-                newElement.id = "theelement";
+            if (this.wasAttached)
+            {
+                return;
+            }
+            this.wasAttached = true;
+            this.async(function () {
+                this.importHref(this.edithref, function (e) {
+                    var newElement = document.createElement(this.editelement);
+                    newElement.id = "theelement";
 
-                this.$.theelement = Polymer.dom(this.$.main).appendChild(newElement);
+                    this.$.theelement = Polymer.dom(this.$.main).appendChild(newElement);
 
-                this.fire('elementready');
-            }, function (e) {
-                debugger;
+                    this.fire('elementready');
+                }, function (e) {
+                    debugger;
+                });
             });
         },
-        ready: function () {
-        },
         load: function() {
-            this.$.ajax.url = "/api/" + this.oname;
-            this.$.ajaxread.url = "/api/" + this.oname + "/" + this.idobject;
+            this.$.ajax.url = "/CRUD/Get/" + this.oname;
+            this.$.ajaxread.url = "/CRUD/Get/" + this.oname + "/" + this.idobject;
 
             this.$.ajaxread.generateRequest();
         },
