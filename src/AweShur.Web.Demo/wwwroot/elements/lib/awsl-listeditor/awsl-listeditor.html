@@ -7,7 +7,8 @@
 <link rel="import" href="../../../lib/iron-list/iron-list.html">
 <link rel="import" href="../../../lib/paper-fab/paper-fab.html">
 
-<link rel="import" href="awsl-editor.html">
+<link rel="import" href="../awsl-listeditor-behavior/awsl-listeditor-behavior.html">
+<link rel="import" href="../awsl-editor/awsl-editor.html">
 
 <dom-module id="awsl-listeditor">
     <template>
@@ -19,6 +20,7 @@
                 @apply(--layout-scroll);
                 margin: 8px;
             }
+
             .item {
                 cursor: pointer;
                 padding: 16px 22px;
@@ -44,15 +46,11 @@
             }
         </style>
 
-        <iron-ajax last-response="{{data}}" handle-as="json"
-                   content-type="application/json" id="ajaxlist"
-                   method='GET'></iron-ajax>
-
         <neon-animated-pages id="pages" class="flex" selected="0" entry-animation="slide-from-right-animation" exit-animation="slide-left-animation">
             <neon-animatable>
                 <div id="listContent">
                     <paper-fab icon="add" on-tap="_onAdd" hidden="[[hideadd]]"></paper-fab>
-                    <iron-list id="itemsList" items="[[data]]" as="item">
+                    <iron-list id="itemsList" as="item">
                     </iron-list>
                 </div>
             </neon-animatable>
@@ -69,63 +67,19 @@
     <script>
         Polymer({
             is: 'awsl-listeditor',
-            properties: {
-                idobject: {
-                    type: String,
-                },
-                data: {
-                    type: Object,
-                },
-                oname: {
-                    type: String,
-                },
-                listhref: {
-                    type: String,
-                },
-                listelement: {
-                    type: String,
-                },
-                edithref: {
-                    type: String,
-                },
-                editelement: {
-                    type: String,
-                },
-                hiderefresh: {
-                    type: Boolean,
-                    value: false
-                },
-                hideadd: {
-                    type: Boolean,
-                    value: false
-                },
-                hideokcancel: {
-                    type: Boolean,
-                    value: false
-                }
+            behaviors: [AWSLBehaviors.ListEditorBehavior],
+            setData: function (newData) {
+                itemsList.items = newData;
             },
-            wasAttached: false,
-            attached: function () {
-                if (this.wasAttached) {
-                    return;
-                }
-                this.wasAttached = true;
-                this.async(function () {
-                    this.importHref(this.listhref, function (e) {
-                        var ironlisttemplate = document.createElement('template');
-                        ironlisttemplate.id = "tempList";
-                        ironlisttemplate.innerHTML = "<div class='item style-scope awsl-listeditor' on-click='_selectedItemChanged'>"
-                            + "<" + this.listelement + " item='[[item]]' />"
-                            + "</div>";
+            getListTemplate: function() {
+                var ironlisttemplate = document.createElement('template');
 
-                        Polymer.dom(this.$.itemsList).appendChild(ironlisttemplate);
+                ironlisttemplate.id = "tempList";
+                ironlisttemplate.innerHTML = "<div class='item style-scope awsl-listeditor' on-click='_selectedItemChanged'>"
+                    + "<" + this.listelement + " item='[[item]]' />"
+                    + "</div>";
 
-                        this.$.ajaxlist.url = "/CRUD/List/" + this.oname;
-                        this.$.ajaxlist.generateRequest();
-                    }, function (e) {
-                        debugger;
-                    });
-                });
+                return ironlisttemplate;
             },
             reset: function () {
                 if (this.$.pages.selected != 0) {
@@ -159,9 +113,6 @@
                 this.$.pages.entryAnimation = "slide-from-left-animation";
                 this.$.pages.exitAnimation = "slide-right-animation";
                 this.$.pages.selected = 0;
-            },
-            _onSaved: function () {
-                this.$.ajaxlist.generateRequest()
             }
         });
     </script>

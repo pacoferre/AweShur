@@ -1,6 +1,7 @@
 ﻿<link rel="import" href="../../../lib/app-layout/app-toolbar/app-toolbar.html">
 <link rel="import" href="../../../lib/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../../../lib/iron-ajax/iron-ajax.html">
+<link rel="import" href="../awsl-editor-behavior/awsl-editor-behavior.html">
 
 <dom-module id="awsl-editor">
     <template>
@@ -55,97 +56,7 @@
     <script>
     Polymer({
         is: 'awsl-editor',
-        properties: {
-            idobject: {
-                type: String,
-            },
-            item: {
-                type: Object,
-                notify: true
-            },
-            edithref: {
-                type: String,
-            },
-            editelement: {
-                type: String,
-            },
-            oname: {
-                type: String,
-            },
-            hiderefresh: {
-                type: Boolean,
-                value: false
-            },
-            hideadd: {
-                type: Boolean,
-                value: false
-            },
-            hideokcancel: {
-                type: Boolean,
-                value: false
-            }
-        },
-        wasAttached: false,
-        attached: function () {
-            if (this.wasAttached)
-            {
-                return;
-            }
-            this.wasAttached = true;
-            this.async(function () {
-                this.importHref(this.edithref, function (e) {
-                    var newElement = document.createElement(this.editelement);
-                    newElement.id = "theelement";
-
-                    this.$.theelement = Polymer.dom(this.$.main).appendChild(newElement);
-
-                    this.fire('elementready');
-                }, function (e) {
-                    debugger;
-                });
-            });
-        },
-        load: function() {
-            this.$.ajax.url = "/CRUD/Get/" + this.oname;
-            this.$.ajaxread.url = "/CRUD/Get/" + this.oname + "/" + this.idobject;
-
-            this.$.ajaxread.generateRequest();
-        },
-        responseHandlerRead: function (a, b) {
-            this.item = this.$.ajaxread.lastResponse;
-            this.$.theelement.item = this.item;
-        },
-        _new: function () {
-            this.idobject = "0";
-            this.load();
-        },
-        _onOK: function () {
-            this.$.ajax.body = this.item;
-            this.$.ajax.generateRequest();
-        },
-        _onClear: function () {
-            this.load();
-            this.fire('close');
-        },
-        responseHandler: function (a, b) {
-            if (this.$.ajax.lastResponse.ok) {
-                this.item = this.$.ajax.lastResponse.model;
-                this.$.toastOk.text = this.$.ajax.lastResponse.message;
-                this.$.toastOk.fitInto = this.$.main;
-                this.$.toastOk.open();
-                this.fire('saved');
-            }
-            else {
-                if (this.$.ajax.lastResponse.reload) {
-                    window.location.reload();
-                }
-                else {
-                    this.$.toastError.text = this.$.ajax.lastResponse.message;
-                    this.$.toastError.fitInto = this.$.main;
-                    this.$.toastError.open();
-                }
-            }
-        }
+        behaviors: [AWSLBehaviors.EditorBehavior],
     });
     </script>
 </dom-module>

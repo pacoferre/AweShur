@@ -8,7 +8,7 @@
 <link rel="import" href="/lib/app-route/app-route.html">
 <link rel="import" href="/lib/app-layout/app-scroll-effects/app-scroll-effects.html">
 <link rel="import" href="/lib/app-layout/app-layout.html">
-<link rel="import" href="/elements/lib/awsl-editor/awsl-listeditor.html">
+<link rel="import" href="/elements/lib/awsl-listeditor/awsl-listeditor.html">
 
 <link rel="import" href="@("/Elements/Load/Profile/UserProfile/" + idappuser)">
 
@@ -74,6 +74,9 @@
                                 class="drawer-content">
                         <paper-icon-item role="menuitem" key="Users" on-tap="menuSelected">
                             <iron-icon icon="social:people" item-icon></iron-icon><span>Users</span>
+                        </paper-icon-item>
+                        <paper-icon-item role="menuitem" key="MyProfile" on-tap="menuSelected">
+                            <iron-icon icon="social:people" item-icon></iron-icon><span>My profile</span>
                         </paper-icon-item>
                     </paper-menu>
                 </app-drawer>
