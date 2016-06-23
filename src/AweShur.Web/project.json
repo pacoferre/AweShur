@@ -5,8 +5,11 @@
     "AweShur.Core": "0.0.1-alpha",
     "Microsoft.AspNetCore.Mvc": "1.0.0-rc2-final",
     "Microsoft.AspNetCore.Mvc.ViewFeatures": "1.0.0-rc2-final",
-    "NETStandard.Library": "1.5.0-rc2-24027"
+    "NETStandard.Library": "1.5.0-rc2-24027",
+    "System.Collections.Concurrent": "4.0.12-rc4-24126-00"
   },
+
+  "resource": "Components/**/*.*",
 
   "frameworks": {
     "netstandard1.5": {

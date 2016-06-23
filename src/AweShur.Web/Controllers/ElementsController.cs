@@ -1,10 +1,14 @@
 ﻿using AweShur.Core.Security;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.Net.Http.Headers;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
+using System.Collections.Concurrent;
 
 namespace AweShur.Web.Controllers
 {
@@ -19,11 +23,18 @@ namespace AweShur.Web.Controllers
 
             if (AppUser.UserIsAuthenticated(context.HttpContext))
             {
-                object id = RouteData.Values["id"];
-
-                if (id != null)
+                if (RouteData.Values["action"].ToString() == "AWSLib")
                 {
-                    ok = (id.ToString() == AppUser.IDAppUser(HttpContext).ToString());
+                    ok = true;
+                }
+                else
+                {
+                    object id = RouteData.Values["id"];
+
+                    if (id != null)
+                    {
+                        ok = (id.ToString() == AppUser.IDAppUser(HttpContext).ToString());
+                    }
                 }
             }
 
@@ -41,6 +52,29 @@ namespace AweShur.Web.Controllers
         public IActionResult LoadFolder(string folder, string component, int? id)
         {
             return PartialView("~/Views/Elements/" + folder + "/" + component + ".cshtml");
+        }
+
+        private static ConcurrentDictionary<string, byte[]> componentCache = new ConcurrentDictionary<string, byte[]>();
+
+//        [ResponseCache(Location = ResponseCacheLocation.Any, Duration = 10)]
+        public IActionResult AWSLib(string component)
+        {
+            string name = "AweShur.Web.Components." + component.Replace('-', '_') + "." + component + ".html";
+
+            byte[] result = componentCache.GetOrAdd(name, (key) =>
+                {
+                    using (Stream stream = GetType().GetTypeInfo().Assembly.GetManifestResourceStream(name))
+                    {
+                        using (MemoryStream temp = new MemoryStream())
+                        {
+                            stream.CopyTo(temp);
+
+                            return temp.ToArray();
+                        }
+                    }
+                });
+
+            return File(result, "text/html");
         }
     }
 }
