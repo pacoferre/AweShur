@@ -1,0 +1,89 @@
+﻿<link rel="import" href="../../../lib/polymer/polymer.html">
+<link rel="import" href="../../../lib/iron-ajax/iron-ajax.html">
+
+<script>
+    var AWSLBehaviors = AWSLBehaviors || {};
+
+    (function () {
+        AWSLBehaviors.ListEditorBehavior = {
+            properties: {
+                idobject: {
+                    type: String,
+                },
+                oname: {
+                    type: String,
+                },
+                listhref: {
+                    type: String,
+                },
+                listelement: {
+                    type: String,
+                },
+                edithref: {
+                    type: String,
+                },
+                editelement: {
+                    type: String,
+                },
+                hiderefresh: {
+                    type: Boolean,
+                    value: false
+                },
+                hideadd: {
+                    type: Boolean,
+                    value: false
+                },
+                hideokcancel: {
+                    type: Boolean,
+                    value: false
+                },
+                ajaxlist: {
+                    type: Object
+                }
+            },
+            registered: function () {
+                // Object that handles the ajax form submission request.
+                this.ajaxlist = document.createElement('iron-ajax');
+
+                this.ajaxlist.method = 'GET';
+                this.ajaxlist.contentType = 'application/json';
+
+                this.ajaxlist.addEventListener('response', this._handleFormResponse.bind(this));
+                this.ajaxlist.addEventListener('error', this._handleFormError.bind(this));
+            },
+            _handleFormResponse: function (event) {
+                this.setData(event.detail.response);
+            },
+            setData: function(newData)
+            {
+
+            },
+            _handleFormError: function (event) {
+                debugger;
+            },
+            wasAttached: false,
+            attached: function () {
+                if (this.wasAttached) {
+                    return;
+                }
+                this.wasAttached = true;
+                this.async(function () {
+                    this.importHref(this.listhref, function (e) {
+                        Polymer.dom(this.$.itemsList).appendChild(this.getListTemplate());
+
+                        this.ajaxlist.url = "/CRUD/List/" + this.oname;
+                        this.ajaxlist.generateRequest();
+                    }, function (e) {
+                        debugger;
+                    });
+                });
+            },
+            getListTemplate: function() {
+                return null;
+            },
+            _onSaved: function () {
+                this.ajaxlist.generateRequest()
+            }
+        };
+    })();
+</script>
