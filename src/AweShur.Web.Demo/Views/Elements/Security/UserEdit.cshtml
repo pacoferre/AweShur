@@ -7,6 +7,8 @@
 <link rel="import" href="/lib/paper-checkbox/paper-checkbox.html">
 <link rel="import" href="/lib/gold-email-input/gold-email-input.html">
 
+<link rel="import" href="/AWSLib/awsl-element-behavior">
+
 <dom-module id="aswd-useredit">
     <template>
         <style>
@@ -27,8 +29,17 @@
         properties: {
             item: {
                 type: Object,
+                notify: true,
+                value: function () { return {}; }
             }
         },
+        behaviors: [AWSLBehaviors.ElementBehavior],
+        setData: function (response) {
+            for (var name in response.data)
+            {
+                this.set("item." + name, response.data[name]);
+            }
+        }
     });
     </script>
 </dom-module>

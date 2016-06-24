@@ -1,4 +1,5 @@
 ﻿using AweShur.Core;
+using AweShur.Core.REST;
 using AweShur.Core.Security;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
@@ -18,7 +19,7 @@ namespace AweShur.Web.Controllers
 
             if (!AppUser.UserIsAuthenticated(context.HttpContext))
             {
-                context.Result = new JsonResult(BusinessBaseResponse.ErrorResponse);
+                context.Result = new JsonResult(ModelToClient.ErrorResponse("User not authenticated"));
             }
         }
 
@@ -29,9 +30,9 @@ namespace AweShur.Web.Controllers
         }
 
         [HttpPost]
-        public JsonResult Get(string objectName, string id)
+        public JsonResult Get(string objectName, string key)
         {
-            return new JsonResult(BusinessBaseProvider.RetreiveObject(objectName, id, HttpContext).ToJson());
+            return new JsonResult(BusinessBaseProvider.RetreiveObject(objectName, key, HttpContext).ToClient());
         }
 
         [HttpPost]
@@ -41,21 +42,21 @@ namespace AweShur.Web.Controllers
             {
                 obj.StoreToDB();
 
-                return new JsonResult(obj.ToJson());
+                return new JsonResult(obj.ToClient());
             }
-            catch
-            { }
-
-            return new JsonResult(BusinessBaseResponse.ErrorResponse);
+            catch(Exception exp)
+            {
+                return new JsonResult(ModelToClient.ErrorResponse(exp.Message));
+            }
         }
 
         [HttpPost]
-        public void Put(int id, [FromBody]AppUser value)
+        public void Put(int key, [FromBody]AppUser value)
         {
         }
 
         [HttpPost]
-        public void Delete(int id)
+        public void Delete(int key)
         {
         }
     }

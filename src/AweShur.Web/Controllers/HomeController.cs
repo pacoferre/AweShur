@@ -7,11 +7,12 @@ using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
 using AweShur.Core.Security;
+using AweShur.Web.Helpers;
 
 namespace AweShur.Web.Controllers
 {
     [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
-    public class HomeController :  Controller
+    public class HomeController : Controller
     {
         public class LoginObject
         {
@@ -31,6 +32,10 @@ namespace AweShur.Web.Controllers
             if (!valid)
             {
                 HttpContext.Session.Clear();
+            }
+            else
+            {
+                CookiesHelper.WriteCookie(HttpContext, CookiesHelper.LoginCookieName, login.email, 1);
             }
 
             return new JsonResult(new

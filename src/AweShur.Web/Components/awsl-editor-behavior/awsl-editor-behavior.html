@@ -1,13 +1,13 @@
 ﻿<link rel="import" href="../lib/polymer/polymer.html">
 <link rel="import" href="../lib/iron-ajax/iron-ajax.html">
 
-<link rel="import" href="../AWSLib/awsl-element-behavior">
-
 <script>
+    var AWSLBehaviors = AWSLBehaviors || {};
+
     (function () {
-        var EditorBehaviorImpl = {
+        AWSLBehaviors.EditorBehavior = {
             properties: {
-                idobject: {
+                key: {
                     type: String,
                 },
                 item: {
@@ -60,16 +60,16 @@
             },
             load: function () {
                 this.$.ajax.url = "/CRUD/Get/" + this.oname;
-                this.$.ajaxread.url = "/CRUD/Get/" + this.oname + "/" + this.idobject;
+                this.$.ajaxread.url = "/CRUD/Get/" + this.oname + "/" + this.key;
 
                 this.$.ajaxread.generateRequest();
             },
             responseHandlerRead: function (a, b) {
                 this.item = this.$.ajaxread.lastResponse;
-                this.$.theelement.item = this.item;
+                this.$.theelement.setData(this.$.ajaxread.lastResponse);
             },
             _new: function () {
-                this.idobject = "0";
+                this.key = "0";
                 this.load();
             },
             _onOK: function () {
@@ -100,7 +100,5 @@
                 }
             }
         };
-
-        AWSLBehaviors.EditorBehavior = [AWSLBehaviors.ElementBehavior, EditorBehaviorImpl];
     })();
 </script>

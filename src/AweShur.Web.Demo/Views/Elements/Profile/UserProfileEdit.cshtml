@@ -18,12 +18,9 @@
         properties: {
             item: {
                 type: Object,
-                notify: true,
-                observer: "_itemChanged"
             },
         },
-        _itemChanged: function () {
-        }
+        behaviors: [AWSLBehaviors.ElementBehavior],
     });
     </script>
 </dom-module>

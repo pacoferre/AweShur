@@ -9,7 +9,7 @@ namespace AweShur.Core
     {
         public IEnumerable<dynamic> Get()
         {
-            return CurrentDB.Query("Select * From " + TableName
+            return CurrentDB.Query(Definition.FilterSelectQuery
                 + " Order By " + Definition.FirstStringProperty.PropertyName);
         }
     }

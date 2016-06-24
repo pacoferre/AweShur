@@ -27,6 +27,7 @@ namespace AweShur.Core
         protected PropertyDefinition firstStringProperty;
 
         private Lazy<string> selectBuilder;
+        private Lazy<string> filterSelectBuilder;
         private Lazy<string> insertBuilder;
         private Lazy<string> updateBuilder;
         private Lazy<string> deleteBuilder;
@@ -34,6 +35,7 @@ namespace AweShur.Core
         public BusinessBaseDefinition()
         {
             selectBuilder = new Lazy<string>(PrepareSelectQuery);
+            filterSelectBuilder = new Lazy<string>(PrepareFilterSelectQuery);
             insertBuilder = new Lazy<string>(PrepareInsertQuery);
             updateBuilder = new Lazy<string>(PrepareUpdateQuery);
             deleteBuilder = new Lazy<string>(PrepareDeleteQuery);
@@ -126,6 +128,24 @@ namespace AweShur.Core
             get
             {
                 return selectBuilder.Value;
+            }
+        }
+
+        protected virtual string PrepareFilterSelectQuery()
+        {
+            StringBuilder sql = new StringBuilder("select ");
+
+            sql.Append(dialect.SQLListColumns(ListProperties));
+            sql.Append(" from " + dialect.Encapsulate(tableName));
+
+            return sql.ToString();
+        }
+
+        public string FilterSelectQuery
+        {
+            get
+            {
+                return filterSelectBuilder.Value;
             }
         }
 

@@ -217,7 +217,14 @@ namespace AweShur.Core
                 }
                 else
                 {
-                    value = obj[PropertyName].ToString();
+                    try
+                    {
+                        value = obj[PropertyName].ToString();
+                    }
+                    catch (Exception exp)
+                    {
+                        int t = 2;
+                    }
                 }
             }
 

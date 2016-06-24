@@ -61,11 +61,22 @@
               type: String,
               value: "Login"
           },
+          lastLogin: {
+              type: String,
+              value: ""
+          }
       },
       listeners: {
           'loginButton.tap': 'onLogin',
       },
-      ready: function () {
+      attached: function () {
+          if (this.lastLogin != "") {
+              this.$.email.value = this.lastLogin;
+              this.$.password.focus();
+          }
+          else {
+              this.$.email.focus();
+          }
       },
       showError: function(errorMessage) {
           this.$.toastError.text = errorMessage;

@@ -56,7 +56,7 @@
             </neon-animatable>
             <neon-animatable>
                 <div>
-                    <awsl-editor id="editor" on-saved="_onSaved" on-close="_onClose" oname="{{oname}}" idobject="{{idobject}}"
+                    <awsl-editor id="editor" on-saved="_onSaved" on-close="_onClose" oname="{{oname}}" key="{{key}}"
                                  hiderefresh="[[hiderefresh]]" hideadd="[[hideadd]]" hideokcancel="[[hideokcancel]]"
                                  edithref="[[edithref]]" editelement="[[editelement]]">
                     </awsl-editor>
@@ -96,14 +96,14 @@
                 return classes;
             },
             _selectedItemChanged: function (e) {
-                this.idobject = e.model.item.id;
+                this.key = e.model.item.key;
                 this.$.editor.load();
                 this.$.pages.entryAnimation = "slide-from-right-animation";
                 this.$.pages.exitAnimation = "slide-left-animation";
                 this.$.pages.selected = 1;
             },
             _onAdd: function () {
-                this.idobject = "0";
+                this.key = "0";
                 this.$.editor.load();
                 this.$.pages.entryAnimation = "slide-from-right-animation";
                 this.$.pages.exitAnimation = "slide-left-animation";

@@ -194,6 +194,48 @@ ORDER BY col.ORDINAL_POSITION";
             return _instance[(int)dialect].Value;
         }
 
+        public string SQLListColumns(List<PropertyDefinition> properties)
+        {
+            StringBuilder sb = new StringBuilder();
+            string keyExpression = "";
+            var addedAny = false;
+
+            foreach (PropertyDefinition prop in properties)
+            {
+                if (prop.IsDBField)
+                {
+                    if (prop.IsPrimaryKey)
+                    {
+                        if (keyExpression != "")
+                        {
+                            keyExpression += ",";
+                        }
+                        if (prop.BasicType == BasicType.Number)
+                        {
+                            //SQL Server.
+                            keyExpression += "LTRIM(STR(" + Encapsulate(prop.PropertyName) + "))";
+                        }
+                        else
+                        {
+                            keyExpression += Encapsulate(prop.PropertyName);
+                        }
+                    }
+                    else
+                    {
+                        if (addedAny)
+                        {
+                            sb.Append(",");
+                        }
+                        sb.Append(Encapsulate(prop.PropertyName));
+
+                        addedAny = true;
+                    }
+                }
+            }
+
+            return keyExpression + " As " + Encapsulate("key") + ", " + sb.ToString();
+        }
+
         public string SQLAllColumns(List<PropertyDefinition> properties)
         {
             StringBuilder sb = new StringBuilder();
