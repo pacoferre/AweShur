@@ -41,16 +41,6 @@
                     type: Object
                 }
             },
-            registered: function () {
-                // Object that handles the ajax form submission request.
-                this.ajaxlist = document.createElement('iron-ajax');
-
-                this.ajaxlist.method = 'GET';
-                this.ajaxlist.contentType = 'application/json';
-
-                this.ajaxlist.addEventListener('response', this._handleFormResponse.bind(this));
-                this.ajaxlist.addEventListener('error', this._handleFormError.bind(this));
-            },
             _handleFormResponse: function (event) {
                 this.setData(event.detail.response);
             },
@@ -67,6 +57,15 @@
                     return;
                 }
                 this.wasAttached = true;
+
+                this.ajaxlist = document.createElement('iron-ajax');
+
+                this.ajaxlist.method = 'GET';
+                this.ajaxlist.contentType = 'application/json';
+
+                this.ajaxlist.addEventListener('response', this._handleFormResponse.bind(this));
+                this.ajaxlist.addEventListener('error', this._handleFormError.bind(this));
+
                 this.async(function () {
                     this.importHref(this.listhref, function (e) {
                         Polymer.dom(this.$.itemsList).appendChild(this.getListTemplate());

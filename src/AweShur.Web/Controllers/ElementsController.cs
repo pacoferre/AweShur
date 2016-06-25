@@ -59,6 +59,15 @@ namespace AweShur.Web.Controllers
 //        [ResponseCache(Location = ResponseCacheLocation.Any, Duration = 10)]
         public IActionResult AWSLib(string component)
         {
+#if (DEBUG)
+            string fileName = component + ".html";
+
+            DirectoryInfo info = new DirectoryInfo(GetType().GetTypeInfo().Assembly.Location.Replace("AweShur.Web.dll", "") + @"..\..\..\..\AweShur.Web\Components\" + component);
+
+            byte[] content = System.IO.File.ReadAllBytes(info.FullName + "\\" + fileName);
+
+            return File(content, "text/html");
+#else
             string name = "AweShur.Web.Components." + component.Replace('-', '_') + "." + component + ".html";
 
             byte[] result = componentCache.GetOrAdd(name, (key) =>
@@ -75,6 +84,7 @@ namespace AweShur.Web.Controllers
                 });
 
             return File(result, "text/html");
+#endif
         }
     }
 }

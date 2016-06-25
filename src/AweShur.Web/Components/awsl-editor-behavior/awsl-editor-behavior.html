@@ -10,10 +10,6 @@
                 key: {
                     type: String,
                 },
-                item: {
-                    type: Object,
-                    notify: true
-                },
                 edithref: {
                     type: String,
                 },
@@ -34,10 +30,17 @@
                 hideokcancel: {
                     type: Boolean,
                     value: false
+                },
+                theelement: {
+                    type: Object,
+                    value: function () { return null;}
+                },
+                ajax: {
+                    type: Object
+                },
+                ajaxread: {
+                    type: Object
                 }
-            },
-            registered: function () {
-
             },
             wasAttached: false,
             attached: function () {
@@ -45,12 +48,29 @@
                     return;
                 }
                 this.wasAttached = true;
+
+                this.ajax = document.createElement('iron-ajax');
+
+                this.ajax.method = 'POST';
+                this.ajax.contentType = 'application/json';
+
+                this.ajax.addEventListener('response', this.responseHandler.bind(this));
+                this.ajax.addEventListener('error', this.responseHandlerError.bind(this));
+
+                this.ajaxread = document.createElement('iron-ajax');
+
+                this.ajaxread.method = 'POST';
+                this.ajaxread.contentType = 'application/json';
+
+                this.ajaxread.addEventListener('response', this.responseHandlerRead.bind(this));
+                this.ajaxread.addEventListener('error', this.responseHandlerReadError.bind(this));
+
                 this.async(function () {
                     this.importHref(this.edithref, function (e) {
                         var newElement = document.createElement(this.editelement);
                         newElement.id = "theelement";
 
-                        this.$.theelement = Polymer.dom(this.$.main).appendChild(newElement);
+                        this.theelement = Polymer.dom(this.getMain()).appendChild(newElement);
 
                         this.fire('elementready');
                     }, function (e) {
@@ -59,45 +79,59 @@
                 });
             },
             load: function () {
-                this.$.ajax.url = "/CRUD/Get/" + this.oname;
-                this.$.ajaxread.url = "/CRUD/Get/" + this.oname + "/" + this.key;
+                this.ajax.url = "/CRUD/Get/" + this.oname;
+                this.ajaxread.url = "/CRUD/Get/" + this.oname + "/" + this.key;
 
-                this.$.ajaxread.generateRequest();
+                this.ajaxread.generateRequest();
             },
             responseHandlerRead: function (a, b) {
-                this.item = this.$.ajaxread.lastResponse;
-                this.$.theelement.setData(this.$.ajaxread.lastResponse);
+                if (this.theelement == null) {
+                    this.async(function () {
+                        this.responseHandlerRead();
+                    }, 10);
+                }
+                else {
+                    this.theelement.setData(this.ajaxread.lastResponse);
+                }
+            },
+            responseHandlerReadError: function (event) {
+                debugger;
             },
             _new: function () {
                 this.key = "0";
                 this.load();
             },
             _onOK: function () {
-                this.$.ajax.body = this.item;
-                this.$.ajax.generateRequest();
+//                this.ajax.generateRequest();
             },
             _onClear: function () {
                 this.load();
                 this.fire('close');
             },
             responseHandler: function (a, b) {
-                if (this.$.ajax.lastResponse.ok) {
-                    this.item = this.$.ajax.lastResponse.model;
-                    this.$.toastOk.text = this.$.ajax.lastResponse.message;
-                    this.$.toastOk.fitInto = this.$.main;
-                    this.$.toastOk.open();
+                if (this.ajax.lastResponse.ok) {
+                    this.showMessage(this.ajax.lastResponse.message);
+
                     this.fire('saved');
                 }
                 else {
-                    if (this.$.ajax.lastResponse.reload) {
+                    if (this.ajax.lastResponse.reload) {
                         window.location.reload();
                     }
                     else {
-                        this.$.toastError.text = this.$.ajax.lastResponse.message;
-                        this.$.toastError.fitInto = this.$.main;
-                        this.$.toastError.open();
+                        this.showError(this.ajax.lastResponse.message);
                     }
                 }
+            },
+            responseHandlerError: function (event) {
+                debugger;
+            },
+            getMain: function () {
+                return null;
+            },
+            showMessage: function(msg) {
+            },
+            showError: function (msg) {
             }
         };
     })();

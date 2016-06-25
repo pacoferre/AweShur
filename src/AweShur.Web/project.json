@@ -9,7 +9,9 @@
     "System.Collections.Concurrent": "4.0.12-rc4-24126-00"
   },
 
-  "resource": "Components/**/*.*",
+  "buildOptions": {
+    "embed": "Components/**/*.*"
+  },
 
   "frameworks": {
     "netstandard1.5": {

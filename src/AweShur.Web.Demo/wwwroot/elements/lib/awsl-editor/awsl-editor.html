@@ -26,21 +26,6 @@
             }
         </style>
 
-        <iron-ajax id="ajax"
-                   method="POST"
-                   content-type="application/json"
-                   url="/api/AppUser"
-                   handle-as="json"
-                   on-response="responseHandler">
-        </iron-ajax>
-        <iron-ajax id="ajaxread"
-                   method="POST"
-                   content-type="application/json"
-                   url="/api/AppUser"
-                   handle-as="json"
-                   on-response="responseHandlerRead">
-        </iron-ajax>
-
         <app-toolbar hidden="[[hideokcancel]]">
             <paper-icon-button icon="refresh" on-click="load" hidden="[[hiderefresh]]"></paper-icon-button>
             <paper-icon-button icon="add" on-click="_new" hidden="[[hideadd]]">+</paper-icon-button>
@@ -57,6 +42,19 @@
     Polymer({
         is: 'awsl-editor',
         behaviors: [AWSLBehaviors.EditorBehavior],
+        getMain: function () {
+            return this.$.main;
+        },
+        showMessage: function (msg) {
+            this.$.toastOk.text = msg;
+            this.$.toastOk.fitInto = this.getMain();
+            this.$.toastOk.open();
+        },
+        showError: function (msg) {
+            this.$.toastError.text = msg;
+            this.$.toastError.fitInto = this.getMain();
+            this.$.toastError.open();
+        }
     });
     </script>
 </dom-module>

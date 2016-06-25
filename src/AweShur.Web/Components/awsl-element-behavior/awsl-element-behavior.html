@@ -10,19 +10,21 @@
                     type: Object
                 },
                 elements: {
-                    type: Array
-                }
+                    type: Array,
+                    value: function () { return []; }
+                },
+                item: {
+                    type: Object,
+                    notify: true,
+                    value: function () { return {}; }
+                },
             },
 
             listeners: {
                 'awsl-element-register': '_registerElement',
                 'awsl-element-unregister': '_unregisterElement',
                 'iron-form-element-register': '_registerIronFormElement',
-                'iron-form-element-unregister': '_unregisterIronFormElement',
-            },
-
-            registered: function () {
-                this.elements = [];
+                'iron-form-element-unregister': '_unregisterElement',
             },
 
             attached: function () {
@@ -43,7 +45,10 @@
                     this.elements.push(element);
 
                     e.stopPropagation();
+
+                    return element;
                 }
+                return null;
             },
             _unregisterElement: function (e) {
                 var target = e.detail.target;
@@ -59,63 +64,50 @@
             },
             _registerIronFormElement: function (e) {
                 // Get the actual element that fired the event
-                var element = Polymer.dom(e).rootTarget;
+                var element = this._registerElement(e);
 
-                element.parentElement = this;
-                this.elements.push(element);
+                if (element != null)
+                {
+                    element.setData = function (response) {
+                        var name = element.getAttribute('data-field');
 
-                element.setData = function (response) {
-                    var name = element.getAttribute('data-field');
+                        if (name != null) {
+                            var value = response.data[name];
 
-                    if (name != null) {
-                        var value = response.data[name];
+                            if (this.type == 'checkbox' ||
+                                this.type == 'radio' ||
+                                this.getAttribute('role') == 'checkbox' ||
+                                this.getAttribute('role') == 'radio' ||
+                                this['_hasIronCheckedElementBehavior']) {
 
-                        if (this.type == 'checkbox' ||
-                            this.type == 'radio' ||
-                            this.getAttribute('role') == 'checkbox' ||
-                            this.getAttribute('role') == 'radio' ||
-                            this['_hasIronCheckedElementBehavior']) {
-
-                            this.checked = value == 'True' || value == '1' || value == 'true';
+                                this.checked = value == 'True' || value == '1' || value == 'true';
+                            }
+                            else {
+                                this.value = value;
+                            }
                         }
-                        else
-                        {
-                            this.value = value;
+                    };
+                    element.getData = function (response) {
+                        var name = this.getAttribute('data-field');
+
+                        if (name != null) {
+                            var value;
+
+                            if (this.type == 'checkbox' ||
+                                this.type == 'radio' ||
+                                this.getAttribute('role') == 'checkbox' ||
+                                this.getAttribute('role') == 'radio' ||
+                                this['_hasIronCheckedElementBehavior']) {
+
+                                vale = this.checked ? 'True' : 'False';
+                            }
+                            else {
+                                value = this.value;
+                            }
+
+                            response.data[name] = value;
                         }
-                    }
-                };
-                element.getData = function (response) {
-                    var name = this.getAttribute('data-field');
-
-                    if (name != null) {
-                        var value;
-
-                        if (this.type == 'checkbox' ||
-                            this.type == 'radio' ||
-                            this.getAttribute('role') == 'checkbox' ||
-                            this.getAttribute('role') == 'radio' ||
-                            this['_hasIronCheckedElementBehavior']) {
-
-                            vale = this.checked ? 'True' : 'False';
-                        }
-                        else {
-                            value = this.value;
-                        }
-
-                        response.data[name] = value;
-                    }
-                };
-
-                e.stopPropagation();
-            },
-            _unregisterIronFormElement: function (e) {
-                var target = e.detail.target;
-
-                if (target) {
-                    var index = this.elements.indexOf(target);
-                    if (index > -1) {
-                        this.elements.splice(index, 1);
-                    }
+                    };
                 }
 
                 e.stopPropagation();
