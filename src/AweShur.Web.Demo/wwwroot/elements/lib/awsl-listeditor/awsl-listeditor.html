@@ -56,7 +56,7 @@
             </neon-animatable>
             <neon-animatable>
                 <div>
-                    <awsl-editor id="editor" on-saved="_onSaved" on-close="_onClose" oname="{{oname}}" key="{{key}}"
+                    <awsl-editor id="editor" on-saved="_onSaved" on-close="_onClose" oname="{{oname}}"
                                  hiderefresh="[[hiderefresh]]" hideadd="[[hideadd]]" hideokcancel="[[hideokcancel]]"
                                  edithref="[[edithref]]" editelement="[[editelement]]">
                     </awsl-editor>
@@ -68,8 +68,8 @@
         Polymer({
             is: 'awsl-listeditor',
             behaviors: [AWSLBehaviors.ListEditorBehavior],
-            setData: function (newData) {
-                itemsList.items = newData;
+            setData: function (fromserver) {
+                itemsList.items = fromserver;
             },
             getListTemplate: function() {
                 var ironlisttemplate = document.createElement('template');
@@ -97,14 +97,14 @@
             },
             _selectedItemChanged: function (e) {
                 this.key = e.model.item.key;
-                this.$.editor.load();
+                this.$.editor.load(this.key);
                 this.$.pages.entryAnimation = "slide-from-right-animation";
                 this.$.pages.exitAnimation = "slide-left-animation";
                 this.$.pages.selected = 1;
             },
             _onAdd: function () {
                 this.key = "0";
-                this.$.editor.load();
+                this.$.editor.load(this.key);
                 this.$.pages.entryAnimation = "slide-from-right-animation";
                 this.$.pages.exitAnimation = "slide-left-animation";
                 this.$.pages.selected = 1;

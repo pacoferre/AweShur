@@ -13,6 +13,10 @@
                     type: Array,
                     value: function () { return []; }
                 },
+                dataNames: {
+                    type: Array,
+                    value: function () { return []; }
+                },
                 item: {
                     type: Object,
                     notify: true,
@@ -68,11 +72,20 @@
 
                 if (element != null)
                 {
-                    element.setData = function (response) {
-                        var name = element.getAttribute('data-field');
+                    var name = element.getAttribute('data-field');
+
+                    element.dataFieldName = name;
+
+                    if (this.dataNames.indexOf(name) == -1)
+                    {
+                        this.dataNames.push(name);
+                    }
+
+                    element.setData = function (fromserver) {
+                        var name = this.dataFieldName;
 
                         if (name != null) {
-                            var value = response.data[name];
+                            var value = fromserver.data[name];
 
                             if (this.type == 'checkbox' ||
                                 this.type == 'radio' ||
@@ -87,8 +100,8 @@
                             }
                         }
                     };
-                    element.getData = function (response) {
-                        var name = this.getAttribute('data-field');
+                    element.getData = function (toserver) {
+                        var name = this.dataFieldName;
 
                         if (name != null) {
                             var value;
@@ -105,7 +118,7 @@
                                 value = this.value;
                             }
 
-                            response.data[name] = value;
+                            toserver.data[name] = value;
                         }
                     };
                 }
@@ -113,9 +126,9 @@
                 e.stopPropagation();
             },
 
-            setData: function (response) {
+            setData: function (fromserver) {
                 for (var el, i = 0; el = this.elements[i], i < this.elements.length; i++) {
-                    el.setData(response);
+                    el.setData(fromserver);
                 }
             }
         };

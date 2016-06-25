@@ -30,34 +30,30 @@ namespace AweShur.Web.Controllers
         }
 
         [HttpPost]
-        public JsonResult Get(string objectName, string key)
-        {
-            return new JsonResult(BusinessBaseProvider.RetreiveObject(objectName, key, HttpContext).ToClient());
-        }
-
-        [HttpPost]
-        public JsonResult Post([FromBody]BusinessBase obj)
+        public JsonResult Post([FromBody]ModelFromClient fromClient)
         {
             try
             {
-                obj.StoreToDB();
+                if (fromClient.action == "init")
+                {
+                    ModelToClient toClient = new ModelToClient();
 
-                return new JsonResult(obj.ToClient());
+                    toClient.formToken = new Guid().ToString();
+                    toClient.sequence = 1;
+
+                    return new JsonResult(toClient);
+                }
+                else if (fromClient.action == "load")
+                {
+                    return new JsonResult(BusinessBaseProvider.RetreiveObject(fromClient.oname, fromClient.root.key, HttpContext).ToClient(fromClient));
+                }
+
+                return new JsonResult(ModelToClient.ErrorResponse("Action " + fromClient.action + " not supported."));
             }
             catch(Exception exp)
             {
                 return new JsonResult(ModelToClient.ErrorResponse(exp.Message));
             }
-        }
-
-        [HttpPost]
-        public void Put(int key, [FromBody]AppUser value)
-        {
-        }
-
-        [HttpPost]
-        public void Delete(int key)
-        {
         }
     }
 }

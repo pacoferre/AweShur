@@ -213,11 +213,11 @@ ORDER BY col.ORDINAL_POSITION";
                         if (prop.BasicType == BasicType.Number)
                         {
                             //SQL Server.
-                            keyExpression += "LTRIM(STR(" + Encapsulate(prop.PropertyName) + "))";
+                            keyExpression += "LTRIM(STR(" + Encapsulate(prop.FieldName) + "))";
                         }
                         else
                         {
-                            keyExpression += Encapsulate(prop.PropertyName);
+                            keyExpression += Encapsulate(prop.FieldName);
                         }
                     }
                     else
@@ -226,7 +226,7 @@ ORDER BY col.ORDINAL_POSITION";
                         {
                             sb.Append(",");
                         }
-                        sb.Append(Encapsulate(prop.PropertyName));
+                        sb.Append(Encapsulate(prop.FieldName));
 
                         addedAny = true;
                     }
@@ -249,7 +249,7 @@ ORDER BY col.ORDINAL_POSITION";
                     {
                         sb.Append(",");
                     }
-                    sb.Append(Encapsulate(prop.PropertyName));
+                    sb.Append(Encapsulate(prop.FieldName));
 
                     addedAny = true;
                 }
@@ -271,7 +271,7 @@ ORDER BY col.ORDINAL_POSITION";
                     {
                         sb.Append(" AND ");
                     }
-                    sb.Append(Encapsulate(prop.PropertyName) + "=@" + prop.PropertyName);
+                    sb.Append(Encapsulate(prop.FieldName) + "=@" + prop.FieldName);
 
                     addedAny = true;
                 }
@@ -293,7 +293,7 @@ ORDER BY col.ORDINAL_POSITION";
                     {
                         sb.Append(", ");
                     }
-                    sb.Append(Encapsulate(prop.PropertyName));
+                    sb.Append(Encapsulate(prop.FieldName));
 
                     addedAny = true;
                 }
@@ -315,7 +315,7 @@ ORDER BY col.ORDINAL_POSITION";
                     {
                         sb.Append(", ");
                     }
-                    sb.Append("@" + prop.PropertyName);
+                    sb.Append("@" + prop.FieldName);
 
                     addedAny = true;
                 }
@@ -337,7 +337,7 @@ ORDER BY col.ORDINAL_POSITION";
                     {
                         sb.Append(", ");
                     }
-                    sb.Append(Encapsulate(prop.PropertyName) + "=@" + prop.PropertyName);
+                    sb.Append(Encapsulate(prop.FieldName) + "=@" + prop.FieldName);
 
                     addedAny = true;
                 }

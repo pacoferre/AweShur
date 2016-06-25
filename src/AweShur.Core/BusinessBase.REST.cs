@@ -8,7 +8,7 @@ namespace AweShur.Core
 {
     public partial class BusinessBase
     {
-        public virtual ModelToClient ToClient()
+        public virtual ModelToClient ToClient(ModelFromClient fromClient)
         {
             ModelToClient model = new ModelToClient();
 
@@ -16,7 +16,10 @@ namespace AweShur.Core
 
             foreach(PropertyDefinition prop in Definition.ListProperties)
             {
-                model.data.Add(prop.PropertyName, prop.GetValue(this));
+                if (fromClient.dataNames.Contains(prop.FieldName))
+                {
+                    model.data.Add(prop.FieldName, prop.GetValue(this));
+                }
             }
 
             return model;

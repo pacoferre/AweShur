@@ -54,7 +54,7 @@ namespace AweShur.Core
         public bool IsPrimaryKey { get; } = false;
         public bool IsReadOnly { get; set; } = false;
         public string DBDataType { get; } = "";
-        public string PropertyName { get; } = "";
+        public string FieldName { get; } = "";
         public Type DataType { get; }
 
         public string Label { get; set; } = "";
@@ -84,7 +84,7 @@ namespace AweShur.Core
             IsIdentity = colDef.IsIdentity;
             IsPrimaryKey = colDef.IsPrimaryKey;
             DBDataType = colDef.DBDataType;
-            PropertyName = colDef.ColumnName;
+            FieldName = colDef.ColumnName;
             DataType = DBDialect.GetColumnType(colDef.DBDataType);
             BasicType = DBDialect.GetBasicType(DataType);
             MaxLength = colDef.MaxLength;
@@ -97,7 +97,7 @@ namespace AweShur.Core
 
         public PropertyDefinition(string propertyName, string label, BasicType basicType = BasicType.Text, PropertyInputType type = PropertyInputType.text)
         {
-            PropertyName = propertyName;
+            FieldName = propertyName;
             Label = label;
             if (Label == "")
             {
@@ -165,38 +165,38 @@ namespace AweShur.Core
 
             if (Type == PropertyInputType.date)
             {
-                if (!(obj[PropertyName] == null))
+                if (!(obj[FieldName] == null))
                 {
-                    value = ((DateTime)obj[PropertyName]).ToString(obj.CurrentUser.ShortDateFormat);
+                    value = ((DateTime)obj[FieldName]).ToString(obj.CurrentUser.ShortDateFormat);
                 }
             }
             else if (Type == PropertyInputType.datetimeHHmm)
             {
-                if (!(obj[PropertyName] == null))
+                if (!(obj[FieldName] == null))
                 {
-                    value = ((DateTime)obj[PropertyName]).ToString(obj.CurrentUser.ShortDateFormat + " HH:mm");
+                    value = ((DateTime)obj[FieldName]).ToString(obj.CurrentUser.ShortDateFormat + " HH:mm");
                 }
             }
             else if (Type == PropertyInputType.datetimeHHmmss)
             {
-                if (!(obj[PropertyName] == null))
+                if (!(obj[FieldName] == null))
                 {
-                    value = ((DateTime)obj[PropertyName]).ToString(obj.CurrentUser.ShortDateFormat + " HH:mm:ss");
+                    value = ((DateTime)obj[FieldName]).ToString(obj.CurrentUser.ShortDateFormat + " HH:mm:ss");
                 }
             }
             else if (Type == PropertyInputType.checkbox)
             {
-                value = obj[PropertyName].NoNullBool() ? "1" : "0";
+                value = obj[FieldName].NoNullBool() ? "1" : "0";
             }
             else if (Type == PropertyInputType.select)
             {
-                if (obj[PropertyName] == null)
+                if (obj[FieldName] == null)
                 {
                     value = "0";
                 }
                 else
                 {
-                    value = obj[PropertyName].ToString();
+                    value = obj[FieldName].ToString();
                 }
 
                 if (Required && value == "0" && !IsObjectView)
@@ -213,13 +213,13 @@ namespace AweShur.Core
             {
                 if (Format != "")
                 {
-                    value = String.Format(Format, obj[PropertyName]);
+                    value = String.Format(Format, obj[FieldName]);
                 }
                 else
                 {
                     try
                     {
-                        value = obj[PropertyName].ToString();
+                        value = obj[FieldName].ToString();
                     }
                     catch (Exception exp)
                     {
@@ -233,7 +233,7 @@ namespace AweShur.Core
 
         public void SetValue(BusinessBase obj, string value)
         {
-            if (obj.IsReadOnly(PropertyName) || value == null)
+            if (obj.IsReadOnly(FieldName) || value == null)
             {
                 return;
             }
@@ -242,17 +242,17 @@ namespace AweShur.Core
             {
                 value = value.Trim();
 
-                if (obj[PropertyName].ToString() != value)
+                if (obj[FieldName].ToString() != value)
                 {
-                    obj[PropertyName] = value;
+                    obj[FieldName] = value;
                 }
             }
 
             else if (Type == PropertyInputType.checkbox)
             {
-                if (obj[PropertyName].NoNullBool() != (value == "1"))
+                if (obj[FieldName].NoNullBool() != (value == "1"))
                 {
-                    obj[PropertyName] = (value == "1");
+                    obj[FieldName] = (value == "1");
                 }
             }
 
@@ -274,31 +274,31 @@ namespace AweShur.Core
                             d = DateTime.Parse(value, us.Culture);
                         }
 
-                        if (obj[PropertyName] == null)
+                        if (obj[FieldName] == null)
                         {
-                            obj[PropertyName] = d;
+                            obj[FieldName] = d;
                         }
                         else
                         {
-                            if ((DateTime)obj[PropertyName] != d)
+                            if ((DateTime)obj[FieldName] != d)
                             {
-                                obj[PropertyName] = d;
+                                obj[FieldName] = d;
                             }
                         }
                     }
                     else
                     {
-                        if (!(obj[PropertyName] == null))
+                        if (!(obj[FieldName] == null))
                         {
-                            obj[PropertyName] = null;
+                            obj[FieldName] = null;
                         }
                     }
                 }
                 catch
                 {
-                    if (!(obj[PropertyName] == null))
+                    if (!(obj[FieldName] == null))
                     {
-                        obj[PropertyName] = null;
+                        obj[FieldName] = null;
                     }
                 }
             }
@@ -310,9 +310,9 @@ namespace AweShur.Core
                 try
                 {
                     newGuid = Guid.Parse(value.ToString());
-                    if ((Guid)obj[PropertyName] != newGuid)
+                    if ((Guid)obj[FieldName] != newGuid)
                     {
-                        obj[PropertyName] = newGuid;
+                        obj[FieldName] = newGuid;
                     }
                 }
                 catch
@@ -326,16 +326,16 @@ namespace AweShur.Core
                 {
                     Lib.Numerize(ref value);
 
-                    if (obj[PropertyName] == null && !IsNullable)
+                    if (obj[FieldName] == null && !IsNullable)
                     {
-                        obj[PropertyName] = 0;
+                        obj[FieldName] = 0;
                     }
 
                     if (IsNullable && (value == "" || (value == "0" && Type == PropertyInputType.select)))
                     {
-                        if (!(obj[PropertyName] == null))
+                        if (!(obj[FieldName] == null))
                         {
-                            obj[PropertyName] = null;
+                            obj[FieldName] = null;
                         }
                     }
                     else
@@ -351,54 +351,54 @@ namespace AweShur.Core
                         {
                             value = "0";
                         }
-                        if (obj[PropertyName] == null && value != "")
+                        if (obj[FieldName] == null && value != "")
                         {
-                            obj[PropertyName] = 0;
+                            obj[FieldName] = 0;
                         }
 
                         if (DataType == typeof(System.Int32))
                         {
                             int tmp = Int32.Parse(value);
 
-                            if ((int)obj[PropertyName] != tmp)
+                            if ((int)obj[FieldName] != tmp)
                             {
-                                obj[PropertyName] = tmp;
+                                obj[FieldName] = tmp;
                             }
                         }
                         else if (DataType == typeof(System.Int16))
                         {
                             short tmp = Int16.Parse(value);
 
-                            if ((short)obj[PropertyName] != tmp)
+                            if ((short)obj[FieldName] != tmp)
                             {
-                                obj[PropertyName] = tmp;
+                                obj[FieldName] = tmp;
                             }
                         }
                         if (DataType == typeof(System.Single))
                         {
                             Single tmp = Single.Parse(value);
 
-                            if ((float)obj[PropertyName] != tmp)
+                            if ((float)obj[FieldName] != tmp)
                             {
-                                obj[PropertyName] = tmp;
+                                obj[FieldName] = tmp;
                             }
                         }
                         if (DataType == typeof(System.Double))
                         {
                             Double tmp = Double.Parse(value);
 
-                            if ((double)obj[PropertyName] != tmp)
+                            if ((double)obj[FieldName] != tmp)
                             {
-                                obj[PropertyName] = tmp;
+                                obj[FieldName] = tmp;
                             }
                         }
                         if (DataType == typeof(System.Decimal))
                         {
                             Decimal tmp = Decimal.Parse(value);
 
-                            if ((decimal)obj[PropertyName] != tmp)
+                            if ((decimal)obj[FieldName] != tmp)
                             {
-                                obj[PropertyName] = tmp;
+                                obj[FieldName] = tmp;
                             }
                         }
                     }
@@ -419,7 +419,7 @@ namespace AweShur.Core
                 if (!IsNullable && value == null)
                 {
                     lastErrorMessage = Label + " empty";
-                    lastErrorProperty = PropertyName;
+                    lastErrorProperty = FieldName;
 
                     return false;
                 }
@@ -428,7 +428,7 @@ namespace AweShur.Core
                     if ((BasicType == BasicType.Text || BasicType == BasicType.TextLong) && value.NoNullString() == "")
                     {
                         lastErrorMessage = Label + " empty";
-                        lastErrorProperty = PropertyName;
+                        lastErrorProperty = FieldName;
 
                         return false;
                     }
@@ -442,7 +442,7 @@ namespace AweShur.Core
                         {
                             lastErrorMessage = Label + " value missing";
                         }
-                        lastErrorProperty = PropertyName;
+                        lastErrorProperty = FieldName;
 
                         return false;
                     }

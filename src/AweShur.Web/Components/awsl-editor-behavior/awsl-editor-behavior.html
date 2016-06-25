@@ -38,8 +38,24 @@
                 ajax: {
                     type: Object
                 },
-                ajaxread: {
-                    type: Object
+                toserver: {
+                    type: Object,
+                    value: function () {
+                        var obj = {
+                            oname: "",
+                            formToken: "",
+                            sequence: 0,
+                            action: "",
+                            dataNames: [],
+                            root: {
+                                key: "",
+                                data: [],
+                                childreen: []
+                            }
+                        };
+
+                        return obj;
+                    }
                 }
             },
             wasAttached: false,
@@ -53,17 +69,12 @@
 
                 this.ajax.method = 'POST';
                 this.ajax.contentType = 'application/json';
+                this.ajax.url = "/CRUD/Post";
 
                 this.ajax.addEventListener('response', this.responseHandler.bind(this));
                 this.ajax.addEventListener('error', this.responseHandlerError.bind(this));
 
-                this.ajaxread = document.createElement('iron-ajax');
-
-                this.ajaxread.method = 'POST';
-                this.ajaxread.contentType = 'application/json';
-
-                this.ajaxread.addEventListener('response', this.responseHandlerRead.bind(this));
-                this.ajaxread.addEventListener('error', this.responseHandlerReadError.bind(this));
+                this.toserver.oname = this.oname;
 
                 this.async(function () {
                     this.importHref(this.edithref, function (e) {
@@ -72,56 +83,68 @@
 
                         this.theelement = Polymer.dom(this.getMain()).appendChild(newElement);
 
-                        this.fire('elementready');
+                        this._init();
                     }, function (e) {
                         debugger;
                     });
                 });
             },
-            load: function () {
-                this.ajax.url = "/CRUD/Get/" + this.oname;
-                this.ajaxread.url = "/CRUD/Get/" + this.oname + "/" + this.key;
+            load: function (newKey) {
+                if (newKey !== undefined) {
+                    this.key = newKey;
+                    this.toserver.root.key = newKey;
+                }
 
-                this.ajaxread.generateRequest();
+                this.toserver.action = "load";
+                this._doPost();
             },
-            responseHandlerRead: function (a, b) {
-                if (this.theelement == null) {
-                    this.async(function () {
-                        this.responseHandlerRead();
-                    }, 10);
-                }
-                else {
-                    this.theelement.setData(this.ajaxread.lastResponse);
-                }
+            _doPost: function () {
+                this.ajax.body = this.toserver;
+                this.ajax.generateRequest();
             },
-            responseHandlerReadError: function (event) {
-                debugger;
+            _init: function () {
+                this.async(function () {
+                    this.toserver.action = "init";
+                    this.toserver.dataNames = this.theelement.dataNames;
+                    this._doPost();
+                });
             },
             _new: function () {
                 this.key = "0";
                 this.load();
             },
             _onOK: function () {
-//                this.ajax.generateRequest();
+                this.toserver.action = "ok";
+                this._doPost();
             },
             _onClear: function () {
                 this.load();
                 this.fire('close');
             },
             responseHandler: function (a, b) {
-                if (this.ajax.lastResponse.ok) {
-                    this.showMessage(this.ajax.lastResponse.message);
+                var fromServer = this.ajax.lastResponse;
 
-                    this.fire('saved');
+                if (this.toserver.formToken == "")
+                {
+                    this.toserver.formToken = fromServer.formToken;
+                    this.fire('elementready');
                 }
-                else {
-                    if (this.ajax.lastResponse.reload) {
-                        window.location.reload();
-                    }
-                    else {
-                        this.showError(this.ajax.lastResponse.message);
-                    }
-                }
+
+                this.theelement.setData(fromServer);
+
+                //if (this.ajax.lastResponse.ok) {
+                //    this.showMessage(this.ajax.lastResponse.message);
+
+                //    this.fire('saved');
+                //}
+                //else {
+                //    if (this.ajax.lastResponse.reload) {
+                //        window.location.reload();
+                //    }
+                //    else {
+                //        this.showError(this.ajax.lastResponse.message);
+                //    }
+                //}
             },
             responseHandlerError: function (event) {
                 debugger;
