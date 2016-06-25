@@ -227,6 +227,19 @@ namespace AweShur.Core
             return result;
         }
 
+        public int Execute(string sql, object param = null, int? commandTimeout = null, CommandType? commandType = null)
+        {
+            int result;
+
+            OpenConnection();
+
+            result = conn.Execute(sql, param, trans, commandTimeout, commandType);
+
+            CloseConnection();
+
+            return result;
+        }
+
         public void ReadBusinessObject(BusinessBase obj)
         {
             BusinessBaseDefinition def = obj.Definition;
@@ -240,42 +253,36 @@ namespace AweShur.Core
 
         public void StoreBusinessObject(BusinessBase obj)
         {
-            bool isValidated = obj.Validate();
-            
-            if (isValidated)
+            BusinessBaseDefinition def = obj.Definition;
+
+            OpenConnection();
+
+            if (obj.IsNew)
             {
-                BusinessBaseDefinition def = obj.Definition;
-
-                OpenConnection();
-
-                if (obj.IsNew)
+                if (def.primaryKeyIsOneGuid)
                 {
-                    if (def.primaryKeyIsOneGuid)
-                    {
-                        obj[def.PrimaryKeys[0]] = GenerateComb();
-                    }
-
-                    var result = conn.QuerySingle(def.InsertQuery, def.GetInsertParameters(obj), trans);
-
-                    if (def.primaryKeyIsOneInt)
-                    {
-                        obj[def.PrimaryKeys[0]] = Convert.ToInt32(result.id);
-                    }
-                    if (def.primaryKeyIsOneLong)
-                    {
-                        obj[def.PrimaryKeys[0]] = Convert.ToInt64(result.id);
-                    }
-
-
+                    obj[def.PrimaryKeys[0]] = GenerateComb();
                 }
-                else
-                {
 
+                var result = conn.QuerySingle(def.InsertQuery, def.GetInsertParameters(obj), trans);
+
+                if (def.primaryKeyIsOneInt)
+                {
+                    obj[def.PrimaryKeys[0]] = Convert.ToInt32(result.id);
+                }
+                if (def.primaryKeyIsOneLong)
+                {
+                    obj[def.PrimaryKeys[0]] = Convert.ToInt64(result.id);
                 }
             }
             else
             {
-                throw new Exception("Errro");
+                int result = conn.Execute(def.UpdateQuery, def.GetUpdateParameters(obj), trans);
+
+                if (result != 1)
+                {
+                    throw new Exception("Error. Nothing to update");
+                }
             }
 
             CloseConnection();

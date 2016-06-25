@@ -184,9 +184,12 @@ namespace AweShur.Core
 
         protected virtual string PrepareUpdateQuery()
         {
-            string sql = "";
+            StringBuilder sql = new StringBuilder("update " + dialect.Encapsulate(tableName));
 
-            return sql;
+            sql.Append(" set " + dialect.SQLUpdatePropertiesValues(ListProperties));
+            sql.Append(" where " + dialect.SQLWherePrimaryKey(ListProperties));
+
+            return sql.ToString();
         }
 
         public string UpdateQuery
@@ -232,6 +235,23 @@ namespace AweShur.Core
             {
                 PropertyDefinition prop = ListProperties[index];
                 if (prop.IsDBField && !prop.IsIdentity)
+                {
+                    dynParms.Add("@" + names[index], obj[index]);
+                }
+            }
+
+            return dynParms;
+        }
+
+        public DynamicParameters GetUpdateParameters(BusinessBase obj)
+        {
+            DynamicParameters dynParms = new DynamicParameters();
+
+            for (int index = 0; index < names.Length; ++index)
+            {
+                PropertyDefinition prop = ListProperties[index];
+
+                if (prop.IsDBField && !prop.IsReadOnly && !prop.IsComputed)
                 {
                     dynParms.Add("@" + names[index], obj[index]);
                 }

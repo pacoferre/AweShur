@@ -17,11 +17,11 @@
                 display: block;
             }
         </style>
-        <paper-checkbox checked="{{item.deactivated}}">Deactivated</paper-checkbox>
-        <gold-email-input value="{{item.email}}" label="Email" always-float-label></gold-email-input>
-        <paper-input value="{{item.password}}" label="Password" always-float-label type="password"></paper-input>
-        <paper-input value="{{item.name}}" label="Name" always-float-label></paper-input>
-        <paper-input value="{{item.surname}}" label="Surname" always-float-label></paper-input>
+        <paper-checkbox data-field="deactivated" checked="{{item.deactivated}}">Deactivated</paper-checkbox>
+        <gold-email-input data-field="email" value="{{item.email}}" label="Email" always-float-label readonly></gold-email-input>
+        <paper-input data-field="password" value="{{item.password}}" label="Password" always-float-label type="password"></paper-input>
+        <paper-input data-field="name" value="{{item.name}}" label="Name" always-float-label></paper-input>
+        <paper-input data-field="surname" value="{{item.surname}}" label="Surname" always-float-label></paper-input>
     </template>
     <script>
     Polymer({
@@ -34,12 +34,6 @@
             }
         },
         behaviors: [AWSLBehaviors.ElementBehavior],
-        setData: function (response) {
-            for (var name in response.data)
-            {
-                this.set("item." + name, response.data[name]);
-            }
-        }
     });
     </script>
 </dom-module>

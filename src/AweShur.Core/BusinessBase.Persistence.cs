@@ -83,22 +83,44 @@ namespace AweShur.Core
         }
 
         protected virtual void AfterReadFromDB()
-        {
-
-        }
+        { }
 
         public virtual void StoreToDB()
         {
-            if (Validate())
+            if (IsDeleting || IsNew || IsModified)
             {
-                CurrentDB.StoreBusinessObject(this);
+                bool isValidated = Validate();
 
-                IsNew = false;
-                IsModified = false;
-                IsDeleting = false;
+                if (isValidated)
+                {
+                    if (BeforeStoreToDB())
+                    {
+                        bool wasNew = IsNew;
+                        bool wasModified = IsModified;
+                        bool wasDeleting = IsDeleting;
 
-                AfterReadFromDB();
+                        CurrentDB.StoreBusinessObject(this);
+
+                        IsNew = false;
+                        IsModified = false;
+                        IsDeleting = false;
+
+                        AfterStoreToDB(wasNew, wasModified, wasDeleting);
+                    }
+                }
+                else
+                {
+                    throw new Exception(LastErrorMessage);
+                }
             }
         }
+
+        protected virtual bool BeforeStoreToDB()
+        {
+            return true;
+        }
+
+        protected virtual void AfterStoreToDB(bool wasNew, bool wasModified, bool wasDeleting)
+        { }
     }
 }

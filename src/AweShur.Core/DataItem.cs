@@ -146,13 +146,17 @@ namespace AweShur.Core
             keyIsDirty = true;
         }
 
-        public bool Validate(ref string LastErrorMessage, ref string LastErrorProperty)
+        public bool Validate(ref string lastErrorMessage, ref string lastErrorProperty)
         {
-            bool validated = true;
+            foreach(PropertyDefinition prop in owner.Definition.ListProperties)
+            {
+                if (!prop.Validate(values[prop.Index], ref lastErrorMessage, ref lastErrorProperty))
+                {
+                    return false;
+                }
+            }
 
-            // Null validations and something more...
-
-            return validated;
+            return true;
         }
     }
 }

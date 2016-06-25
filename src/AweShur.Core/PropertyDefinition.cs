@@ -412,5 +412,44 @@ namespace AweShur.Core
             }
         }
 
+        public bool Validate(object value, ref string lastErrorMessage, ref string lastErrorProperty)
+        {
+            if (!NoChecking)
+            {
+                if (!IsNullable && value == null)
+                {
+                    lastErrorMessage = Label + " empty";
+                    lastErrorProperty = PropertyName;
+
+                    return false;
+                }
+                if (Required)
+                {
+                    if ((BasicType == BasicType.Text || BasicType == BasicType.TextLong) && value.NoNullString() == "")
+                    {
+                        lastErrorMessage = Label + " empty";
+                        lastErrorProperty = PropertyName;
+
+                        return false;
+                    }
+                    if (BasicType == BasicType.Number && value.NoNullInt() == 0)
+                    {
+                        if (ListSource != "")
+                        {
+                            lastErrorMessage = Label + " selection missing";
+                        }
+                        else
+                        {
+                            lastErrorMessage = Label + " value missing";
+                        }
+                        lastErrorProperty = PropertyName;
+
+                        return false;
+                    }
+                }
+            }
+
+            return true;
+        }
     }
 }

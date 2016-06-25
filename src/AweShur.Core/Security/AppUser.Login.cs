@@ -23,13 +23,13 @@ namespace AweShur.Core.Security
 
         protected bool LoginInternal(string email, string password, HttpContext context)
         {
-            dynamic userData = DB.Instance.QueryFirstOrDefault("Select idAppUser, email, password From AppUser Where email = @Email", new { Email = email });
+            dynamic userData = DB.Instance.QueryFirstOrDefault("Select idAppUser, password From AppUser Where email = @Email", new { Email = email });
             AppUser usu = null;
             bool valid = false;
 
             if (userData != null)
             {
-                string enc = PasswordDerivedString(userData.email, password);
+                string enc = PasswordDerivedString(((int)userData.idAppUser).NoNullString(), password);
 
                 if (enc == userData.password)
                 {
@@ -47,9 +47,9 @@ namespace AweShur.Core.Security
 
                         usu.ReadFromDB((int)userData.idAppUser);
 
-                        //usu["password"] = password;
+                        usu["password"] = password;
 
-                        //usu.StoreToDB();
+                        usu.StoreToDB();
                     }
                     else
                     {
@@ -92,10 +92,10 @@ namespace AweShur.Core.Security
             return valid;
         }
 
-        public static string PasswordDerivedString(string email, string password)
+        public static string PasswordDerivedString(string idAppUser, string password)
         {
             return Convert.ToBase64String(KeyDerivation.Pbkdf2(
-                password: email + "_fsk53g5djfskj_" + password,
+                password: idAppUser + "_fsk53g5djfskj_" + password,
                 salt: SALT,
                 prf: KeyDerivationPrf.HMACSHA1,
                 iterationCount: 200,

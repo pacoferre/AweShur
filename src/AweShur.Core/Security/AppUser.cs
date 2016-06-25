@@ -20,7 +20,24 @@ namespace AweShur.Core.Security
             }
         }
 
-        private string _newPassword = null;
+        private string newPassword = null;
+
+        public override bool Validate()
+        {
+            bool isValid = base.Validate();
+
+            if (isValid)
+            {
+                if (IsNew && newPassword.NoNullString() == "")
+                {
+                    LastErrorMessage = "Password must be set";
+                    isValid = false;
+                }
+            }
+
+            return isValid;
+        }
+
         public override object this[string property]
         {
             get
@@ -37,13 +54,12 @@ namespace AweShur.Core.Security
                 {
                     if (value.NoNullString() != "")
                     {
-                        string enc = PasswordDerivedString(this["email"].NoNullString(), value.ToString());
-
-                        if (base[property].NoNullString() != enc)
-                        {
-                            base[property] = value;
-                            _newPassword = enc;
-                        }
+                        newPassword = value.ToString();
+                        IsModified = true;
+                    }
+                    else
+                    {
+                        newPassword = null;
                     }
                 }
                 else
@@ -53,6 +69,19 @@ namespace AweShur.Core.Security
             }
         }
 
+        protected override void AfterStoreToDB(bool wasNew, bool wasModified, bool wasDeleting)
+        {
+            if (newPassword != null)
+            {
+                string enc = PasswordDerivedString(this["idAppUser"].NoNullString(), newPassword.ToString());
+
+                CurrentDB.Execute("update AppUser set password = @password Where idAppUser = @id", new { password = enc, id = this["idAppUser"].NoNullString() });
+
+                newPassword = null;
+
+                ReadFromDB();
+            }
+        }
 
         public string ShortDateFormat
         {

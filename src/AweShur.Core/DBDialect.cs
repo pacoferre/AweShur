@@ -324,7 +324,7 @@ ORDER BY col.ORDINAL_POSITION";
             return sb.ToString();
         }
 
-        public string SQLUpdateValues(List<PropertyDefinition> properties)
+        public string SQLUpdatePropertiesValues(List<PropertyDefinition> properties)
         {
             StringBuilder sb = new StringBuilder();
             var addedAny = false;
