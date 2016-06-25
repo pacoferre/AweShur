@@ -87,6 +87,9 @@ namespace AweShur.Core
 
         public virtual void StoreToDB()
         {
+            LastErrorMessage = "";
+            LastErrorProperty = "";
+
             if (IsDeleting || IsNew || IsModified)
             {
                 bool isValidated = Validate();

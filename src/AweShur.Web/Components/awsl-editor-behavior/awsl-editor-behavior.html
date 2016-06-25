@@ -115,6 +115,9 @@
             },
             _onOK: function () {
                 this.toserver.action = "ok";
+
+                this.theelement.getData(this.toserver.dataNames, this.toserver.root);
+
                 this._doPost();
             },
             _onClear: function () {
@@ -128,23 +131,31 @@
                 {
                     this.toserver.formToken = fromServer.formToken;
                     this.fire('elementready');
+
+                    return;
                 }
 
-                this.theelement.setData(fromServer);
+                this.async(function () {
+                    this.theelement.setData(fromServer);
+                });
 
-                //if (this.ajax.lastResponse.ok) {
-                //    this.showMessage(this.ajax.lastResponse.message);
+                if (fromServer.ok) {
+                    if (fromServer.normalMessage != "") {
+                        this.showMessage(fromServer.normalMessage);
+                    }
 
-                //    this.fire('saved');
-                //}
-                //else {
-                //    if (this.ajax.lastResponse.reload) {
-                //        window.location.reload();
-                //    }
-                //    else {
-                //        this.showError(this.ajax.lastResponse.message);
-                //    }
-                //}
+                    this.fire('saved');
+                }
+                else {
+                    if (this.ajax.lastResponse.reload) {
+                        window.location.reload();
+                    }
+                    else {
+                        if (fromServer.errorMessage != "") {
+                            this.showError(fromServer.errorMessage);
+                        }
+                    }
+                }
             },
             responseHandlerError: function (event) {
                 debugger;

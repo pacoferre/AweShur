@@ -43,9 +43,9 @@ namespace AweShur.Web.Controllers
 
                     return new JsonResult(toClient);
                 }
-                else if (fromClient.action == "load")
+                else if (fromClient.action == "load" || fromClient.action == "ok")
                 {
-                    return new JsonResult(BusinessBaseProvider.RetreiveObject(fromClient.oname, fromClient.root.key, HttpContext).ToClient(fromClient));
+                    return new JsonResult(BusinessBaseProvider.RetreiveObject(fromClient.oname, fromClient.root.key, HttpContext).ToClient(HttpContext, fromClient));
                 }
 
                 return new JsonResult(ModelToClient.ErrorResponse("Action " + fromClient.action + " not supported."));

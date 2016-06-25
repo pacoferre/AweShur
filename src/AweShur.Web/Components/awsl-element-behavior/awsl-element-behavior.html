@@ -100,7 +100,7 @@
                             }
                         }
                     };
-                    element.getData = function (toserver) {
+                    element.getDataField = function () {
                         var name = this.dataFieldName;
 
                         if (name != null) {
@@ -112,14 +112,16 @@
                                 this.getAttribute('role') == 'radio' ||
                                 this['_hasIronCheckedElementBehavior']) {
 
-                                vale = this.checked ? 'True' : 'False';
+                                value = this.checked ? 'True' : 'False';
                             }
                             else {
                                 value = this.value;
                             }
 
-                            toserver.data[name] = value;
+                            return value;
                         }
+
+                        return "";
                     };
                 }
 
@@ -129,6 +131,23 @@
             setData: function (fromserver) {
                 for (var el, i = 0; el = this.elements[i], i < this.elements.length; i++) {
                     el.setData(fromserver);
+                }
+            },
+            getData: function (dataNames, root) {
+
+                root.data = [];
+
+                for (i = 0; i < dataNames.length; i++) {
+                    root.data.push("");
+                }
+
+                for (var el, i = 0; el = this.elements[i], i < this.elements.length; i++) {
+                    var index = dataNames.indexOf(el.dataFieldName);
+
+                    if (index > -1)
+                    {
+                        root.data[index] = el.getDataField();
+                    }
                 }
             }
         };

@@ -102,21 +102,24 @@ namespace AweShur.Core
 
         private void CloseConnection(bool forceClose)
         {
-            lock (this)
+            if (conn.State != ConnectionState.Closed)
             {
-                if (conn.State != ConnectionState.Closed)
+                lock (this)
                 {
-                    if (inTransaction && forceClose)
+                    if (conn.State != ConnectionState.Closed)
                     {
-                        RollBackTransaction();
-
-                        throw new Exception("Can't close with open transaction. RollBack done.");
-                    }
-                    else
-                    {
-                        if (!inTransaction)
+                        if (inTransaction && forceClose)
                         {
-                            conn.Close();
+                            RollBackTransaction();
+
+                            throw new Exception("Can't close with open transaction. RollBack done.");
+                        }
+                        else
+                        {
+                            if (!inTransaction)
+                            {
+                                conn.Close();
+                            }
                         }
                     }
                 }
