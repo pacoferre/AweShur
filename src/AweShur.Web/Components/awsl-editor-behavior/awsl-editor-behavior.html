@@ -136,6 +136,9 @@
                 }
 
                 this.async(function () {
+                    this.key = fromServer.keyObject;
+                    this.toserver.root.key = fromServer.keyObject;
+
                     this.theelement.setData(fromServer);
                 });
 

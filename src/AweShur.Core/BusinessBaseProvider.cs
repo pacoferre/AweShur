@@ -5,11 +5,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.Framework.Runtime.Infrastructure;
 using Microsoft.AspNetCore.Http;
 using AweShur.Core.Security;
 using Microsoft.Extensions.Configuration;
 using System.Text;
+using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Caching.Distributed;
+using StackExchange.Redis;
 
 namespace AweShur.Core
 {
@@ -21,10 +23,13 @@ namespace AweShur.Core
             definitionsCache = new ConcurrentDictionary<string, Lazy<BusinessBaseDefinition>>();
         public static BusinessBaseProvider Instance { get; set; }
         private static IHttpContextAccessor HttpContextAccessor;
+        private static ConnectionMultiplexer TheCache;
 
-        public static void Configure(IHttpContextAccessor httpContextAccessor, BusinessBaseProvider instance, IConfigurationRoot configuration)
+        public static void Configure(IHttpContextAccessor httpContextAccessor, ConnectionMultiplexer theCache,
+            BusinessBaseProvider instance, IConfigurationRoot configuration)
         {
             HttpContextAccessor = httpContextAccessor;
+            TheCache = theCache;
             Instance = instance;
             DB.Configuration = configuration;
 
@@ -103,37 +108,54 @@ namespace AweShur.Core
             return definition;
         }
 
-        private static string SessionKey(string objectName, int dbNumber, string key)
+        private static string ObjectKey(string objectName, int dbNumber, string key)
         {
             return "O_" + objectName + "_" + dbNumber + "_" + key;
         }
 
-        public static void StoreObject(BusinessBase obj, string objectName, HttpContext context)
+        public static void StoreObject(BusinessBase obj, string objectName)
         {
-            string sessionKey = SessionKey(objectName, obj.DBNumber, obj.Key);
+            string objectKey = ObjectKey(objectName, obj.DBNumber, obj.Key);
 
-            context.Session.Set(sessionKey, obj.Serialize());
+            StoreData(objectKey, obj.Serialize());
         }
 
-        public static BusinessBase RetreiveObject(string objectName, string key, HttpContext context)
+        public static void StoreData(string key, byte[] data)
         {
-            return RetreiveObject(objectName, 0, key, context);
+            TheCache.GetDatabase().StringSetAsync(key, data, TimeSpan.FromMinutes(30), When.Always, CommandFlags.FireAndForget);
         }
 
-        public static BusinessBase RetreiveObject(string objectName, int dbNumber, string key, HttpContext context)
+        public static byte[] GetData(string key)
         {
-            string sessionKey = SessionKey(objectName, dbNumber, key);
+            return TheCache.GetDatabase().StringGet(key);
+        }
+
+        public static void RemoveData(string key)
+        {
+            TheCache.GetDatabase().KeyDeleteAsync(key, CommandFlags.FireAndForget);
+        }
+
+        public static BusinessBase RetreiveObject(HttpContext context, string objectName, string key)
+        {
+            return RetreiveObject(context, objectName, 0, key);
+        }
+
+        public static BusinessBase RetreiveObject(HttpContext context, string objectName, int dbNumber, string key)
+        {
+            string objectKey = ObjectKey(objectName, dbNumber, key);
             byte[] data;
 
-            if (context.Items[sessionKey] == null)
+            if (context.Items[objectKey] == null)
             {
                 lock (context)
                 {
-                    if (context.Items[sessionKey] == null)
+                    if (context.Items[objectKey] == null)
                     {
                         BusinessBase obj = Instance.CreateObject(objectName, dbNumber);
 
-                        if (context.Session.TryGetValue(sessionKey, out data))
+                        data = GetData(objectKey);
+
+                        if (data != null)
                         {
                             obj.Deserialize(data);
                         }
@@ -144,15 +166,15 @@ namespace AweShur.Core
                                 obj.ReadFromDB(key);
                             }
 
-                            StoreObject(obj, objectName, context);
+                            StoreObject(obj, objectName);
                         }
 
-                        context.Items[sessionKey] = obj;
+                        context.Items[objectKey] = obj;
                     }
                 }
             }
 
-            return (BusinessBase)context.Items[sessionKey];
+            return (BusinessBase)context.Items[objectKey];
         }
     }
 }

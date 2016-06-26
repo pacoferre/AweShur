@@ -9,7 +9,7 @@ namespace AweShur.Core
 {
     public partial class BusinessBase
     {
-        public virtual ModelToClient ToClient(HttpContext context, ModelFromClient fromClient)
+        public virtual ModelToClient PerformActionAndCreateResponse(HttpContext context, ModelFromClient fromClient)
         {
             ModelToClient model = new ModelToClient();
 
@@ -57,7 +57,9 @@ namespace AweShur.Core
                 }
             }
 
-            BusinessBaseProvider.StoreObject(this, fromClient.oname, context);
+            BusinessBaseProvider.StoreObject(this, fromClient.oname);
+
+            model.keyObject = Key;
 
             return model;
         }

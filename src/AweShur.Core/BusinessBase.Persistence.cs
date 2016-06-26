@@ -64,19 +64,22 @@ namespace AweShur.Core
         {
             bool readed = true;
 
-            try
+            if (!IsNew)
             {
-                CurrentDB.ReadBusinessObject(this);
+                try
+                {
+                    CurrentDB.ReadBusinessObject(this);
 
-                IsNew = false;
-                IsModified = false;
-                IsDeleting = false;
+                    IsNew = false;
+                    IsModified = false;
+                    IsDeleting = false;
 
-                AfterReadFromDB();
-            }
-            catch
-            {
-                readed = false;
+                    AfterReadFromDB();
+                }
+                catch
+                {
+                    readed = false;
+                }
             }
 
             return readed;

@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Http;
-using Microsoft.Framework.Runtime.Infrastructure;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -119,7 +118,7 @@ namespace AweShur.Core.Security
 
             context.Session.SetInt32(CurrentUserIDSessionKey, (int)user[0]);
 
-            BusinessBaseProvider.StoreObject(user, "AppUser", context);
+            BusinessBaseProvider.StoreObject(user, "AppUser");
         }
 
         public static AppUser GetAppUserWithoutHttpContext()
@@ -133,7 +132,7 @@ namespace AweShur.Core.Security
 
             if (idAppUser > 0)
             {
-                return (AppUser)BusinessBaseProvider.RetreiveObject("AppUser", idAppUser.ToString(), context);
+                return (AppUser)BusinessBaseProvider.RetreiveObject(context, "AppUser", idAppUser.ToString());
             }
 
             return null;

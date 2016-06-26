@@ -3,6 +3,7 @@ using AweShur.Core.REST;
 using AweShur.Core.Security;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.Extensions.Caching.Memory;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,6 +14,13 @@ namespace AweShur.Web.Controllers
     [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
     public class CRUDController : Controller
     {
+        IMemoryCache memoryCache;
+
+        public CRUDController(IMemoryCache memoryCache)
+        {
+            this.memoryCache = memoryCache;
+        }
+
         public override void OnActionExecuting(ActionExecutingContext context)
         {
             base.OnActionExecuting(context);
@@ -26,7 +34,7 @@ namespace AweShur.Web.Controllers
         [HttpGet]
         public IEnumerable<dynamic> List(string objectName)
         {
-            return BusinessBaseProvider.RetreiveObject(objectName, "0", HttpContext).Get();
+            return BusinessBaseProvider.RetreiveObject(HttpContext, objectName, "0").Get();
         }
 
         [HttpPost]
@@ -38,14 +46,15 @@ namespace AweShur.Web.Controllers
                 {
                     ModelToClient toClient = new ModelToClient();
 
-                    toClient.formToken = new Guid().ToString();
+                    toClient.formToken = Guid.NewGuid().ToString();
                     toClient.sequence = 1;
 
                     return new JsonResult(toClient);
                 }
-                else if (fromClient.action == "load" || fromClient.action == "ok")
+                else if (fromClient.action == "load" || fromClient.action == "ok" || fromClient.action == "new")
                 {
-                    return new JsonResult(BusinessBaseProvider.RetreiveObject(fromClient.oname, fromClient.root.key, HttpContext).ToClient(HttpContext, fromClient));
+                    return new JsonResult(BusinessBaseProvider.RetreiveObject(HttpContext, fromClient.oname, 
+                        fromClient.root.key).PerformActionAndCreateResponse(HttpContext, fromClient));
                 }
 
                 return new JsonResult(ModelToClient.ErrorResponse("Action " + fromClient.action + " not supported."));
@@ -55,6 +64,10 @@ namespace AweShur.Web.Controllers
                 return new JsonResult(ModelToClient.ErrorResponse(exp.Message));
             }
         }
+
+        private static Dictionary<Guid, string> cruds = new Dictionary<Guid, string>();
+
+
     }
 }
 
