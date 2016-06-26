@@ -50,6 +50,7 @@ namespace AweShur.Core
         public virtual void RegisterBusinessCreators()
         {
             creators.Add("AppUser", () => new Security.AppUser() );
+            decorators.Add("AppUser", () => new Security.AppUserDecorator() );
         }
 
         public virtual void RegisterCustomDecorators()
@@ -164,6 +165,13 @@ namespace AweShur.Core
                             if (key != "0")
                             {
                                 obj.ReadFromDB(key);
+                            }
+                            else
+                            {
+                                if (!obj.IsNew)
+                                {
+                                    obj.SetNew();
+                                }
                             }
 
                             StoreObject(obj, objectName);

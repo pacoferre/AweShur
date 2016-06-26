@@ -7,6 +7,13 @@ namespace AweShur.Core
 {
     public partial class BusinessBase
     {
+        public void SetNew()
+        {
+            dataItem = Definition.New(this);
+            IsNew = true;
+            PostSetNew();
+        }
+
         public virtual bool ReadFromDB(string key)
         {
             string[] keys = DataItem.SplitKey(key);

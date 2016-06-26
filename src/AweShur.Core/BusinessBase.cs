@@ -47,6 +47,10 @@ namespace AweShur.Core
             return dataItem.Validate(ref LastErrorMessage, ref LastErrorProperty);
         }
 
+        public virtual void PostSetNew()
+        {
+
+        }
 
         public virtual bool IsReadOnly(string property)
         {

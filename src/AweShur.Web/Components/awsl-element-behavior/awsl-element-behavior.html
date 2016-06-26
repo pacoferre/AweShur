@@ -98,6 +98,16 @@
                             else {
                                 this.value = value;
                             }
+
+                            if (element.getAttribute('data-onlynew') == "1")
+                            {
+                                if (fromserver.isNew) {
+                                    this.removeAttribute("readonly");
+                                }
+                                else {
+                                    this.setAttribute("readonly", "");
+                                }
+                            }
                         }
                     };
                     element.getDataField = function () {

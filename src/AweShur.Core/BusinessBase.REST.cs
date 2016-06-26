@@ -23,9 +23,16 @@ namespace AweShur.Core
             {
                 for (int index = 0; index < fromClient.dataNames.Count; ++index)
                 {
-                    PropertyDefinition prop = Definition.Properties[fromClient.dataNames[index]];
+                    try
+                    {
+                        PropertyDefinition prop = Definition.Properties[fromClient.dataNames[index]];
 
-                    prop.SetValue(this, fromClient.root.data[index]);
+                        prop.SetValue(this, fromClient.root.data[index]);
+                    }
+                    catch(Exception exc)
+                    {
+                        int r = 2;
+                    }
                 }
 
                 try
@@ -60,6 +67,9 @@ namespace AweShur.Core
             BusinessBaseProvider.StoreObject(this, fromClient.oname);
 
             model.keyObject = Key;
+            model.isNew = IsNew;
+            model.isModified = IsModified;
+            model.isDeleting = IsDeleting;
 
             return model;
         }

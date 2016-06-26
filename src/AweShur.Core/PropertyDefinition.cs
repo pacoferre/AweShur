@@ -83,6 +83,10 @@ namespace AweShur.Core
             IsComputed = colDef.IsComputed;
             IsIdentity = colDef.IsIdentity;
             IsPrimaryKey = colDef.IsPrimaryKey;
+            if (IsComputed || IsIdentity)
+            {
+                NoChecking = true;
+            }
             DBDataType = colDef.DBDataType;
             FieldName = colDef.ColumnName;
             DataType = DBDialect.GetColumnType(colDef.DBDataType);
@@ -92,6 +96,10 @@ namespace AweShur.Core
             if (BasicType == BasicType.Text && MaxLength == 10000)
             {
                 BasicType = BasicType.TextLong;
+            }
+            if (BasicType == BasicType.Bit && !IsNullable)
+            {
+                DefaultValue = false;
             }
         }
 
@@ -240,9 +248,9 @@ namespace AweShur.Core
 
             if (BasicType == BasicType.Text || BasicType == BasicType.TextLong)
             {
-                value = value.Trim();
+                value = value.NoNullString().Trim();
 
-                if (obj[FieldName].ToString() != value)
+                if (obj[FieldName].NoNullString() != value)
                 {
                     obj[FieldName] = value;
                 }

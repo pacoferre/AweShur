@@ -14,7 +14,7 @@ namespace AweShur.Core
         private string key = "";
 
         private object[] values;
-        public bool IsNew { get; set; } = true;
+        public bool IsNew { get; set; } = false;
         public bool IsModified { get; set; } = false;
         public bool IsDeleting { get; set; } = false;
         private BusinessBase owner = null;
@@ -82,7 +82,7 @@ namespace AweShur.Core
                     SetKey();
                 }
 
-                return key;
+                return IsNew ? "0" : key;
             }
         }
 

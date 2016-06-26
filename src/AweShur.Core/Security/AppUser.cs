@@ -5,6 +5,14 @@ using System.Threading.Tasks;
 
 namespace AweShur.Core.Security
 {
+    public class AppUserDecorator : BusinessBaseDefinition
+    {
+        protected override void SetCustomProperties()
+        {
+            this.Properties["password"].NoChecking = true;
+        }
+    }
+
     public partial class AppUser : BusinessBase
     {
         public AppUser() : base("AppUser")
@@ -55,11 +63,7 @@ namespace AweShur.Core.Security
                     if (value.NoNullString() != "")
                     {
                         newPassword = value.ToString();
-                        IsModified = true;
-                    }
-                    else
-                    {
-                        newPassword = null;
+                        base[property] = "NWRE";
                     }
                 }
                 else
