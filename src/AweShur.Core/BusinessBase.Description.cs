@@ -14,5 +14,16 @@ namespace AweShur.Core
                 return this[Definition.FirstStringProperty.Index].NoNullString();
             }
         }
+
+        public virtual string Title
+        {
+            get
+            {
+                return Definition.Singular + " " + Description + 
+                    (IsNew ? " (new)" : 
+                        (IsDeleting ? " (deleting)" : 
+                            (IsModified ? " (modified)" : "")));
+            }
+        }
     }
 }

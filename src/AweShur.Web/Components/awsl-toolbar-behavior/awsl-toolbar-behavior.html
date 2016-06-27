@@ -1,0 +1,63 @@
+﻿<link rel="import" href="../lib/polymer/polymer.html">
+
+<script>
+    var AWSLBehaviors = AWSLBehaviors || {};
+
+    (function () {
+        AWSLBehaviors.ToolBarBehavior = {
+            properties: {
+                title: {
+                    type: String,
+                },
+            },
+            setToolBar: function(fromServer)
+            {
+                if (fromServer.isNew) {
+                    this.$.new.hidden = true;
+                    this.$.refresh.hidden = true;
+                    this.$.delete.hidden = true;
+                    this.$.ok.hidden = false;
+                    this.$.ok.icon = "done";
+                    this.$.clear.hidden = false;
+                }
+                else {
+                    this.$.new.hidden = fromServer.isNew;
+                    this.$.refresh.hidden = fromServer.isNew;
+
+                    if (fromServer.isDeleting) {
+                        this.$.delete.hidden = true;
+                        this.$.ok.hidden = false;
+                        this.$.ok.icon = "delete";
+                        this.$.clear.hidden = false;
+                    }
+                    else {
+                        this.$.delete.hidden = false;
+                        this.$.ok.hidden = !fromServer.isModified;
+                        this.$.ok.icon = "done";
+                        this.$.clear.hidden = !fromServer.isModified;
+                    }
+                }
+            },
+            _onRefresh: function()
+            {
+                this.fire('awsl-refresh');
+            },
+            _onNew: function()
+            {
+                this.fire('awsl-new');
+            },
+            _onDelete: function () {
+                this.fire('awsl-delete');
+            },
+            _onOK: function () {
+                this.fire('awsl-ok');
+            },
+            _onClear: function () {
+                this.fire('awsl-clear');
+            },
+            _onClose: function () {
+                this.fire('awsl-close');
+            },
+        };
+    })();
+</script>

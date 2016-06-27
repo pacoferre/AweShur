@@ -19,17 +19,8 @@
                 oname: {
                     type: String,
                 },
-                hiderefresh: {
-                    type: Boolean,
-                    value: false
-                },
-                hideadd: {
-                    type: Boolean,
-                    value: false
-                },
-                hideokcancel: {
-                    type: Boolean,
-                    value: false
+                info: {
+                    type: String,
                 },
                 theelement: {
                     type: Object,
@@ -57,6 +48,14 @@
                         return obj;
                     }
                 }
+            },
+            listeners: {
+                'awsl-refresh': '_onRefresh',
+                'awsl-new': '_onNew',
+                'awsl-delete': '_onDelete',
+                'awsl-ok': '_onOK',
+                'awsl-clear': '_onClear',
+                'awsl-close': '_onClose',
             },
             wasAttached: false,
             attached: function () {
@@ -95,36 +94,50 @@
                     this.toserver.root.key = newKey;
                 }
 
-                this.toserver.action = "load";
-                this._doPost();
+                this._doPost("load");
             },
-            _doPost: function () {
+            _doPost: function (action) {
+                this.toserver.action = action;
+
+                if (action == "load") {
+                    this.toserver.root.data = [];
+                    this.toserver.root.childreen = [];
+                }
+                else if (action == "init") {
+                    this.toserver.dataNames = this.theelement.dataNames;
+                }
+                else {
+                    this.theelement.getData(this.toserver.dataNames, this.toserver.root);
+                }
+
                 this.ajax.body = this.toserver;
                 this.ajax.generateRequest();
             },
             _init: function () {
                 this.async(function () {
-                    this.toserver.action = "init";
-                    this.toserver.dataNames = this.theelement.dataNames;
-                    this._doPost();
+                    this._doPost("init");
                 });
             },
-            _new: function () {
-                this.key = "0";
+            _onRefresh: function() {
                 this.load();
+            },
+            _onNew: function () {
+                this._doPost("new");
+            },
+            _onDelete: function () {
+                this._doPost("delete");
             },
             _onOK: function () {
-                this.toserver.action = "ok";
-
-                this.theelement.getData(this.toserver.dataNames, this.toserver.root);
-
-                this._doPost();
+                this._doPost("ok");
             },
             _onClear: function () {
-                this.load();
+                this._doPost("clear");
+            },
+            _onClose: function () {
+                this._doPost("clear");
                 this.fire('close');
             },
-            responseHandler: function (a, b) {
+            responseHandler: function () {
                 var fromServer = this.ajax.lastResponse;
 
                 if (this.toserver.formToken == "")
@@ -136,6 +149,7 @@
                 }
 
                 if (fromServer.ok) {
+                    this.title = fromServer.title;
                     this.async(function () {
                         this.key = fromServer.keyObject;
                         this.toserver.root.key = fromServer.keyObject;
@@ -147,7 +161,14 @@
                         this.showMessage(fromServer.normalMessage);
                     }
 
-                    this.fire('saved');
+                    if (this.$.tool !== undefined)
+                    {
+                        this.$.tool.setToolBar(fromServer);
+                    }
+
+                    if (fromServer.action == "ok") {
+                        this.fire('saved');
+                    }
                 }
                 else {
                     if (this.ajax.lastResponse.reload) {

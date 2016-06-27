@@ -9,12 +9,17 @@ namespace AweShur.Core.REST
     {
         public string formToken { get; set; } = "";
         public int sequence { get; set; } = 0;
+        public string action { get; set; } = "";
         public bool ok { get; set; }
         public string keyObject { get; set; }
         public string keyObjectUp { get; set; }
         public string keyObjectDown { get; set; }
         public string[] keysObjectInternal { get; set; }
         public bool goBack { get; set; }
+
+        public bool wasModified { get; set; }
+        public bool wasNew { get; set; }
+        public bool wasDeleting { get; set; }
 
         public bool isModified { get; set; }
         public bool isNew { get; set; }

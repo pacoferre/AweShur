@@ -25,24 +25,15 @@
                 editelement: {
                     type: String,
                 },
-                hiderefresh: {
-                    type: Boolean,
-                    value: false
-                },
-                hideadd: {
-                    type: Boolean,
-                    value: false
-                },
-                hideokcancel: {
-                    type: Boolean,
-                    value: false
-                },
                 ajaxlist: {
                     type: Object
                 }
             },
             _handleFormResponse: function (event) {
                 this.setData(event.detail.response);
+                this.async(function () {
+                    this.fire('iron-resize');
+                });
             },
             setData: function(fromserver)
             {

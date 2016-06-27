@@ -9,7 +9,10 @@ namespace AweShur.Core.Security
     {
         protected override void SetCustomProperties()
         {
-            this.Properties["password"].NoChecking = true;
+            Properties["password"].NoChecking = true;
+
+            Singular = "User";
+            Plural = "Users";
         }
     }
 

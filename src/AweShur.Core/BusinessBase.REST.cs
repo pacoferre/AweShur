@@ -13,26 +13,29 @@ namespace AweShur.Core
         {
             ModelToClient model = new ModelToClient();
 
-            model.data = new Dictionary<string, string>(Definition.ListProperties.Count);
+            model.wasNew = IsNew;
+            model.wasDeleting = IsDeleting;
+            model.wasModified = IsModified;
 
             if (fromClient.action == "load")
             {
                 ReadFromDB();
             }
+            else if (fromClient.action == "new")
+            {
+                SetNew();
+            }
+            else if (fromClient.action == "delete")
+            {
+                IsDeleting = true;
+            }
             else if (fromClient.action == "ok")
             {
                 for (int index = 0; index < fromClient.dataNames.Count; ++index)
                 {
-                    try
-                    {
-                        PropertyDefinition prop = Definition.Properties[fromClient.dataNames[index]];
+                    PropertyDefinition prop = Definition.Properties[fromClient.dataNames[index]];
 
-                        prop.SetValue(this, fromClient.root.data[index]);
-                    }
-                    catch(Exception exc)
-                    {
-                        int r = 2;
-                    }
+                    prop.SetValue(this, fromClient.root.data[index]);
                 }
 
                 try
@@ -54,9 +57,26 @@ namespace AweShur.Core
                     model.errorMessage = LastErrorMessage == "" ? exp.Message : LastErrorMessage;
                 }
             }
+            else if (fromClient.action == "clear")
+            {
+                if (IsNew)
+                {
+                    SetNew();
+                }
+                else
+                {
+                    if (IsDeleting)
+                    {
+                        IsDeleting = false;
+                    }
+
+                    ReadFromDB();
+                }
+            }
 
             // Send object data.
-            foreach(PropertyDefinition prop in Definition.ListProperties)
+            model.data = new Dictionary<string, string>(Definition.ListProperties.Count);
+            foreach (PropertyDefinition prop in Definition.ListProperties)
             {
                 if (fromClient.dataNames.Contains(prop.FieldName))
                 {
@@ -70,6 +90,10 @@ namespace AweShur.Core
             model.isNew = IsNew;
             model.isModified = IsModified;
             model.isDeleting = IsDeleting;
+
+            model.title = Title;
+
+            model.action = fromClient.action;
 
             return model;
         }

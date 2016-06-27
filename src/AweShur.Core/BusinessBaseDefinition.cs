@@ -20,6 +20,9 @@ namespace AweShur.Core
         public bool primaryKeyIsOneGuid { get; internal set; }
         private bool primaryKeyIsReturned = false;
 
+        public string Singular { get; set; } = "";
+        public string Plural { get; set; } = "";
+
         private Dictionary<string, int> fieldNameLookup;
         protected DBDialect dialect;
         protected string tableName;
@@ -61,6 +64,9 @@ namespace AweShur.Core
                 Properties[column.ColumnName] = def;
             }
 
+            Singular = tableName;
+            Plural = tableName + "s";
+
             SetCustomProperties();
 
             ListProperties.AddRange(Properties.Values.ToList());
@@ -86,6 +92,7 @@ namespace AweShur.Core
             primaryKeyIsOneInt = PrimaryKeys.Count == 1 && ListProperties[PrimaryKeys[0]].DataType == typeof(Int32);
             primaryKeyIsOneLong = PrimaryKeys.Count == 1 && ListProperties[PrimaryKeys[0]].DataType == typeof(Int64);
             primaryKeyIsOneGuid = PrimaryKeys.Count == 1 && ListProperties[PrimaryKeys[0]].DataType == typeof(Guid);
+
         }
 
         protected virtual void SetCustomProperties()

@@ -13,6 +13,15 @@
 <dom-module id="awsl-listeditor">
     <template>
         <style>
+            :host {
+                @apply(--layout-vertical);
+                height: calc(100vh - 64px);
+            }
+
+            neon-animated-pages {
+                height: calc(100vh - 64px);
+            }
+
             iron-list {
                 background-color: var(--paper-grey-200, #eee);
                 padding-bottom: 16px;
@@ -49,15 +58,14 @@
         <neon-animated-pages id="pages" class="flex" selected="0" entry-animation="slide-from-right-animation" exit-animation="slide-left-animation">
             <neon-animatable>
                 <div id="listContent">
-                    <paper-fab icon="add" on-tap="_onAdd" hidden="[[hideadd]]"></paper-fab>
-                    <iron-list id="itemsList" as="item">
+                    <paper-fab icon="add" on-tap="_onAdd"></paper-fab>
+                    <iron-list id="itemsList" as="item" scroll-target="listContent">
                     </iron-list>
                 </div>
             </neon-animatable>
             <neon-animatable>
                 <div>
                     <awsl-editor id="editor" on-saved="_onSaved" on-close="_onClose" oname="{{oname}}"
-                                 hiderefresh="[[hiderefresh]]" hideadd="[[hideadd]]" hideokcancel="[[hideokcancel]]"
                                  edithref="[[edithref]]" editelement="[[editelement]]">
                     </awsl-editor>
                 </div>

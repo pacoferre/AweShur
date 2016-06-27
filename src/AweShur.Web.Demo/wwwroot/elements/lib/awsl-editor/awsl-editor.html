@@ -1,7 +1,5 @@
-﻿<link rel="import" href="../../../lib/app-layout/app-toolbar/app-toolbar.html">
-<link rel="import" href="../../../lib/paper-icon-button/paper-icon-button.html">
-<link rel="import" href="../../../lib/iron-ajax/iron-ajax.html">
-<link rel="import" href="../../../AWSLib/awsl-editor-behavior">
+﻿<link rel="import" href="../../../AWSLib/awsl-editor-behavior">
+<link rel="import" href="../awsl-toolbar/awsl-toolbar.html">
 
 <dom-module id="awsl-editor">
     <template>
@@ -16,23 +14,13 @@
                 overflow-y: auto;
             }
 
-            .sp {
-                @apply(--layout-flex);
-            }
-
             #toastError {
                 --paper-toast-background-color: red;
                 --paper-toast-color: white;
             }
         </style>
 
-        <app-toolbar hidden="[[hideokcancel]]">
-            <paper-icon-button icon="refresh" on-click="load" hidden="[[hiderefresh]]"></paper-icon-button>
-            <paper-icon-button icon="add" on-click="_new" hidden="[[hideadd]]">+</paper-icon-button>
-            <span class="sp">&nbsp;</span>
-            <paper-icon-button icon="done" on-click="_onOK" hidden="[[hideokcancel]]"></paper-icon-button>
-            <paper-icon-button icon="close" on-click="_onClear" hidden="[[hideokcancel]]"></paper-icon-button>
-        </app-toolbar>
+        <awsl-toolbar id="tool" title="[[title]]"></awsl-toolbar>
         <div id="main">
         </div>
         <paper-toast id="toastOk" text=""></paper-toast>

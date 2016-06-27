@@ -89,9 +89,12 @@ namespace AweShur.Core
             {
                 return dataItem.IsDeleting;
             }
-
             set
             {
+                if (IsNew && value)
+                {
+                    throw new Exception("New object, can't mark as deleting.");
+                }
                 dataItem.IsDeleting = value;
             }
         }
