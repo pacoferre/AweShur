@@ -23,6 +23,7 @@
             }
 
             iron-list {
+                height: calc(100vh - 96px);
                 background-color: var(--paper-grey-200, #eee);
                 padding-bottom: 16px;
                 @apply(--layout-flex);
@@ -43,7 +44,9 @@
             }
 
             #listContent {
-                height: calc(100vh - 64px);
+                height:calc(100vh - 64px);
+                height:-moz-calc(100vh - 64px);
+                height:-webkit-calc(100vh - 64px);
                 overflow-x: hidden;
                 overflow-y: auto;
             }
@@ -57,9 +60,9 @@
 
         <neon-animated-pages id="pages" class="flex" selected="0" entry-animation="slide-from-right-animation" exit-animation="slide-left-animation">
             <neon-animatable>
-                <div id="listContent">
+                <div id="listContent" style="min-height: 100px;">
                     <paper-fab icon="add" on-tap="_onAdd"></paper-fab>
-                    <iron-list id="itemsList" as="item" scroll-target="listContent">
+                    <iron-list id="itemsList" as="item" items="[[items]]" scroll-target="listContent">
                     </iron-list>
                 </div>
             </neon-animatable>
@@ -76,13 +79,11 @@
         Polymer({
             is: 'awsl-listeditor',
             behaviors: [AWSLBehaviors.ListEditorBehavior],
-            setData: function (fromserver) {
-                itemsList.items = fromserver;
-            },
             getListTemplate: function() {
                 var ironlisttemplate = document.createElement('template');
 
                 ironlisttemplate.id = "tempList";
+
                 ironlisttemplate.innerHTML = "<div class='item style-scope awsl-listeditor' on-click='_selectedItemChanged'>"
                     + "<" + this.listelement + " item='[[item]]' />"
                     + "</div>";

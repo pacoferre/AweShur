@@ -27,17 +27,13 @@
                 },
                 ajaxlist: {
                     type: Object
+                },
+                items: {
+                    type: Array
                 }
             },
             _handleFormResponse: function (event) {
-                this.setData(event.detail.response);
-                this.async(function () {
-                    this.fire('iron-resize');
-                });
-            },
-            setData: function(fromserver)
-            {
-
+                this.items = event.detail.response;
             },
             _handleFormError: function (event) {
                 debugger;
@@ -61,8 +57,10 @@
                     this.importHref(this.listhref, function (e) {
                         Polymer.dom(this.$.itemsList).appendChild(this.getListTemplate());
 
-                        this.ajaxlist.url = "/CRUD/List/" + this.oname;
-                        this.ajaxlist.generateRequest();
+                        this.async(function () {
+                            this.ajaxlist.url = "/CRUD/List/" + this.oname;
+                            this.ajaxlist.generateRequest();
+                        });
                     }, function (e) {
                         debugger;
                     });
