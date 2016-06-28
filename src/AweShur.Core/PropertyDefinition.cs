@@ -225,14 +225,7 @@ namespace AweShur.Core
                 }
                 else
                 {
-                    try
-                    {
-                        value = obj[FieldName].ToString();
-                    }
-                    catch (Exception exp)
-                    {
-                        int t = 2;
-                    }
+                    value = obj[FieldName].ToString();
                 }
             }
 

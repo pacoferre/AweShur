@@ -18,7 +18,6 @@ namespace AweShur.Core
         public bool primaryKeyIsOneInt { get; internal set; }
         public bool primaryKeyIsOneLong { get; internal set; }
         public bool primaryKeyIsOneGuid { get; internal set; }
-        private bool primaryKeyIsReturned = false;
 
         public string Singular { get; set; } = "";
         public string Plural { get; set; } = "";
@@ -163,11 +162,8 @@ namespace AweShur.Core
             sql.Append(" (" + dialect.SQLInsertProperties(ListProperties) + ")");
             sql.Append(" values (" + dialect.SQLInsertValues(ListProperties) + ") ");
 
-            primaryKeyIsReturned = false;
             if (primaryKeyIsOneInt || primaryKeyIsOneLong)
             {
-                primaryKeyIsReturned = true;
-
                 if (dialect.Dialect == DBDialectEnum.PostgreSQL) //???
                 {
                     sql.Append(" RETURNING lastval() as id");
