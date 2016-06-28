@@ -56,6 +56,8 @@
                 'awsl-ok': '_onOK',
                 'awsl-clear': '_onClear',
                 'awsl-close': '_onClose',
+                'change': '_onChanged',
+                'iron-change': '_onChanged',
             },
             wasAttached: false,
             attached: function () {
@@ -136,6 +138,11 @@
             _onClose: function () {
                 this._doPost("clear");
                 this.fire('close');
+            },
+            _onChanged: function (elementChanged) {
+                this.debounce('changed', function () {
+                    this._doPost("changed");
+                }, 100);
             },
             responseHandler: function () {
                 var fromServer = this.ajax.lastResponse;

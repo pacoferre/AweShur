@@ -29,7 +29,7 @@ namespace AweShur.Core
             {
                 IsDeleting = true;
             }
-            else if (fromClient.action == "ok")
+            else if (fromClient.action == "ok" || fromClient.action == "changed")
             {
                 for (int index = 0; index < fromClient.dataNames.Count; ++index)
                 {
@@ -38,23 +38,25 @@ namespace AweShur.Core
                     prop.SetValue(this, fromClient.root.data[index]);
                 }
 
-                try
+                if (fromClient.action == "ok")
                 {
-                    CurrentDB.BeginTransaction();
+                    try
+                    {
+                        CurrentDB.BeginTransaction();
 
-                    StoreToDB();
+                        StoreToDB();
 
-                    model.normalMessage = Description + " saved successfully.";
+                        model.normalMessage = Description + " saved successfully.";
 
-                    CurrentDB.CommitTransaction();
+                        CurrentDB.CommitTransaction();
+                    }
+                    catch (Exception exp)
+                    {
+                        CurrentDB.RollBackTransaction();
 
-                }
-                catch (Exception exp)
-                {
-                    CurrentDB.RollBackTransaction();
-
-                    model.ok = false;
-                    model.errorMessage = LastErrorMessage == "" ? exp.Message : LastErrorMessage;
+                        model.ok = false;
+                        model.errorMessage = LastErrorMessage == "" ? exp.Message : LastErrorMessage;
+                    }
                 }
             }
             else if (fromClient.action == "clear")

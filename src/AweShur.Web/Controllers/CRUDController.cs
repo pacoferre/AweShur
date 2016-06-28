@@ -51,7 +51,8 @@ namespace AweShur.Web.Controllers
 
                     return new JsonResult(toClient);
                 }
-                else if (fromClient.action == "load" || fromClient.action == "ok" || fromClient.action == "clear"
+                else if (fromClient.action == "changed" || fromClient.action == "load"
+                    || fromClient.action == "ok" || fromClient.action == "clear"
                     || fromClient.action == "new" || fromClient.action == "delete")
                 {
                     return new JsonResult(BusinessBaseProvider.RetreiveObject(HttpContext, fromClient.oname, 
