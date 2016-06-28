@@ -29,7 +29,8 @@
                     type: Object
                 },
                 items: {
-                    type: Array
+                    type: Array,
+                    observer: '_itemsChanged'
                 }
             },
             _handleFormResponse: function (event) {
@@ -55,16 +56,17 @@
 
                 this.async(function () {
                     this.importHref(this.listhref, function (e) {
-                        Polymer.dom(this.$.itemsList).appendChild(this.getListTemplate());
+                        Polymer.dom(this.getItemsList()).appendChild(this.getListTemplate());
 
-                        this.async(function () {
-                            this.ajaxlist.url = "/CRUD/List/" + this.oname;
-                            this.ajaxlist.generateRequest();
-                        });
+                        this.ajaxlist.url = "/CRUD/List/" + this.oname;
+                        this.ajaxlist.generateRequest();
                     }, function (e) {
                         debugger;
                     });
                 });
+            },
+            getItemsList: function () {
+                return null;
             },
             getListTemplate: function() {
                 return null;

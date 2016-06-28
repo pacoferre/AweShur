@@ -18,7 +18,6 @@
             }
 
             iron-list {
-                height: calc(100vh - 96px);
                 background-color: var(--paper-grey-200, #eee);
                 padding-bottom: 16px;
                 @apply(--layout-flex);
@@ -55,7 +54,7 @@
 
         <neon-animated-pages id="pages" class="flex" selected="0" entry-animation="slide-from-right-animation" exit-animation="slide-left-animation">
             <neon-animatable>
-                <div id="listContent" style="min-height: 100px;">
+                <div id="listContent">
                     <paper-fab icon="add" on-tap="_onAdd"></paper-fab>
                     <iron-list id="itemsList" as="item" items="[[items]]" scroll-target="listContent">
                     </iron-list>
@@ -64,7 +63,7 @@
             <neon-animatable>
                 <div>
                     <awsl-editor id="editor" on-saved="_onSaved" on-close="_onClose" oname="{{oname}}"
-                                 edithref="[[edithref]]" editelement="[[editelement]]">
+                                    edithref="[[edithref]]" editelement="[[editelement]]">
                     </awsl-editor>
                 </div>
             </neon-animatable>
@@ -74,6 +73,20 @@
         Polymer({
             is: 'awsl-listeditor',
             behaviors: [AWSLBehaviors.ListEditorBehavior],
+            getItemsList: function () {
+                return this.$.itemsList;
+            },
+            _itemsChanged: function() {
+                this.async(function () {
+                    if (this.$.listContent.offsetHeight > 0)
+                    {
+                        this.$.itemsList._render();
+                    }
+                    else {
+                        this._itemsChanged();
+                    }
+                }, 5);
+            },
             getListTemplate: function() {
                 var ironlisttemplate = document.createElement('template');
 
