@@ -41,6 +41,7 @@
                             root: {
                                 key: "",
                                 data: [],
+                                changed: {},
                                 childreen: []
                             }
                         };
@@ -57,7 +58,7 @@
                 'awsl-clear': '_onClear',
                 'awsl-close': '_onClose',
                 'change': '_onChanged',
-                'iron-change': '_onChanged',
+                'keyup': '_onChanged'
             },
             wasAttached: false,
             attached: function () {
@@ -98,23 +99,6 @@
 
                 this._doPost("load");
             },
-            _doPost: function (action) {
-                this.toserver.action = action;
-
-                if (action == "load") {
-                    this.toserver.root.data = [];
-                    this.toserver.root.childreen = [];
-                }
-                else if (action == "init") {
-                    this.toserver.dataNames = this.theelement.dataNames;
-                }
-                else {
-                    this.theelement.getData(this.toserver.dataNames, this.toserver.root);
-                }
-
-                this.ajax.body = this.toserver;
-                this.ajax.generateRequest();
-            },
             _init: function () {
                 this.async(function () {
                     this._doPost("init");
@@ -140,15 +124,80 @@
                 this.fire('close');
             },
             _onChanged: function (elementChanged) {
-                this.debounce('changed', function () {
-                    this._doPost("changed");
-                }, 100);
+                var elementWithDataFieldName = this._searchElementWithDataFieldName(elementChanged.target, 0);
+
+                if (elementWithDataFieldName != null)
+                {
+                    var val = elementWithDataFieldName.getDataField();
+
+                    this.lastChangedElement = elementWithDataFieldName;
+
+                    this.toserver.root.changed[elementWithDataFieldName.dataFieldName] =
+                        val;
+
+                    //console.log("Changed " + elementWithDataFieldName.dataFieldName + " = '" + val + "'");
+
+                    this.debounce('changed', function () {
+                        this._doPost("changed");
+                    }, 100);
+                }
+            },
+            _searchElementWithDataFieldName: function(node, level)
+            {
+                if (level > 5)
+                {
+                    return null;
+                }
+                if (node.dataFieldName !== undefined)
+                {
+                    return node;
+                }
+
+                return this._searchElementWithDataFieldName(node.parentNode, level + 1);
+            },
+            lastChangedElement: null,
+            waitingResponse: false,
+            _doPost: function (action) {
+                if (this.waitingResponse) {
+                    this.async(function () {
+                        this._doPost(action);
+                    }, 10);
+                }
+                else {
+                    this.waitingResponse = true;
+                    this.toserver.action = action;
+
+                    if (action == "load") {
+                        this.toserver.root.data = [];
+                        this.toserver.root.childreen = [];
+                    }
+                    else if (action == "init") {
+                        this.toserver.dataNames = this.theelement.dataNames;
+                    }
+                    else if (action == "changed") {
+                        this.toserver.root.data = [];
+                    }
+                    else {
+                        this.theelement.getData(this.toserver.dataNames, this.toserver.root);
+                    }
+
+                    this.ajax.body = this.toserver;
+                    this.ajax.generateRequest();
+
+                    //console.log("Post " + this.toserver.action + " " + this.toserver.sequence);
+
+                    this.toserver.root.changed = {};
+                }
             },
             responseHandler: function () {
                 var fromServer = this.ajax.lastResponse;
 
+                this.waitingResponse = false;
+                this.toserver.sequence++;
+
                 if (this.toserver.formToken == "")
                 {
+                    this.lastChangedElement = null;
                     this.toserver.formToken = fromServer.formToken;
                     this.fire('elementready');
 
@@ -157,12 +206,17 @@
 
                 if (fromServer.ok) {
                     this.title = fromServer.title;
-                    this.async(function () {
-                        this.key = fromServer.keyObject;
-                        this.toserver.root.key = fromServer.keyObject;
+                    this.key = fromServer.keyObject;
+                    this.toserver.root.key = fromServer.keyObject;
 
-                        this.theelement.setData(fromServer);
-                    });
+                    if (fromServer.action != "changed" && this.lastChangedElement != null)
+                    {
+                        // This should never happen.
+                        debugger;
+                    }
+
+                    this.theelement.setData(fromServer, this.lastChangedElement);
+                    this.lastChangedElement = null;
 
                     if (fromServer.normalMessage != "") {
                         this.showMessage(fromServer.normalMessage);
@@ -178,6 +232,7 @@
                     }
                 }
                 else {
+                    this.lastChangedElement = null;
                     if (this.ajax.lastResponse.reload) {
                         window.location.reload();
                     }
@@ -189,6 +244,9 @@
                 }
             },
             responseHandlerError: function (event) {
+                this.waitingResponse = false;
+                this.lastChangedElement = null;
+
                 debugger;
             },
             getMain: function () {

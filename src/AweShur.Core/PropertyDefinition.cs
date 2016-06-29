@@ -101,6 +101,11 @@ namespace AweShur.Core
             {
                 DefaultValue = false;
             }
+
+            if (BasicType == BasicType.Bit)
+            {
+                inputType = PropertyInputType.checkbox;
+            }
         }
 
         public PropertyDefinition(string propertyName, string label, BasicType basicType = BasicType.Text, PropertyInputType type = PropertyInputType.text)
@@ -192,7 +197,7 @@ namespace AweShur.Core
                     value = ((DateTime)obj[FieldName]).ToString(obj.CurrentUser.ShortDateFormat + " HH:mm:ss");
                 }
             }
-            else if (Type == PropertyInputType.checkbox)
+            else if (Type == PropertyInputType.checkbox || BasicType == BasicType.Bit)
             {
                 value = obj[FieldName].NoNullBool() ? "1" : "0";
             }
@@ -249,7 +254,7 @@ namespace AweShur.Core
                 }
             }
 
-            else if (Type == PropertyInputType.checkbox)
+            else if (Type == PropertyInputType.checkbox || BasicType == BasicType.Bit)
             {
                 if (obj[FieldName].NoNullBool() != (value == "1"))
                 {

@@ -1,0 +1,46 @@
+﻿<link rel="import" href="../lib/polymer/polymer.html">
+<link rel="import" href="../lib/iron-ajax/iron-ajax.html">
+<link rel="import" href="../lib/paper-dropdown-menu/paper-dropdown-menu-light.html">
+
+<dom-module id="awsl-selector">
+    <template>
+        <paper-dropdown-menu-light label="[[labelText]]">
+            <paper-listbox class="dropdown-content" on-iron-select="_itemSelected">
+                <template is="dom-repeat" items="[[listItems]]">
+                    <paper-item>[[item.t]]</paper-item>
+                </template>
+            </paper-listbox>
+        </paper-dropdown-menu-light>
+    </template>
+    <script>
+    Polymer({
+      is: "aswd-login",
+      behaviors: [AWSLBehaviors.SelectorBehavior],
+      properties: {
+          labelText: {
+              type: String,
+              value: ""
+          },
+          listItems: {
+              type: Array,
+          },
+          value: {
+              type: String,
+              value: ""
+          },
+          listName: {
+              type: String,
+              value: ""
+          },
+          dataFieldName: {
+              type: String,
+              value: ""
+          }
+      },
+      _itemSelected: function () {
+          console.log('Selected!');
+      },
+    });
+    </script>
+</dom-module>
+

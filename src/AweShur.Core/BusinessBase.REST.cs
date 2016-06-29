@@ -29,7 +29,16 @@ namespace AweShur.Core
             {
                 IsDeleting = true;
             }
-            else if (fromClient.action == "ok" || fromClient.action == "changed")
+            else if (fromClient.action == "changed")
+            {
+                foreach (KeyValuePair<string, string> item in fromClient.root.changed)
+                {
+                    PropertyDefinition prop = Definition.Properties[item.Key];
+
+                    prop.SetValue(this, item.Value);
+                }
+            }
+            else if (fromClient.action == "ok")
             {
                 for (int index = 0; index < fromClient.dataNames.Count; ++index)
                 {
@@ -38,25 +47,22 @@ namespace AweShur.Core
                     prop.SetValue(this, fromClient.root.data[index]);
                 }
 
-                if (fromClient.action == "ok")
+                try
                 {
-                    try
-                    {
-                        CurrentDB.BeginTransaction();
+                    CurrentDB.BeginTransaction();
 
-                        StoreToDB();
+                    StoreToDB();
 
-                        model.normalMessage = Description + " saved successfully.";
+                    model.normalMessage = Description + " saved successfully.";
 
-                        CurrentDB.CommitTransaction();
-                    }
-                    catch (Exception exp)
-                    {
-                        CurrentDB.RollBackTransaction();
+                    CurrentDB.CommitTransaction();
+                }
+                catch (Exception exp)
+                {
+                    CurrentDB.RollBackTransaction();
 
-                        model.ok = false;
-                        model.errorMessage = LastErrorMessage == "" ? exp.Message : LastErrorMessage;
-                    }
+                    model.ok = false;
+                    model.errorMessage = LastErrorMessage == "" ? exp.Message : LastErrorMessage;
                 }
             }
             else if (fromClient.action == "clear")
