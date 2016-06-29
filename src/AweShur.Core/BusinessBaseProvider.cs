@@ -4,14 +4,12 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using AweShur.Core.Security;
 using Microsoft.Extensions.Configuration;
 using System.Text;
-using Microsoft.Extensions.Caching.Memory;
-using Microsoft.Extensions.Caching.Distributed;
 using StackExchange.Redis;
+using AweShur.Core.Lists;
 
 namespace AweShur.Core
 {
@@ -20,10 +18,11 @@ namespace AweShur.Core
         private Dictionary<string, Func<BusinessBase>> creators = new Dictionary<string, Func<BusinessBase>>();
         private Dictionary<string, Func<BusinessBaseDefinition>> decorators = new Dictionary<string, Func<BusinessBaseDefinition>>();
         private ConcurrentDictionary<string, Lazy<BusinessBaseDefinition>>
-            definitionsCache = new ConcurrentDictionary<string, Lazy<BusinessBaseDefinition>>();
+            definitionsCreators = new ConcurrentDictionary<string, Lazy<BusinessBaseDefinition>>();
         public static BusinessBaseProvider Instance { get; set; }
         private static IHttpContextAccessor HttpContextAccessor;
         private static ConnectionMultiplexer TheCache;
+        public static ListProvider ListProvider { get; private set; }
 
         public static void Configure(IHttpContextAccessor httpContextAccessor, ConnectionMultiplexer theCache,
             BusinessBaseProvider instance, IConfigurationRoot configuration)
@@ -37,6 +36,8 @@ namespace AweShur.Core
             Instance.RegisterCustomDecorators();
 
             AppUser.SALT = Encoding.ASCII.GetBytes(DB.Configuration.GetSection("Security")["SALT"]).Take(16).ToArray();
+
+            ListProvider = new ListProvider();
         }
 
         public static HttpContext HttpContext
@@ -80,12 +81,17 @@ namespace AweShur.Core
             return obj;
         }
 
-        public virtual BusinessBaseDefinition GetDefinition(BusinessBase business)
+        public BusinessBaseDefinition GetDefinition(BusinessBase business)
         {
-            Lazy<BusinessBaseDefinition> lazy = definitionsCache.GetOrAdd(
-                business.TableName,
+            return GetDefinition(business.TableName, business.DBNumber);
+        }
+
+        public BusinessBaseDefinition GetDefinition(string name, int dbNumber)
+        {
+            Lazy<BusinessBaseDefinition> lazy = definitionsCreators.GetOrAdd(
+                name,
                 new Lazy<BusinessBaseDefinition>(
-                    () => GetDefinitionInternal(business.TableName, business.DBNumber),
+                    () => GetDefinitionInternal(name, dbNumber),
                     LazyThreadSafetyMode.ExecutionAndPublication
                 ));
 

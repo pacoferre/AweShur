@@ -86,7 +86,7 @@ namespace AweShur.Core
             }
         }
 
-        public virtual byte[] Serialize()
+        public byte[] Serialize()
         {
             JObject obj = new JObject();
 

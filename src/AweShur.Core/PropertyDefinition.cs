@@ -214,7 +214,8 @@ namespace AweShur.Core
 
                 if (Required && value == "0" && !IsObjectView)
                 {
-                    ListTable dt = ListProvider.Instance(ListSource).GetList();
+                    // First element
+                    ListTable dt = BusinessBaseProvider.ListProvider.GetList(ListSource);
 
                     if (dt.Count > 0)
                     {

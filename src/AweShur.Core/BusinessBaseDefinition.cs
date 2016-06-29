@@ -1,4 +1,5 @@
-﻿using Dapper;
+﻿using AweShur.Core.Lists;
+using Dapper;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -261,6 +262,24 @@ namespace AweShur.Core
             }
 
             return dynParms;
+        }
+
+        public virtual string GetListSQL(string listName)
+        {
+            string sql = "Select " + dialect.Encapsulate(names[PrimaryKeys[0]]) + " As ID, "
+                + dialect.Encapsulate(firstStringProperty.FieldName) + " From " + dialect.Encapsulate(tableName)
+                + " Order By " + dialect.Encapsulate(firstStringProperty.FieldName);
+
+            return sql;
+        }
+
+        public virtual ListTable GetList(string listName, int dbNumber)
+        {
+            string sql = GetListSQL(listName);
+            IEnumerable<dynamic> items = DB.InstanceNumber(dbNumber).Query(sql);
+            ListTable list = new ListTable(listName, items);
+
+            return list;
         }
     }
 }
