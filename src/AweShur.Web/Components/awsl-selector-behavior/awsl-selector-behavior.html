@@ -7,7 +7,19 @@
     (function () {
         AWSLBehaviors.SelectorBehaviorImpl = {
             properties: {
+                listName: {
+                    type: String,
+                    value: ""
+                },
+                labelText: {
+                    type: String,
+                    value: ""
+                },
+                listItems: {
+                    type: Array,
+                },
             },
+            isSelector: true,
         };
 
         AWSLBehaviors.SelectorBehavior = [AWSLBehaviors.ElementBehavior, AWSLBehaviors.SelectorBehaviorImpl]

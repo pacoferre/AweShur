@@ -132,6 +132,11 @@ namespace AweShur.Core
             TheCache.GetDatabase().StringSetAsync(key, data, TimeSpan.FromMinutes(30), When.Always, CommandFlags.FireAndForget);
         }
 
+        public static bool ExistsData(string key)
+        {
+            return TheCache.GetDatabase().KeyExists(key);
+        }
+
         public static byte[] GetData(string key)
         {
             return TheCache.GetDatabase().StringGet(key);

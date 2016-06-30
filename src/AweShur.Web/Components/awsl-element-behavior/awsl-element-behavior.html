@@ -6,20 +6,16 @@
     (function () {
         AWSLBehaviors.ElementBehavior = {
             properties: {
-                elements: {
-                    type: Array,
-                    value: function () { return []; }
-                },
-                dataNames: {
-                    type: Array,
-                    value: function () { return []; }
-                },
                 item: {
                     type: Object,
                     notify: true,
                     value: function () { return {}; }
                 },
             },
+            elements: [],
+            dataNames: [],
+            listNames: [],
+            listItems: [],
             parentElement: null,
             listeners: {
                 'awsl-element-register': '_registerElement',
@@ -38,7 +34,6 @@
                 }
             },
             _registerElement: function (e) {
-                // Get the actual element that fired the event
                 var element = Polymer.dom(e).rootTarget;
 
                 if (element !== this) {
@@ -64,76 +59,89 @@
                 e.stopPropagation();
             },
             _registerIronFormElement: function (e) {
-                // Get the actual element that fired the event
-                var element = this._registerElement(e);
+                var element = Polymer.dom(e).rootTarget;
 
-                if (element != null)
-                {
+                e.stopPropagation();
+
+                if (element !== this) {
                     var name = element.getAttribute('data-field');
 
-                    element.dataFieldName = name;
+                    if (name != undefined && name != "") {
+                        element.parentElement = this;
+                        this.elements.push(element);
 
-                    if (this.dataNames.indexOf(name) == -1)
-                    {
-                        this.dataNames.push(name);
+                        element.dataFieldName = name;
+
+                        if (this.dataNames.indexOf(name) == -1) {
+                            this.dataNames.push(name);
+                        }
+
+                        if (element.isCustomControl !== undefined) {
+                            if (element.isSelector !== undefined) {
+                                if (this.listNames.indexOf(element.listName) == -1) {
+                                    this.listNames.push(element.listName);
+                                }
+                            }
+                        }
+                        else
+                        {
+                            element.setData = function (fromserver) {
+                                var name = this.dataFieldName;
+
+                                if (name != null) {
+                                    var value = fromserver.data[name];
+
+                                    if (this.type == 'checkbox' ||
+                                        this.type == 'radio' ||
+                                        this.getAttribute('role') == 'checkbox' ||
+                                        this.getAttribute('role') == 'radio' ||
+                                        this['_hasIronCheckedElementBehavior']) {
+
+                                        if (this.checked != (value == '1')) {
+                                            this.checked = value == '1';
+                                        }
+                                    }
+                                    else {
+                                        if (!this.value || this.value.toString().trim() != value) {
+                                            this.value = value;
+                                        }
+                                    }
+
+                                    if (element.getAttribute('data-onlynew') == "1") {
+                                        if (fromserver.isNew) {
+                                            this.removeAttribute("readonly");
+                                        }
+                                        else {
+                                            this.setAttribute("readonly", "");
+                                        }
+                                    }
+                                }
+                            };
+                            element.getDataField = function () {
+                                var name = this.dataFieldName;
+
+                                if (name != null) {
+                                    var value;
+
+                                    if (this.type == 'checkbox' ||
+                                        this.type == 'radio' ||
+                                        this.getAttribute('role') == 'checkbox' ||
+                                        this.getAttribute('role') == 'radio' ||
+                                        this['_hasIronCheckedElementBehavior']) {
+
+                                        value = this.checked ? '1' : '0';
+                                    }
+                                    else {
+                                        value = this.value;
+                                    }
+
+                                    return value;
+                                }
+
+                                return "";
+                            };
+                        }
                     }
-
-                    element.setData = function (fromserver) {
-                        var name = this.dataFieldName;
-
-                        if (name != null) {
-                            var value = fromserver.data[name];
-
-                            if (this.type == 'checkbox' ||
-                                this.type == 'radio' ||
-                                this.getAttribute('role') == 'checkbox' ||
-                                this.getAttribute('role') == 'radio' ||
-                                this['_hasIronCheckedElementBehavior']) {
-
-                                if (this.checked != (value == '1')) {
-                                    this.checked = value == '1';
-                                }
-                            }
-                            else {
-                                if (!this.value || this.value.toString().trim() != value) {
-                                    this.value = value;
-                                }
-                            }
-
-                            if (element.getAttribute('data-onlynew') == "1")
-                            {
-                                if (fromserver.isNew) {
-                                    this.removeAttribute("readonly");
-                                }
-                                else {
-                                    this.setAttribute("readonly", "");
-                                }
-                            }
-                        }
-                    };
-                    element.getDataField = function () {
-                        var name = this.dataFieldName;
-
-                        if (name != null) {
-                            var value;
-
-                            if (this.type == 'checkbox' ||
-                                this.type == 'radio' ||
-                                this.getAttribute('role') == 'checkbox' ||
-                                this.getAttribute('role') == 'radio' ||
-                                this['_hasIronCheckedElementBehavior']) {
-
-                                value = this.checked ? '1' : '0';
-                            }
-                            else {
-                                value = this.value;
-                            }
-
-                            return value;
-                        }
-
-                        return "";
-                    };
                 }
 
                 e.stopPropagation();
@@ -154,16 +162,16 @@
                     }
                 }
             },
-            getData: function (dataNames, root) {
+            getData: function (root) {
 
                 root.data = [];
 
-                for (i = 0; i < dataNames.length; i++) {
+                for (i = 0; i < this.dataNames.length; i++) {
                     root.data.push("");
                 }
 
                 for (var el, i = 0; el = this.elements[i], i < this.elements.length; i++) {
-                    var index = dataNames.indexOf(el.dataFieldName);
+                    var index = this.dataNames.indexOf(el.dataFieldName);
 
                     if (index > -1)
                     {

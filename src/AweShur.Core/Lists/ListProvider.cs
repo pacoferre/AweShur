@@ -25,9 +25,30 @@ namespace AweShur.Core.Lists
             return lazy.Value;
         }
 
+        public void Invalidate(string businessBaseDefinitionName)
+        {
+            if (BusinessBaseProvider.ExistsData(Key(businessBaseDefinitionName)))
+            {
+                GetListInternal(businessBaseDefinitionName).Invalidate();
+            }
+
+            foreach(var kp in listGenerators)
+            {
+                if (kp.Key == businessBaseDefinitionName)
+                {
+                    BusinessBaseProvider.RemoveData(Key(kp.Value.Item1));
+                }
+            }
+        }
+
+        private string Key(string listName)
+        {
+            return "list_" + listName;
+        }
+
         private ListTable GetListInternal(string listName)
         {
-            string key = "list_" + listName;
+            string key = Key(listName);
             ListTable list;
             byte[] listData = BusinessBaseProvider.GetData(key);
 

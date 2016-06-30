@@ -1,4 +1,5 @@
-﻿using AweShur.Core.REST;
+﻿using AweShur.Core.Lists;
+using AweShur.Core.REST;
 using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
@@ -79,6 +80,15 @@ namespace AweShur.Core
                     }
 
                     ReadFromDB();
+                }
+            }
+            else if (fromClient.action == "init")
+            {
+                foreach(string listName in fromClient.listNames)
+                {
+                    ListTable table = BusinessBaseProvider.ListProvider.GetList(listName);
+
+                    model.listItems.Add(listName, table.ToClient);
                 }
             }
 

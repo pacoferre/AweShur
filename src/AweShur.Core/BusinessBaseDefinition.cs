@@ -276,8 +276,7 @@ namespace AweShur.Core
         public virtual ListTable GetList(string listName, int dbNumber)
         {
             string sql = GetListSQL(listName);
-            IEnumerable<dynamic> items = DB.InstanceNumber(dbNumber).Query(sql);
-            ListTable list = new ListTable(listName, items);
+            ListTable list = new ListTable(listName, sql, dbNumber);
 
             return list;
         }

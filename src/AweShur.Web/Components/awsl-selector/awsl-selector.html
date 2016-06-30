@@ -16,29 +16,8 @@
     Polymer({
       is: "aswd-login",
       behaviors: [AWSLBehaviors.SelectorBehavior],
-      properties: {
-          labelText: {
-              type: String,
-              value: ""
-          },
-          listItems: {
-              type: Array,
-          },
-          value: {
-              type: String,
-              value: ""
-          },
-          listName: {
-              type: String,
-              value: ""
-          },
-          dataFieldName: {
-              type: String,
-              value: ""
-          }
-      },
-      _itemSelected: function () {
-          console.log('Selected!');
+      _itemSelected: function (item) {
+          this.value = item.v;
       },
     });
     </script>

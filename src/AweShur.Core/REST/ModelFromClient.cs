@@ -13,6 +13,7 @@ namespace AweShur.Core.REST
         public string action { get; set; } = "";
 
         public List<string> dataNames { get; set; }
+        public List<string> listNames { get; set; }
         public ModelFromClientData root { get; set; }
     }
 

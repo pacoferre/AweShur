@@ -38,6 +38,7 @@
                             sequence: 0,
                             action: "",
                             dataNames: [],
+                            listNames: [],
                             root: {
                                 key: "",
                                 data: [],
@@ -173,12 +174,13 @@
                     }
                     else if (action == "init") {
                         this.toserver.dataNames = this.theelement.dataNames;
+                        this.toserver.listNames = this.theelement.listNames;
                     }
                     else if (action == "changed") {
                         this.toserver.root.data = [];
                     }
                     else {
-                        this.theelement.getData(this.toserver.dataNames, this.toserver.root);
+                        this.theelement.getData(this.toserver.root);
                     }
 
                     this.ajax.body = this.toserver;

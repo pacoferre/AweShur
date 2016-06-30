@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AweShur.Core.Lists;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -29,7 +30,7 @@ namespace AweShur.Core.REST
         public Dictionary<string, string> props { get; set; }
 
         public List<BusinessTool> tools { get; set; }
-        public Dictionary<string, List<Tuple<string, string>>> listItems { get; set; }
+        public Dictionary<string, List<ListItemRest>> listItems { get; set; }
         public List<string> refreshLists { get; set; }
 
         public string title { get; set; }

@@ -6,7 +6,15 @@
     (function () {
         AWSLBehaviors.ControlBehavior = {
             properties: {
+                dataFieldName: {
+                    type: String
+                },
+                value: {
+                    type: String,
+                    value: ""
+                },
             },
+            isCustomControl: true,
         };
     })();
 </script>
