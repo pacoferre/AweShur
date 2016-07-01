@@ -331,7 +331,8 @@ ORDER BY col.ORDINAL_POSITION";
 
             foreach (PropertyDefinition prop in properties)
             {
-                if (prop.IsDBField && !prop.IsIdentity && !prop.IsReadOnly && !prop.IsComputed)
+                if (prop.IsDBField && !prop.IsIdentity 
+                    && !prop.IsReadOnly && !prop.IsComputed)
                 {
                     if (addedAny)
                     {

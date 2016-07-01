@@ -32,7 +32,8 @@ namespace AweShur.Core
             Dialect = DBDialect.Instance((DBDialectEnum) Enum.Parse(typeof(DBDialectEnum), section["Dialect"]));
             connectionString = section["ConnectionString"];
 
-            lazyConnection = new Lazy<IDbConnection>(() => {
+            lazyConnection = new Lazy<IDbConnection>(() => 
+            {
                 return Dialect.GetConnection(connectionString);
             }, false);
         }
