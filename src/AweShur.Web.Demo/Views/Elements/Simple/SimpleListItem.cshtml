@@ -3,15 +3,15 @@
 }
 <link rel="import" href="/lib/polymer/polymer.html">
 
-<dom-module id="aswd-userlistitem">
+<dom-module id="aswd-simplelistitem">
     <template>
         <div class="primary">
-            [[item.name]] [[item.surname]]
+            [[item.name]]
         </div>
     </template>
     <script>
         Polymer({
-            is: 'aswd-userlistitem',
+            is: 'aswd-simplelistitem',
             properties: {
                 item: {
                     type: Object,

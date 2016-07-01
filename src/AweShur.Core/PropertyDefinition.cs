@@ -106,6 +106,10 @@ namespace AweShur.Core
             {
                 inputType = PropertyInputType.checkbox;
             }
+            else if (BasicType == BasicType.DateTime)
+            {
+                inputType = PropertyInputType.date;
+            }
         }
 
         public PropertyDefinition(string propertyName, string label, BasicType basicType = BasicType.Text, PropertyInputType type = PropertyInputType.text)
@@ -231,7 +235,7 @@ namespace AweShur.Core
                 }
                 else
                 {
-                    value = obj[FieldName].ToString();
+                    value = obj[FieldName].NoNullString();
                 }
             }
 

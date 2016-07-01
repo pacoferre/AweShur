@@ -9,19 +9,46 @@
             properties: {
                 listName: {
                     type: String,
-                    value: ""
                 },
-                labelText: {
+                label: {
                     type: String,
-                    value: ""
                 },
                 listItems: {
                     type: Array,
+                    value: function () { return []; }
+                },
+                isSelector: {
+                    type: Boolean,
+                    value: true
                 },
             },
-            isSelector: true,
+            setListItem: function (fromserver) {
+                if (fromserver.listItems != null && this.listName != "") {
+                    this.listItems = fromserver.listItems[this.listName];
+                }
+            },
+            setData : function (fromserver) {
+                var name = this.dataFieldName;
+
+                if (name != null) {
+                    var value = fromserver.data[name];
+
+                    if (!this.value || this.value.toString().trim() != value) {
+                        this.value = value;
+                    }
+                }
+            },
+            getDataField: function () {
+                var name = this.dataFieldName;
+
+                if (name != null) {
+                    return this.value;
+                }
+
+                return "";
+            }
         };
 
-        AWSLBehaviors.SelectorBehavior = [AWSLBehaviors.ElementBehavior, AWSLBehaviors.SelectorBehaviorImpl]
+        AWSLBehaviors.SelectorBehavior = [AWSLBehaviors.ControlBehavior, AWSLBehaviors.SelectorBehaviorImpl]
     })();
 </script>

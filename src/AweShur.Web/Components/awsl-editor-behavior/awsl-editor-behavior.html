@@ -27,7 +27,8 @@
                     value: function () { return null;}
                 },
                 ajax: {
-                    type: Object
+                    type: Object,
+                    value: function () { return null;}
                 },
                 toserver: {
                     type: Object,
@@ -49,7 +50,13 @@
 
                         return obj;
                     }
-                }
+                },
+                wasAttached: false,
+                lastChangedElement: {
+                    type: Object,
+                    value: function () { return null; }
+                },
+                waitingResponse: false,
             },
             listeners: {
                 'awsl-refresh': '_onRefresh',
@@ -61,7 +68,6 @@
                 'change': '_onChanged',
                 'keyup': '_onChanged'
             },
-            wasAttached: false,
             attached: function () {
                 if (this.wasAttached) {
                     return;
@@ -156,8 +162,6 @@
 
                 return this._searchElementWithDataFieldName(node.parentNode, level + 1);
             },
-            lastChangedElement: null,
-            waitingResponse: false,
             _doPost: function (action) {
                 if (this.waitingResponse) {
                     this.async(function () {

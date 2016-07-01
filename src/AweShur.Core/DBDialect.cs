@@ -287,7 +287,7 @@ ORDER BY col.ORDINAL_POSITION";
 
             foreach (PropertyDefinition prop in properties)
             {
-                if (prop.IsDBField && !prop.IsIdentity)
+                if (prop.IsDBField && !prop.IsIdentity && !prop.IsComputed)
                 {
                     if (addedAny)
                     {
@@ -309,7 +309,7 @@ ORDER BY col.ORDINAL_POSITION";
 
             foreach (PropertyDefinition prop in properties)
             {
-                if (prop.IsDBField && !prop.IsIdentity)
+                if (prop.IsDBField && !prop.IsIdentity && !prop.IsComputed)
                 {
                     if (addedAny)
                     {

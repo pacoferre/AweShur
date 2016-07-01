@@ -15,8 +15,8 @@ namespace AweShur.Core
 {
     public class BusinessBaseProvider
     {
-        private Dictionary<string, Func<BusinessBase>> creators = new Dictionary<string, Func<BusinessBase>>();
-        private Dictionary<string, Func<BusinessBaseDefinition>> decorators = new Dictionary<string, Func<BusinessBaseDefinition>>();
+        protected Dictionary<string, Func<BusinessBase>> creators = new Dictionary<string, Func<BusinessBase>>();
+        protected Dictionary<string, Func<BusinessBaseDefinition>> decorators = new Dictionary<string, Func<BusinessBaseDefinition>>();
         private ConcurrentDictionary<string, Lazy<BusinessBaseDefinition>>
             definitionsCreators = new ConcurrentDictionary<string, Lazy<BusinessBaseDefinition>>();
         public static BusinessBaseProvider Instance { get; set; }
@@ -33,7 +33,6 @@ namespace AweShur.Core
             DB.Configuration = configuration;
 
             Instance.RegisterBusinessCreators();
-            Instance.RegisterCustomDecorators();
 
             AppUser.SALT = Encoding.ASCII.GetBytes(DB.Configuration.GetSection("Security")["SALT"]).Take(16).ToArray();
 
@@ -52,11 +51,6 @@ namespace AweShur.Core
         {
             creators.Add("AppUser", () => new Security.AppUser() );
             decorators.Add("AppUser", () => new Security.AppUserDecorator() );
-        }
-
-        public virtual void RegisterCustomDecorators()
-        {
-
         }
 
         public virtual BusinessBase CreateObject(string objectName, int dbNumber = 0)

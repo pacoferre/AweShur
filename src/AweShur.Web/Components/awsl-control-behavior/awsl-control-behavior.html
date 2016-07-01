@@ -11,10 +11,35 @@
                 },
                 value: {
                     type: String,
-                    value: ""
+                    observer: '_valueChanged'
                 },
+                isCustomControl: {
+                    type: Boolean,
+                    value: true
+                },
+                parentElement: {
+                    type: Object,
+                    value: function () { return null; }
+                }
             },
-            isCustomControl: true,
+            listeners: {
+                'iron-form-element-register': '_nothing',
+                'iron-form-element-unregister': '_nothing',
+            },
+
+            _nothing: function (e) {
+                e.stopPropagation();
+            },
+
+            attached: function () {
+                this.fire('awsl-element-register');
+            },
+
+            detached: function () {
+                if (this.parentElement) {
+                    this.parentElement.fire('awsl-element-unregister', { target: this });
+                }
+            },
         };
     })();
 </script>

@@ -71,6 +71,12 @@
                         <paper-icon-item role="menuitem" key="Users" on-tap="menuSelected">
                             <iron-icon icon="social:people" item-icon></iron-icon><span>Users</span>
                         </paper-icon-item>
+                        <paper-icon-item role="menuitem" key="Customers" on-tap="menuSelected">
+                            <iron-icon icon="social:people" item-icon></iron-icon><span>Customers</span>
+                        </paper-icon-item>
+                        <paper-icon-item role="menuitem" key="CustomerTypes" on-tap="menuSelected">
+                            <iron-icon icon="social:people" item-icon></iron-icon><span>Customer Types</span>
+                        </paper-icon-item>
                         <paper-icon-item role="menuitem" key="MyProfile" on-tap="menuSelected">
                             <iron-icon icon="social:people" item-icon></iron-icon><span>My profile</span>
                         </paper-icon-item>
@@ -82,6 +88,16 @@
                         <awsl-listeditor id="users" oname="AppUser"
                                             listhref='@("/Elements/Load/Security/UserListItem/" + idappuser)' listelement="aswd-userlistitem"
                                             edithref='@("/Elements/Load/Security/UserEdit/" + idappuser)' editelement="aswd-useredit"></awsl-listeditor>
+                    </div>
+                    <div key="Customers">
+                        <awsl-listeditor id="custs" oname="Customer"
+                                         listhref='@("/Elements/Load/Customer/CustomerListItem/" + idappuser)' listelement="aswd-customerlistitem"
+                                         edithref='@("/Elements/Load/Customer/CustomerEdit/" + idappuser)' editelement="aswd-customeredit"></awsl-listeditor>
+                    </div>
+                    <div key="CustomerTypes">
+                        <awsl-listeditor id="ctypes" oname="CustomerType"
+                                         listhref='@("/Elements/Load/Simple/SimpleListItem/" + idappuser)' listelement="aswd-simplelistitem"
+                                         edithref='@("/Elements/Load/Simple/SimpleEdit/" + idappuser)' editelement="aswd-simpleedit"></awsl-listeditor>
                     </div>
                     <div key="MyProfile">
                         <aswd-profile></aswd-profile>

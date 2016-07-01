@@ -1,0 +1,22 @@
+﻿@{
+    Layout = "";
+}
+<link rel="import" href="/lib/paper-input/paper-input.html">
+
+<link rel="import" href="/AWSLib/awsl-element-behavior">
+<link rel="import" href="/AWSLib/awsl-selector">
+
+<dom-module id="aswd-customeredit">
+    <template>
+        <awsl-selector data-field-name="idCustomerType" label="Type" list-name="CustomerType"></awsl-selector>
+        <paper-input data-field="name" label="Name" always-float-label></paper-input>
+        <paper-input data-field="creationDate" label="Creation Date (computed)" always-float-label readonly></paper-input>
+        <paper-input data-field="memo" label="Memo" always-float-label></paper-input>
+    </template>
+    <script>
+    Polymer({
+        is: 'aswd-customeredit',
+        behaviors: [AWSLBehaviors.ElementBehavior],
+    });
+    </script>
+</dom-module>

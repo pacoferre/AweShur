@@ -1,0 +1,18 @@
+﻿@{
+    Layout = "";
+}
+<link rel="import" href="/lib/paper-input/paper-input.html">
+
+<link rel="import" href="/AWSLib/awsl-element-behavior">
+
+<dom-module id="aswd-simpleedit">
+    <template>
+        <paper-input data-field="name" label="Name" always-float-label></paper-input>
+    </template>
+    <script>
+    Polymer({
+        is: 'aswd-simpleedit',
+        behaviors: [AWSLBehaviors.ElementBehavior],
+    });
+    </script>
+</dom-module>

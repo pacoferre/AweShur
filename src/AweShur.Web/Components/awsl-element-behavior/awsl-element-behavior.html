@@ -11,12 +11,27 @@
                     notify: true,
                     value: function () { return {}; }
                 },
+                elements: {
+                    type: Array,
+                    value: function () { return []; }
+                },
+                dataNames: {
+                    type: Array,
+                    value: function () { return []; }
+                },
+                listNames: {
+                    type: Array,
+                    value: function () { return []; }
+                },
+                listItems: {
+                    type: Array,
+                    value: function () { return []; }
+                },
+                parentElement: {
+                    type: Object,
+                    value: function () { return null; }
+                }
             },
-            elements: [],
-            dataNames: [],
-            listNames: [],
-            listItems: [],
-            parentElement: null,
             listeners: {
                 'awsl-element-register': '_registerElement',
                 'awsl-element-unregister': '_unregisterElement',
@@ -34,17 +49,13 @@
                 }
             },
             _registerElement: function (e) {
-                var element = Polymer.dom(e).rootTarget;
+                var element = e.target;
 
                 if (element !== this) {
-                    element.parentElement = this;
-                    this.elements.push(element);
+                    this._registerElementData(element);
 
                     e.stopPropagation();
-
-                    return element;
                 }
-                return null;
             },
             _unregisterElement: function (e) {
                 var target = e.detail.target;
@@ -58,33 +69,54 @@
 
                 e.stopPropagation();
             },
+            _registerElementData: function (element)
+            {
+                var name = element.dataFieldName;
+
+                element.parentElement = this;
+                this.elements.push(element);
+
+                if (name != undefined && name != "") {
+                    if (this.dataNames.indexOf(name) == -1) {
+                        this.dataNames.push(name);
+                    }
+                }
+                if (element.isCustomControl !== undefined) {
+                    if (element.isSelector !== undefined) {
+                        if (this.listNames.indexOf(element.listName) == -1) {
+                            this.listNames.push(element.listName);
+                        }
+                    }
+                }
+            },
             _registerIronFormElement: function (e) {
-                var element = Polymer.dom(e).rootTarget;
+                var element = e.target;
 
                 e.stopPropagation();
 
                 if (element !== this) {
-                    var name = element.getAttribute('data-field');
 
-                    if (name != undefined && name != "") {
-                        element.parentElement = this;
-                        this.elements.push(element);
-
-                        element.dataFieldName = name;
-
-                        if (this.dataNames.indexOf(name) == -1) {
-                            this.dataNames.push(name);
-                        }
-
-                        if (element.isCustomControl !== undefined) {
-                            if (element.isSelector !== undefined) {
-                                if (this.listNames.indexOf(element.listName) == -1) {
-                                    this.listNames.push(element.listName);
-                                }
-                            }
-                        }
-                        else
+                    if (element.parentNode !== undefined)
+                    {
+                        if (element.parentNode.isCustomControl !== undefined)
                         {
+                            element = element.parentNode;
+                        }
+                    }
+
+                    if (element.dataFieldName === undefined)
+                    {
+                        var name = element.getAttribute('data-field');
+
+                        if (name !== null && name != "") {
+                            element.dataFieldName = name;
+                        }
+                    }
+
+                    if (element.dataFieldName !== undefined && element.dataFieldName != "") {
+                        this._registerElementData(element);
+
+                        if (element.isCustomControl === undefined) {
                             element.setData = function (fromserver) {
                                 var name = this.dataFieldName;
 
@@ -148,6 +180,8 @@
             },
 
             setData: function (fromserver, lastChanged) {
+                this.setListItems(fromserver);
+
                 for (var el, i = 0; el = this.elements[i], i < this.elements.length; i++) {
                     if (lastChanged != null && el === lastChanged)
                     {
@@ -176,6 +210,16 @@
                     if (index > -1)
                     {
                         root.data[index] = el.getDataField();
+                    }
+                }
+            },
+
+            setListItems: function (fromserver) {
+                if (fromserver.listItems != null) {
+                    for (var el, i = 0; el = this.elements[i], i < this.elements.length; i++) {
+                        if (el.isSelector !== undefined) {
+                            el.setListItem(fromserver);
+                        }
                     }
                 }
             }

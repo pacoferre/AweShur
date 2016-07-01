@@ -30,7 +30,7 @@ namespace AweShur.Core.REST
         public Dictionary<string, string> props { get; set; }
 
         public List<BusinessTool> tools { get; set; }
-        public Dictionary<string, List<ListItemRest>> listItems { get; set; }
+        public Dictionary<string, List<ListItemRest>> listItems { get; set; } = null;
         public List<string> refreshLists { get; set; }
 
         public string title { get; set; }

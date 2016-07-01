@@ -31,7 +31,8 @@
                 items: {
                     type: Array,
                     observer: '_itemsChanged'
-                }
+                },
+                wasAttached: false,
             },
             _handleFormResponse: function (event) {
                 this.items = event.detail.response;
@@ -39,7 +40,6 @@
             _handleFormError: function (event) {
                 debugger;
             },
-            wasAttached: false,
             attached: function () {
                 if (this.wasAttached) {
                     return;

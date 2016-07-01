@@ -82,13 +82,16 @@ namespace AweShur.Core
                     ReadFromDB();
                 }
             }
-            else if (fromClient.action == "init")
+
+            if (fromClient.listNames.Count > 0)
             {
-                foreach(string listName in fromClient.listNames)
+                model.listItems = new Dictionary<string, List<ListItemRest>>(fromClient.listNames.Count);
+
+                foreach (string listName in fromClient.listNames)
                 {
                     ListTable table = BusinessBaseProvider.ListProvider.GetList(listName);
 
-                    model.listItems.Add(listName, table.ToClient);
+                    model.listItems.Add(listName, table.ToClient.Where(item => item.i != "0").ToList());
                 }
             }
 

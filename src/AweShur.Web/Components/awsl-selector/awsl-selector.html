@@ -1,24 +1,50 @@
 ﻿<link rel="import" href="../lib/polymer/polymer.html">
 <link rel="import" href="../lib/iron-ajax/iron-ajax.html">
-<link rel="import" href="../lib/paper-dropdown-menu/paper-dropdown-menu-light.html">
+<link rel="import" href="../lib/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../lib/paper-listbox/paper-listbox.html">
+<link rel="import" href="../lib/paper-item/paper-item.html">
+<link rel="import" href="/AWSLib/awsl-selector-behavior">
 
 <dom-module id="awsl-selector">
     <template>
-        <paper-dropdown-menu-light label="[[labelText]]">
-            <paper-listbox class="dropdown-content" on-iron-select="_itemSelected">
-                <template is="dom-repeat" items="[[listItems]]">
+        <paper-dropdown-menu label="[[label]]" always-float-label="[[alwaysFloatLabel]]">
+            <paper-listbox class="dropdown-content" on-iron-select="_itemSelected" id="selector">
+                <template is="dom-repeat" items="[[listItems]]" id="tItems">
                     <paper-item>[[item.t]]</paper-item>
                 </template>
             </paper-listbox>
-        </paper-dropdown-menu-light>
+        </paper-dropdown-menu>
     </template>
     <script>
     Polymer({
-      is: "aswd-login",
-      behaviors: [AWSLBehaviors.SelectorBehavior],
-      _itemSelected: function (item) {
-          this.value = item.v;
-      },
+        is: "awsl-selector",
+        behaviors: AWSLBehaviors.SelectorBehavior,
+        _itemSelected: function(item)
+        {
+            this.value = this.$.tItems.itemForElement(this.$.selector.selectedItem).i;
+        },
+        _valueChanged: function()
+        {
+            var doSearch = true;
+
+            if (this.$.selector.selectedItem !== undefined) {
+                var index = this.$.tItems.indexForElement(this.$.selector.selectedItem);
+
+                this.fire('change');
+                if (this.value == this.listItems[index].i) {
+                    doSearch = false;
+                }
+            }
+
+            if (doSearch) {
+                for (var i = 0; i < this.listItems.length; i++) {
+                    if (this.listItems[i].i == this.value) {
+                        this.$.selector.selected = i;
+                        return;
+                    }
+                }
+            }
+        }
     });
     </script>
 </dom-module>

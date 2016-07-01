@@ -11,7 +11,7 @@ namespace AweShur.Core.Lists
     {
         private string sqlList = "";
         private int dbNumber = 0;
-        public string[] Names { get; private set; } = null;
+        public string[] Names { get; private set; } = new string[0];
         public string ListName { get; private set; } = "";
         public int Count { get; private set; }
         public List<object[]> Items { get; private set; }
@@ -37,6 +37,8 @@ namespace AweShur.Core.Lists
             this.dbNumber = dbNumber;
 
             Items = new List<object[]>(40);
+
+            CreateGenerator();
         }
 
         private void CreateGenerator()
@@ -46,6 +48,8 @@ namespace AweShur.Core.Lists
                 List<ListItemRest> list = new List<ListItemRest>(Count);
 
                 list.Add(new ListItemRest(ZeroItem[0].ToString(), ZeroItem[1].ToString()));
+
+                EnsureList();
 
                 foreach (object[] item in Items)
                 {
@@ -80,9 +84,9 @@ namespace AweShur.Core.Lists
 
                         Items.Clear();
 
-                        foreach (dynamic item in dbItems)
+                        foreach (IDictionary<string, object> item in dbItems)
                         {
-                            if (Names == null)
+                            if (Names.Length == 0)
                             {
                                 Names = item.Keys.ToArray();
                             }
@@ -102,6 +106,11 @@ namespace AweShur.Core.Lists
             {
                 return generator.Value;
             }
+        }
+
+        public string GetValue(int id)
+        {
+            return Items.Find(item => item[0].NoNullInt() == id)[1].NoNullString();
         }
 
         public object[] First
@@ -144,9 +153,9 @@ namespace AweShur.Core.Lists
             sqlList = obj["sqlList"].ToObject(typeof(string)).ToString();
             dbNumber = (int)obj["dbNumber"].ToObject(typeof(int));
             Names = (string[])obj["Names"].ToObject(typeof(string[]));
-            Count = (int)obj["IsModified"].ToObject(typeof(int));
-            ZeroItem = (object[]) obj["IsDeleting"].ToObject(typeof(object[]));
-            Items = (List<object[]>)obj["IsDeleting"].ToObject(typeof(List<object[]>));
+            Count = (int)obj["Count"].ToObject(typeof(int));
+            ZeroItem = (object[]) obj["ZeroItem"].ToObject(typeof(object[]));
+            Items = (List<object[]>)obj["Items"].ToObject(typeof(List<object[]>));
             pending = obj["pending"].ToObject(typeof(string)).ToString() == "1";
         }
     }
