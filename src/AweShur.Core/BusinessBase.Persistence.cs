@@ -118,6 +118,8 @@ namespace AweShur.Core
                         IsModified = false;
                         IsDeleting = false;
 
+                        BusinessBaseProvider.ListProvider.Invalidate(TableName);
+
                         AfterStoreToDB(wasNew, wasModified, wasDeleting);
                     }
                 }
