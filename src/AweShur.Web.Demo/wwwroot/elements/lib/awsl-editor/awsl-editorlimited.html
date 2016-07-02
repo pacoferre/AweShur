@@ -1,7 +1,7 @@
 ﻿<link rel="import" href="../../../AWSLib/awsl-editor-behavior">
-<link rel="import" href="../awsl-toolbar/awsl-toolbar.html">
+<link rel="import" href="../awsl-toolbar/awsl-toolbarlimited.html">
 
-<dom-module id="awsl-editor">
+<dom-module id="awsl-editorlimited">
     <template>
         <style>
             :host {
@@ -20,7 +20,7 @@
             }
         </style>
 
-        <awsl-toolbar id="tool" title="[[title]]"></awsl-toolbar>
+        <awsl-toolbarlimited id="toollimited" title="[[title]]"></awsl-toolbarlimited>
         <div id="main">
         </div>
         <paper-toast id="toastOk" text=""></paper-toast>
@@ -28,13 +28,13 @@
     </template>
     <script>
     Polymer({
-        is: 'awsl-editor',
+        is: 'awsl-editorlimited',
         behaviors: [AWSLBehaviors.EditorBehavior],
         getMain: function () {
             return this.$.main;
         },
         setToolBar: function (fromServer) {
-            this.$.tool.setToolBar(fromServer);
+            this.$.toollimited.setToolBar(fromServer);
         },
         showMessage: function (msg) {
             this.$.toastOk.text = msg;

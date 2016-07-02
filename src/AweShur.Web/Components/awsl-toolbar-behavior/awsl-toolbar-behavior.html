@@ -12,31 +12,51 @@
             },
             setToolBar: function(fromServer)
             {
+                var newHidden = false;
+                var refreshHidden = false;
+                var deleteHidden = false;
+                var okHidden = false;
+                var okIcon = "done";
+                var clearHidden = false;
+
                 if (fromServer.isNew) {
-                    this.$.new.hidden = true;
-                    this.$.refresh.hidden = true;
-                    this.$.delete.hidden = true;
-                    this.$.ok.hidden = false;
-                    this.$.ok.icon = "done";
-                    this.$.clear.hidden = false;
+                    newHidden = true;
+                    refreshHidden = true;
+                    deleteHidden = true;
+                    okHidden = false;
+                    okIcon = "done";
+                    clearHidden = false;
                 }
                 else {
-                    this.$.new.hidden = fromServer.isNew;
-                    this.$.refresh.hidden = fromServer.isNew;
+                    newHidden = fromServer.isNew;
+                    refreshHidden = fromServer.isNew;
 
                     if (fromServer.isDeleting) {
-                        this.$.delete.hidden = true;
-                        this.$.ok.hidden = false;
-                        this.$.ok.icon = "delete";
-                        this.$.clear.hidden = false;
+                        deleteHidden = true;
+                        okHidden = false;
+                        okIcon = "delete";
+                        clearHidden = false;
                     }
                     else {
-                        this.$.delete.hidden = false;
-                        this.$.ok.hidden = !fromServer.isModified;
-                        this.$.ok.icon = "done";
-                        this.$.clear.hidden = !fromServer.isModified;
+                        deleteHidden = false;
+                        okHidden = !fromServer.isModified;
+                        okIcon = "done";
+                        clearHidden = !fromServer.isModified;
                     }
                 }
+
+                if (this.$.new !== undefined)
+                    this.$.new.hidden = newHidden;
+                if (this.$.refresh !== undefined)
+                    this.$.refresh.hidden = refreshHidden;
+                if (this.$.delete !== undefined)
+                    this.$.delete.hidden = deleteHidden;
+                if (this.$.ok !== undefined) {
+                    this.$.ok.hidden = okHidden;
+                    this.$.ok.icon = okIcon;
+                }
+                if (this.$.clear !== undefined)
+                    this.$.clear.hidden = clearHidden;
             },
             _onRefresh: function()
             {

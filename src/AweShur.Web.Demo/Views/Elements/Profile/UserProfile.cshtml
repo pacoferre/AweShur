@@ -4,16 +4,16 @@
     int? idappuser = AppUser.IDAppUser(Context);
 }
 <link rel="import" href="/lib/polymer/polymer.html">
-<link rel="import" href="/elements/lib/awsl-editor/awsl-editor.html">
+<link rel="import" href="/elements/lib/awsl-editor/awsl-editorlimited.html">
 
 <dom-module id="aswd-profile">
     <template>
         <style>
         </style>
 
-        <awsl-editor id="editor" oname="AppUser" key="@idappuser" on-elementready="_elementready" limited="true"
+        <awsl-editorlimited id="editor" oname="AppUser" key="@idappuser" on-elementready="_elementready"
                      edithref='@("/Elements/Load/Profile/UserProfileEdit/" + idappuser)' editelement="aswd-userprofileedit">
-        </awsl-editor>
+        </awsl-editorlimited>
     </template>
     <script>
         Polymer({

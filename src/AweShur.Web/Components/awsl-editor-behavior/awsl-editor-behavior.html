@@ -227,10 +227,7 @@
                         this.showMessage(fromServer.normalMessage);
                     }
 
-                    if (this.$.tool !== undefined)
-                    {
-                        this.$.tool.setToolBar(fromServer);
-                    }
+                    this.setToolBar(fromServer);
 
                     if (fromServer.action == "ok") {
                         this.fire('saved');
