@@ -1,4 +1,11 @@
-﻿CREATE TABLE [dbo].[AppUser](
+﻿/****** Object:  Table [dbo].[AppUser]    Script Date: 02/07/2016 12:52:35 ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [dbo].[AppUser](
 	[idAppUser] [int] IDENTITY(1,1) NOT NULL,
 	[email] [nvarchar](200) NOT NULL,
 	[password] [nvarchar](100) NOT NULL,
@@ -6,16 +13,75 @@
 	[surname] [nvarchar](50) NOT NULL,
 	[su] [bit] NOT NULL,
 	[deactivated] [bit] NOT NULL,
-CONSTRAINT [PK_User] PRIMARY KEY CLUSTERED 
+ CONSTRAINT [PK_User] PRIMARY KEY CLUSTERED 
 (
 	[idAppUser] ASC
-) WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
 
+GO
+
+/****** Object:  Table [dbo].[CustomerType]    Script Date: 02/07/2016 12:52:35 ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [dbo].[CustomerType](
+	[idCustomerType] [int] IDENTITY(1,1) NOT NULL,
+	[name] [nvarchar](40) NOT NULL,
+ CONSTRAINT [PK_CustomerType] PRIMARY KEY CLUSTERED 
+(
+	[idCustomerType] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+
+GO
+
+/****** Object:  Table [dbo].[Customer]    Script Date: 02/07/2016 12:52:35 ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [dbo].[Customer](
+	[idCustomer] [int] IDENTITY(1,1) NOT NULL,
+	[idCustomerType] [int] NOT NULL,
+	[name] [nvarchar](200) NOT NULL,
+	[creationDate] [date] NOT NULL CONSTRAINT [DF_Customer_CreationDate]  DEFAULT (getdate()),
+	[memo] [ntext] NOT NULL,
+ CONSTRAINT [PK_Customer] PRIMARY KEY CLUSTERED 
+(
+	[idCustomer] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+
+GO
+
+SET ANSI_PADDING ON
+
+GO
+
+/****** Object:  Index [IX_AppUser]    Script Date: 02/07/2016 12:52:35 ******/
 CREATE UNIQUE NONCLUSTERED INDEX [IX_AppUser] ON [dbo].[AppUser]
 (
 	[email] ASC
-) WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 GO
- 
+
+/****** Object:  Index [IX_Customer]    Script Date: 02/07/2016 12:52:35 ******/
+CREATE NONCLUSTERED INDEX [IX_Customer] ON [dbo].[Customer]
+(
+	[idCustomerType] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+GO
+
+ALTER TABLE [dbo].[Customer]  WITH CHECK ADD  CONSTRAINT [FK_Customer_CustomerType] FOREIGN KEY([idCustomerType])
+REFERENCES [dbo].[CustomerType] ([idCustomerType])
+GO
+
+ALTER TABLE [dbo].[Customer] CHECK CONSTRAINT [FK_Customer_CustomerType]
+GO
+
