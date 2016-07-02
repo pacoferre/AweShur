@@ -206,9 +206,12 @@ namespace AweShur.Core
 
         protected virtual string PrepareDeleteQuery()
         {
-            string sql = "";
+            StringBuilder sql = new StringBuilder("delete");
 
-            return sql;
+            sql.Append(" from " + dialect.Encapsulate(tableName));
+            sql.Append(" where " + dialect.SQLWherePrimaryKey(ListProperties));
+
+            return sql.ToString();
         }
 
         public string DeleteQuery

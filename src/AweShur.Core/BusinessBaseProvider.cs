@@ -149,45 +149,45 @@ namespace AweShur.Core
         public static BusinessBase RetreiveObject(HttpContext context, string objectName, int dbNumber, string key)
         {
             string objectKey = ObjectKey(objectName, dbNumber, key);
+            object objTemp;
+            BusinessBase obj;
             byte[] data;
 
-            if (context.Items[objectKey] == null)
+            if (context.Items.TryGetValue(objectKey, out objTemp))
             {
-                lock (context)
+                obj = (BusinessBase)objTemp;
+            }
+            else
+            { 
+                obj = Instance.CreateObject(objectName, dbNumber);
+
+                data = GetData(objectKey);
+
+                if (data != null)
                 {
-                    if (context.Items[objectKey] == null)
-                    {
-                        BusinessBase obj = Instance.CreateObject(objectName, dbNumber);
-
-                        data = GetData(objectKey);
-
-                        if (data != null)
-                        {
-                            obj.Deserialize(data);
-                        }
-                        else
-                        {
-                            if (key != "0")
-                            {
-                                obj.ReadFromDB(key);
-                            }
-                            else
-                            {
-                                if (!obj.IsNew)
-                                {
-                                    obj.SetNew();
-                                }
-                            }
-
-                            StoreObject(obj, objectName);
-                        }
-
-                        context.Items[objectKey] = obj;
-                    }
+                    obj.Deserialize(data);
                 }
+                else
+                {
+                    if (key != "0")
+                    {
+                        obj.ReadFromDB(key);
+                    }
+                    else
+                    {
+                        if (!obj.IsNew)
+                        {
+                            obj.SetNew();
+                        }
+                    }
+
+                    StoreObject(obj, objectName);
+                }
+
+                context.Items[objectKey] = obj;
             }
 
-            return (BusinessBase)context.Items[objectKey];
+            return obj;
         }
     }
 }

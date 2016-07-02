@@ -270,6 +270,11 @@ namespace AweShur.Core
 
                 var result = conn.QuerySingle(def.InsertQuery, def.GetInsertParameters(obj), trans);
 
+                if (result != 1)
+                {
+                    throw new Exception("Error insering new " + obj.Description);
+                }
+
                 if (def.primaryKeyIsOneInt)
                 {
                     obj[def.PrimaryKeys[0]] = Convert.ToInt32(result.id);
@@ -279,13 +284,22 @@ namespace AweShur.Core
                     obj[def.PrimaryKeys[0]] = Convert.ToInt64(result.id);
                 }
             }
+            else if (obj.IsDeleting)
+            {
+                int result = conn.Execute(def.DeleteQuery, def.GetPrimaryKeyParameters(obj), trans);
+
+                if (result != 1)
+                {
+                    throw new Exception("Error deleting " + obj.Description);
+                }
+            }
             else
             {
                 int result = conn.Execute(def.UpdateQuery, def.GetUpdateParameters(obj), trans);
 
                 if (result != 1)
                 {
-                    throw new Exception("Error. Nothing to update");
+                    throw new Exception("Error updating " + obj.Description);
                 }
             }
 

@@ -80,6 +80,11 @@ namespace AweShur.Core
         {
             IsDBField = true;
             IsNullable = colDef.IsNullable;
+            if (!IsNullable)
+            {
+                Required = true;
+            }
+
             IsComputed = colDef.IsComputed;
             IsIdentity = colDef.IsIdentity;
             IsPrimaryKey = colDef.IsPrimaryKey;
