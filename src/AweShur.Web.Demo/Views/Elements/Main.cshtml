@@ -1,168 +1,121 @@
 ﻿@{
     int? idappuser = AppUser.IDAppUser(Context);
-
-    string firstMenu = "Users";
 }
 <link rel="import" href="/lib/polymer/polymer.html">
 <link rel="import" href="/lib/app-route/app-location.html">
 <link rel="import" href="/lib/app-route/app-route.html">
 <link rel="import" href="/lib/app-layout/app-scroll-effects/app-scroll-effects.html">
 <link rel="import" href="/lib/app-layout/app-layout.html">
-<link rel="import" href="/elements/lib/awsl-listeditor/awsl-listeditor.html">
+<link rel="import" href="/lib/app-layout/app-drawer-layout/app-drawer-layout.html">
+<link rel="import" href="/lib/app-layout/app-drawer/app-drawer.html">
+<link rel="import" href="/lib/app-layout/app-header/app-header.html">
+<link rel="import" href="/lib/app-layout/app-header-layout/app-header-layout.html">
+<link rel="import" href="/lib/app-layout/app-toolbar/app-toolbar.html">
+<link rel="import" href="/lib/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="/lib/iron-pages/iron-pages.html">
+<link rel="import" href="/lib/iron-selector/iron-selector.html">
 
-<link rel="import" href="@("/Elements/Load/Profile/UserProfile/" + idappuser)">
+<link rel="import" href="/elements/lib/awsl-listeditor/awsl-listeditor.html">
 
 <dom-module id="aswd-main">
     <template>
         <style>
-            paper-menu {
-                background-color: #fafafa;
+            :host {
+                display: block;
+                --app-primary-color: #4285f4;
+                --app-secondary-color: black;
             }
 
             app-header {
-              background-color: #4285f4;
-              color: #fff;
+                background-color: var(--app-primary-color);
+                color: #fff;
             }
+
             app-header paper-icon-button {
-              --paper-icon-button-ink-color: #fff;
-            }
-            app-drawer-layout {
-              --app-drawer-layout-content-transition: margin 0.2s;
-            }
-            app-drawer {
-              --app-drawer-content-container: {
-                background-color: #eee;
-              }
-            }
-            .drawer-content {
-              margin-top: 64px;
-              height: calc(100vh - 64px);
-              overflow: auto;
-            }
-            
-            .page-title {
-              font-size: 24px !important;
+                --paper-icon-button-ink-color: white;
             }
 
-            paper-menu {
-                background-color: #eee;
+            .drawer-list {
+                margin: 0 20px;
             }
 
-            paper-menu a > *, paper-menu paper-item > *, paper-menu paper-icon-item > * {
-                pointer-events: none;
+            .drawer-list a {
+                display: block;
+                padding: 0 16px;
+                line-height: 40px;
+                text-decoration: none;
+                color: var(--app-secondary-color);
             }
 
-            @@media (max-width: 600px) {
-                .page-title {
-                    font-size: 22px !important;
-                }
+            .drawer-list a.iron-selected {
+                color: black;
+                font-weight: bold;
+            }
+
+            .drawer-list a.subroute {
+                padding-left: 32px;
             }
         </style>
-        <app-location use-hash-as-path route="{{route}}" id="lation"></app-location>
 
-        <!-- Two routes, one for the home page, and one for the tabs page. -->
-        <app-route route="{{route}}" pattern="/:actual" data="{{data}}"></app-route>
+        <app-location use-hash-as-path route="{{route}}"></app-location>
+        <app-route route="{{route}}" pattern="/:page" data="{{routeData}}" tail="{{subroute}}"></app-route>
+        <app-drawer-layout fullbleed="">
 
-        <app-header-layout>
-            <app-drawer-layout id="drawerLayout">
-                <app-drawer swipe-open>
-                    <paper-menu selected="{{data.actual}}" attr-for-selected='key' selectable="paper-icon-item"
-                                class="drawer-content">
-                        <paper-icon-item role="menuitem" key="Users" on-tap="menuSelected">
-                            <iron-icon icon="social:people" item-icon></iron-icon><span>Users</span>
-                        </paper-icon-item>
-                        <paper-icon-item role="menuitem" key="Customers" on-tap="menuSelected">
-                            <iron-icon icon="social:people" item-icon></iron-icon><span>Customers</span>
-                        </paper-icon-item>
-                        <paper-icon-item role="menuitem" key="CustomerTypes" on-tap="menuSelected">
-                            <iron-icon icon="social:people" item-icon></iron-icon><span>Customer Types</span>
-                        </paper-icon-item>
-                        <paper-icon-item role="menuitem" key="MyProfile" on-tap="menuSelected">
-                            <iron-icon icon="social:people" item-icon></iron-icon><span>My profile</span>
-                        </paper-icon-item>
-                    </paper-menu>
-                </app-drawer>
+            <app-drawer>
+                <app-toolbar>Menu</app-toolbar>
+                <iron-selector selected="[[page]]" attr-for-selected="name" class="drawer-list" role="navigation">
+                    <a name="customer" href="/#/customer">Customers</a>
+                    <a name="customertype" href="/#/customertype">Customer types</a>
+                    <a name="user" href="/#/user">Users</a>
+                    <a name="profile" href="/#/profile">My profile</a>
+                </iron-selector>
+            </app-drawer>
 
-                <iron-pages selected="{{data.actual}}" attr-for-selected='key'>
-                    <div key="Users">
-                        <awsl-listeditor id="users" oname="AppUser"
-                                            listhref='@("/Elements/Load/Security/UserListItem/" + idappuser)' listelement="aswd-userlistitem"
-                                            edithref='@("/Elements/Load/Security/UserEdit/" + idappuser)' editelement="aswd-useredit"></awsl-listeditor>
-                    </div>
-                    <div key="Customers">
-                        <awsl-listeditor id="custs" oname="Customer"
-                                         listhref='@("/Elements/Load/Customer/CustomerListItem/" + idappuser)' listelement="aswd-customerlistitem"
-                                         edithref='@("/Elements/Load/Customer/CustomerEdit/" + idappuser)' editelement="aswd-customeredit"></awsl-listeditor>
-                    </div>
-                    <div key="CustomerTypes">
-                        <awsl-listeditor id="ctypes" oname="CustomerType"
-                                         listhref='@("/Elements/Load/Simple/SimpleListItem/" + idappuser)' listelement="aswd-simplelistitem"
-                                         edithref='@("/Elements/Load/Simple/SimpleEdit/" + idappuser)' editelement="aswd-simpleedit"></awsl-listeditor>
-                    </div>
-                    <div key="MyProfile">
-                        <aswd-profile></aswd-profile>
-                    </div>
+            <app-header-layout has-scrolling-region="">
+                <app-header condenses="" reveals="" effects="waterfall">
+                    <app-toolbar>
+                        <paper-icon-button icon="menu" drawer-toggle=""></paper-icon-button>
+                        <div title="">[[MainTitle]]</div>
+                        @if (AppUser.UserIsAuthenticated(Context))
+                        {
+                            <div>Hello @AppUser.GetAppUser(Context).Description</div>
+                        }
+                        <paper-icon-button id="exit" icon="exit-to-app" on-tap="_exit"></paper-icon-button>
+                    </app-toolbar>
+                </app-header>
+                <iron-pages role="main" selected="[[page]]" attr-for-selected="name">
+                    <app-customer name="customer" oname="Customer" subroute="{{subroute}}"></app-customer>
+                    <app-customertype name="customertype" oname="CustomerType" subroute="{{subroute}}"></app-customertype>
+                    <app-user name="user" oname="AppUser" subroute="{{subroute}}"></app-user>
+                    <aswd-profile name="profile"></aswd-profile>
                 </iron-pages>
-            </app-drawer-layout>
-
-            <app-header fixed effects="waterfall">
-                <app-toolbar>
-                    <paper-icon-button id="toggle" icon="menu"></paper-icon-button>
-                    <div title class="page-title">{{computeFullName(data.actual)}}</div>
-                    @if (AppUser.UserIsAuthenticated(Context))
-                    {
-                        <div>Hello @AppUser.GetAppUser(Context).Description</div>
-                    }
-                    <paper-icon-button id="exit" icon="exit-to-app" on-tap="_exit"></paper-icon-button>
-                </app-toolbar>
-            </app-header>
-
-        </app-header-layout>
+            </app-header-layout>
+        </app-drawer-layout>
     </template>
     <script>
     Polymer({
         is: 'aswd-main',
         properties: {
-            route: {
-                type: Object,
-            },
-            data: {
-                type: Object,
-            },
+            page: {
+                type: String,
+                reflectToAttribute: !0,
+                observer: "_pageChanged"
+            }
+        },
+        observers: ["_routePageChanged(routeData.page)"],
+        _routePageChanged: function (e) {
+            this.page = e || "customer"
+        },
+        _pageChanged: function (e) {
+            if (e == "profile") {
+                this.importHref('@("/Elements/Load/Profile/UserProfile/" + idappuser)', null, null, !0)
+            }
+            else {
+                this.importHref('@("/Elements/Load/Template/ListEdit/" + idappuser)' + '?e=' + e, null, null, !0)
+            }
         },
         _exit: function () {
             window.location = "/Home/Exit";
-        },
-        menuSelected: function (e) {
-            var key = e.currentTarget.getAttribute('key');
-
-            if (key == "Users")
-            {
-                this.$.users.reset();
-            }
-        },
-        computeFullName: function (key) {
-            if (key === undefined)
-            {
-                return "";
-            }
-            return key.replace(/_/g, " ");
-        },
-        ready: function() {
-            var drawerLayout = this.$.drawerLayout;
-            this.$.toggle.addEventListener('tap', function () {
-                if (drawerLayout.forceNarrow || !drawerLayout.narrow) {
-                    drawerLayout.forceNarrow = !drawerLayout.forceNarrow;
-                } else {
-                    drawerLayout.drawer.toggle();
-                }
-            });
-            this.async(function () {
-                if (!this.route.path) {
-                    this.set('data.actual', '@(firstMenu)');
-                    window.location = ("" + window.location).replace(/\#.*$/, "") + '@("#/" + firstMenu)';
-                }
-            });
         },
     });
     </script>

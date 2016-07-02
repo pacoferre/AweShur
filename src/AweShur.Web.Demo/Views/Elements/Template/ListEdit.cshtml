@@ -1,0 +1,79 @@
+﻿@{
+    bool error = false;
+    string msgError = "";
+    string componentName = "";
+    string listhref = "";
+    string edithref = "";
+    string listelement = "";
+    string editelement = "";
+
+    try
+    {
+        string eref = this.Context.Request.Query["e"].NoNullString();
+
+        if (eref == "")
+        {
+            throw new Exception("Query parameter 'e' missing");
+        }
+        else
+        {
+            int? idappuser = AppUser.IDAppUser(Context);
+            AweShur.Web.Demo.Views.Elements.Locations.LocationItem item = AweShur.Web.Demo.Views.Elements.Locations.Item(eref);
+            string folder = item.Folder;
+            string name = item.Name;
+
+            if (name == "")
+            {
+                name = folder;
+            }
+
+            componentName = "app-" + eref;
+
+            if (folder == "Simple")
+            {
+                eref = "simple";
+            }
+
+            listhref = "/Elements/Load/" + folder + "/" + name + "ListItem/" + idappuser;
+            edithref = "/Elements/Load/" + folder + "/" + name + "Edit/" + idappuser;
+            listelement = "aswd-" + eref + "listitem";
+            editelement = "aswd-" + eref + "edit";
+
+        }
+    }
+    catch(Exception exp)
+    {
+        error = true;
+        msgError = exp.ToString();
+    }
+
+    Layout = "";
+}
+<link rel="import" href="/lib/polymer/polymer.html">
+
+<link rel="import" href="/elements/lib/awsl-listeditor/awsl-listeditor.html">
+
+<dom-module id="@componentName">
+    <template>
+        @if (error)
+        {
+            <div>@msgError</div>
+        }
+        else
+        {
+            <awsl-listeditor oname="[[oname]]"
+                listhref='@listhref' listelement="@listelement"
+                edithref='@edithref' editelement="@editelement"></awsl-listeditor>
+        }
+    </template>
+    <script>
+    Polymer({
+        is: '@componentName',
+        properties: {
+            oname: {
+                type: String
+            }
+        },
+    });
+    </script>
+</dom-module>

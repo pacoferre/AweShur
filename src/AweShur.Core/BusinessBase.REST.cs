@@ -83,7 +83,7 @@ namespace AweShur.Core
                 }
             }
 
-            if (fromClient.listNames.Count > 0)
+            if (fromClient.listNames != null && fromClient.listNames.Count > 0)
             {
                 model.listItems = new Dictionary<string, List<ListItemRest>>(fromClient.listNames.Count);
 
@@ -97,11 +97,14 @@ namespace AweShur.Core
 
             // Send object data.
             model.data = new Dictionary<string, string>(Definition.ListProperties.Count);
-            foreach (PropertyDefinition prop in Definition.ListProperties)
+            if (fromClient.dataNames != null)
             {
-                if (fromClient.dataNames.Contains(prop.FieldName))
+                foreach (PropertyDefinition prop in Definition.ListProperties)
                 {
-                    model.data.Add(prop.FieldName, prop.GetValue(this));
+                    if (fromClient.dataNames.Contains(prop.FieldName))
+                    {
+                        model.data.Add(prop.FieldName, prop.GetValue(this));
+                    }
                 }
             }
 

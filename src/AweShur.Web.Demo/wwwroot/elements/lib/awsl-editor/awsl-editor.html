@@ -1,5 +1,6 @@
 ﻿<link rel="import" href="../../../AWSLib/awsl-editor-behavior">
 <link rel="import" href="../awsl-toolbar/awsl-toolbar.html">
+<link rel="import" href="../awsl-toolbar/awsl-toolbar-limited.html">
 
 <dom-module id="awsl-editor">
     <template>
@@ -20,7 +21,12 @@
             }
         </style>
 
-        <awsl-toolbar id="tool" title="[[title]]"></awsl-toolbar>
+        <template is="dom-if" if="[[!limited]]">
+            <awsl-toolbar id="tool" title="[[title]]"></awsl-toolbar>
+        </template>
+        <template is="dom-if" if="[[limited]]">
+            <awsl-toolbar-limited id="toollimited" title="[[title]]"></awsl-toolbar-limited>
+        </template>
         <div id="main">
         </div>
         <paper-toast id="toastOk" text=""></paper-toast>
@@ -29,9 +35,23 @@
     <script>
     Polymer({
         is: 'awsl-editor',
+        properties: {
+            limited: {
+                type: Boolean,
+                value: false
+            }
+        },
         behaviors: [AWSLBehaviors.EditorBehavior],
         getMain: function () {
             return this.$.main;
+        },
+        setToolBar: function (fromServer) {
+            if (this.limited) {
+                this.$.toollimited.setToolBar(fromServer);
+            }
+            else {
+                this.$.tool.setToolBar(fromServer);
+            }
         },
         showMessage: function (msg) {
             this.$.toastOk.text = msg;

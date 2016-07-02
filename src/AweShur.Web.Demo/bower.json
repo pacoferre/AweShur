@@ -1,8 +1,8 @@
 {
-	"name": "asp.net",
-	"private": true,
+  "name": "asp.net",
+  "private": true,
   "dependencies": {
-    "polymer": "^1.5.0",
+    "polymer": "1.4.0",
     "iron-elements": "PolymerElements/iron-elements#^1.0.8",
     "paper-elements": "PolymerElements/paper-elements#^1.0.0",
     "neon-elements": "PolymerElements/neon-elements#^1.0.0",
@@ -10,6 +10,10 @@
     "app-elements": "PolymerElements/app-elements#^0.9.0",
     "app-layout": "PolymerElements/app-layout#^0.9.0",
     "re-captcha": "https://github.com/cbalit/re-captcha.git",
-    "prism": "^1.5.1"
+    "prism": "1.4.1"
+  },
+  "resolutions": {
+    "polymer": "^v1.2.0",
+    "prism": "1.5.1"
   }
 }

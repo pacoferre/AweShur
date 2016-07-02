@@ -217,8 +217,7 @@
 
                     if (fromServer.action != "changed" && this.lastChangedElement != null)
                     {
-                        // This should never happen.
-                        debugger;
+                        this.lastChangedElement = null;
                     }
 
                     this.theelement.setData(fromServer, this.lastChangedElement);
@@ -257,6 +256,8 @@
             },
             getMain: function () {
                 return null;
+            },
+            setToolBar: function() {
             },
             showMessage: function(msg) {
             },
