@@ -6,6 +6,7 @@
 <link rel="import" href="../../../lib/iron-ajax/iron-ajax.html">
 <link rel="import" href="../../../lib/iron-list/iron-list.html">
 <link rel="import" href="../../../lib/paper-fab/paper-fab.html">
+<link rel="import" href="../../../lib/app-route/app-route.html">
 
 <link rel="import" href="../../../AWSLib/awsl-listeditor-behavior">
 <link rel="import" href="../awsl-editor/awsl-editor.html">
@@ -52,12 +53,18 @@
             }
         </style>
 
-        <neon-animated-pages id="pages" class="flex" selected="0" entry-animation="slide-from-right-animation" exit-animation="slide-left-animation">
+        <app-route route="{{route}}"
+                   pattern="/:key"
+                   data="{{routeData}}"
+                   id="routeManager">
+        </app-route>
+
+        <neon-animated-pages id="pages" class="flex" entry-animation="slide-from-right-animation" exit-animation="slide-left-animation">
             <neon-animatable>
                 <div id="listContent">
-                    <paper-fab icon="add" on-tap="_onAdd"></paper-fab>
                     <iron-list id="itemsList" as="item" items="[[items]]" scroll-target="listContent">
                     </iron-list>
+                    <paper-fab icon="add" on-tap="_onAdd"></paper-fab>
                 </div>
             </neon-animatable>
             <neon-animatable>
@@ -73,6 +80,30 @@
         Polymer({
             is: 'awsl-listeditor',
             behaviors: [AWSLBehaviors.ListEditorBehavior],
+
+            observers: [
+              '_routeChanged(route)',
+              '_viewChanged(routeData.key)'
+            ],
+            _routeChanged: function (newRoute) {
+                if (newRoute.path == "")
+                {
+                    this.set('routeData.key', '');
+                }
+            },
+            _viewChanged: function (key) {
+                if (key !== undefined && key != "") {
+                    this.key = key;
+                    this.$.pages.entryAnimation = "slide-from-right-animation";
+                    this.$.pages.exitAnimation = "slide-left-animation";
+                    this.$.pages.selected = 1;
+                    this.$.editor.load(this.key);
+                }
+                else {
+                    this.reset();
+                }
+            },
+
             getItemsList: function () {
                 return this.$.itemsList;
             },
@@ -100,9 +131,7 @@
             },
             reset: function () {
                 if (this.$.pages.selected != 0) {
-                    this.$.pages.entryAnimation = "slide-from-left-animation";
-                    this.$.pages.exitAnimation = "slide-right-animation";
-                    this.$.pages.selected = 0;
+                    this._onClose();
                 }
             },
             _computedClass: function (isSelected) {
@@ -114,21 +143,17 @@
             },
             _selectedItemChanged: function (e) {
                 this.key = e.model.item.key;
-                this.$.editor.load(this.key);
-                this.$.pages.entryAnimation = "slide-from-right-animation";
-                this.$.pages.exitAnimation = "slide-left-animation";
-                this.$.pages.selected = 1;
+                this.set('route.path', '/' + this.key);
             },
             _onAdd: function () {
                 this.key = "0";
-                this.$.editor.load(this.key);
-                this.$.pages.entryAnimation = "slide-from-right-animation";
-                this.$.pages.exitAnimation = "slide-left-animation";
-                this.$.pages.selected = 1;
+                this.set('route.path', '/' + this.key);
             },
             _onClose: function () {
                 this.$.pages.entryAnimation = "slide-from-left-animation";
                 this.$.pages.exitAnimation = "slide-right-animation";
+                this.set('route.path', '');
+                this.set('routeData.key', '');
                 this.$.pages.selected = 0;
             }
         });

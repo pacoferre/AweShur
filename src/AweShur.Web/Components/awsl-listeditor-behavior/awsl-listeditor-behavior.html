@@ -32,6 +32,10 @@
                     type: Array,
                     observer: '_itemsChanged'
                 },
+                route: {
+                    type: Object,
+                    notify: true
+                },
                 wasAttached: false,
             },
             _handleFormResponse: function (event) {

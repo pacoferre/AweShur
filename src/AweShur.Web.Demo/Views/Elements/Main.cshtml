@@ -85,11 +85,11 @@
                     </app-toolbar>
                 </app-header>
                 <iron-pages role="main" selected="[[page]]" attr-for-selected="name">
-                    <app-customer name="customer" oname="Customer" subroute="{{subroute}}"></app-customer>
-                    <app-customertype name="customertype" oname="CustomerType" subroute="{{subroute}}"></app-customertype>
+                    <app-customer name="customer" oname="Customer" route="{{subroute}}"></app-customer>
+                    <app-customertype name="customertype" oname="CustomerType" route="{{subroute}}"></app-customertype>
                     @if (currentUser["su"].NoNullBool())
                     {
-                    <app-user name="user" oname="AppUser" subroute="{{subroute}}"></app-user>
+                    <app-user name="user" oname="AppUser" route="{{subroute}}"></app-user>
                     <aswd-profile name="profile"></aswd-profile>
                     }
                 </iron-pages>
@@ -104,11 +104,17 @@
                 type: String,
                 reflectToAttribute: !0,
                 observer: "_pageChanged"
+            },
+            route: {
+                type: Object,
+                notify: true
             }
         },
-        observers: ["_routePageChanged(routeData.page)"],
+        observers: [
+            "_routePageChanged(routeData.page)",
+        ],
         _routePageChanged: function (e) {
-            this.page = e || "customer"
+            this.page = e || "customer";
         },
         _pageChanged: function (e) {
             if (e == "profile") {

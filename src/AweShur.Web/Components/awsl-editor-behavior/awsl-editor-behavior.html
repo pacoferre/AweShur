@@ -104,7 +104,10 @@
                     this.toserver.root.key = newKey;
                 }
 
-                this._doPost("load");
+                if (this.key !== undefined)
+                {
+                    this._doPost("load");
+                }
             },
             _init: function () {
                 this.async(function () {
@@ -231,6 +234,10 @@
 
                     if (fromServer.action == "ok") {
                         this.fire('saved');
+                    }
+                    if (fromServer.wasDeleting)
+                    {
+                        this.fire('close');
                     }
                 }
                 else {

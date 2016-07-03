@@ -61,7 +61,7 @@
         }
         else
         {
-            <awsl-listeditor oname="[[oname]]"
+            <awsl-listeditor oname="[[oname]]" route="{{route}}" path="[[name]]"
                 listhref='@listhref' listelement="@listelement"
                 edithref='@edithref' editelement="@editelement"></awsl-listeditor>
         }
@@ -72,6 +72,10 @@
         properties: {
             oname: {
                 type: String
+            },
+            route: {
+                type: Object,
+                notify: true
             }
         },
     });
