@@ -61,7 +61,7 @@
         }
         else
         {
-            <awsl-listeditor oname="[[oname]]" route="{{route}}" path="[[name]]" title=""
+            <awsl-listeditor oname="[[oname]]" route="{{route}}" path="[[name]]" title="" id="le"
                 listhref='@listhref' listelement="@listelement"
                 edithref='@edithref' editelement="@editelement"></awsl-listeditor>
         }
@@ -78,6 +78,10 @@
                 notify: true
             }
         },
+        refresh: function()
+        {
+            this.$.le.refresh();
+        }
     });
     </script>
 </dom-module>

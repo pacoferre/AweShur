@@ -5,7 +5,7 @@
     var AWSLBehaviors = AWSLBehaviors || {};
 
     (function () {
-        AWSLBehaviors.ListEditorBehavior = {
+        AWSLBehaviors.ListEditorBehaviorImpl = {
             properties: {
                 key: {
                     type: String,
@@ -37,9 +37,24 @@
                     notify: true
                 },
                 wasAttached: false,
+                lastTitle: {
+                    type: String
+                }
+            },
+            listeners: {
+                'awsl-refresh': 'refresh',
+            },
+            refresh: function () {
+                if (this.lastTitle !== undefined && this.lastTitle != "")
+                {
+                    this.fire('awsl-set-title', { title: this.lastTitle });
+                }
+                this.notifyResize();
+                this.ajaxlist.generateRequest();
             },
             _handleFormResponse: function (event) {
                 this.items = event.detail.response.data;
+                this.lastTitle = event.detail.response.plural;
                 this.fire('awsl-set-title', { title: event.detail.response.plural });
             },
             _handleFormError: function (event) {
@@ -64,7 +79,6 @@
                         Polymer.dom(this.getItemsList()).appendChild(this.getListTemplate());
 
                         this.ajaxlist.url = "/CRUD/List/" + this.oname;
-                        this.ajaxlist.generateRequest();
                     }, function (e) {
                         debugger;
                     });
@@ -77,8 +91,10 @@
                 return null;
             },
             _onSaved: function () {
-                this.ajaxlist.generateRequest()
+                this.refresh();
             }
         };
+
+        AWSLBehaviors.ListEditorBehavior = [AWSLBehaviors.ListEditorBehaviorImpl, Polymer.IronResizableBehavior]
     })();
 </script>

@@ -84,7 +84,7 @@
                         <paper-icon-button id="exit" icon="exit-to-app" on-tap="_exit"></paper-icon-button>
                     </app-toolbar>
                 </app-header>
-                <iron-pages role="main" selected="[[page]]" attr-for-selected="name">
+                <iron-pages role="main" selected="[[page]]" attr-for-selected="name" id="pages">
                     <app-customer name="customer" oname="Customer" route="{{subroute}}"></app-customer>
                     <app-customertype name="customertype" oname="CustomerType" route="{{subroute}}"></app-customertype>
                     @if (currentUser["su"].NoNullBool())
@@ -127,12 +127,24 @@
             this.page = newPage || "customer";
         },
         _pageChanged: function (e) {
+
+            var onload = function () {
+                this.async(function () {
+                    var showed = this.$.pages.children[this.$.pages.selected];
+
+                    if (showed.refresh !== undefined) {
+                        showed.refresh();
+                    }
+                });
+            };
+
             if (e == "profile") {
-                this.importHref('@("/Elements/Load/Profile/UserProfile/" + idappuser)', null, null, !0)
+                this.importHref('@("/Elements/Load/Profile/UserProfile/" + idappuser)', onload, null, !0)
             }
             else {
-                this.importHref('@("/Elements/Load/Template/ListEdit/" + idappuser)' + '?e=' + e, null, null, !0)
+                this.importHref('@("/Elements/Load/Template/ListEdit/" + idappuser)' + '?e=' + e, onload, null, !0)
             }
+
         },
         _exit: function () {
             window.location = "/Home/Exit";

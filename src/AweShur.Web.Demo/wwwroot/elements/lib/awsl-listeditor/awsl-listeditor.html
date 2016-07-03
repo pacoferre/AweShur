@@ -7,6 +7,7 @@
 <link rel="import" href="../../../lib/iron-list/iron-list.html">
 <link rel="import" href="../../../lib/paper-fab/paper-fab.html">
 <link rel="import" href="../../../lib/app-route/app-route.html">
+<link rel="import" href="../../../lib/iron-resizable-behavior/iron-resizable-behavior.html">
 
 <link rel="import" href="../../../AWSLib/awsl-listeditor-behavior">
 <link rel="import" href="/elements/lib/awsl-list-toolbar/awsl-list-toolbar.html">
@@ -80,7 +81,7 @@
     <script>
         Polymer({
             is: 'awsl-listeditor',
-            behaviors: [AWSLBehaviors.ListEditorBehavior],
+            behaviors: AWSLBehaviors.ListEditorBehavior,
 
             observers: [
               '_routeChanged(route)',
