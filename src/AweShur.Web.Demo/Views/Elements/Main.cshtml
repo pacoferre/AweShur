@@ -113,8 +113,12 @@
         observers: [
             "_routePageChanged(routeData.page)",
         ],
-        _routePageChanged: function (e) {
-            this.page = e || "customer";
+        _routePageChanged: function (newPage) {
+            if (newPage === undefined || newPage == "") {
+                window.location = "/#/customer";
+                return;
+            }
+            this.page = newPage || "customer";
         },
         _pageChanged: function (e) {
             if (e == "profile") {
