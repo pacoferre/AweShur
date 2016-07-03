@@ -60,7 +60,7 @@
 
         <app-location use-hash-as-path route="{{route}}"></app-location>
         <app-route route="{{route}}" pattern="/:page" data="{{routeData}}" tail="{{subroute}}"></app-route>
-        <app-drawer-layout fullbleed="">
+        <app-drawer-layout fullbleed="" responsive-width="1024px">
 
             <app-drawer>
                 <app-toolbar>Menu</app-toolbar>
@@ -110,9 +110,15 @@
                 notify: true
             }
         },
+        listeners: {
+            'awsl-set-title': '_onSetTitle',
+        },
         observers: [
             "_routePageChanged(routeData.page)",
         ],
+        _onSetTitle: function (newTitle) {
+            this.MainTitle = newTitle.detail.title;
+        },
         _routePageChanged: function (newPage) {
             if (newPage === undefined || newPage == "") {
                 window.location = "/#/customer";

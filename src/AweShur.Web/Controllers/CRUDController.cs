@@ -32,9 +32,15 @@ namespace AweShur.Web.Controllers
         }
 
         [HttpGet]
-        public IEnumerable<dynamic> List(string objectName)
+        public ListModelToClient List(string objectName)
         {
-            return BusinessBaseProvider.RetreiveObject(HttpContext, objectName, "0").Get();
+            ListModelToClient resp = new ListModelToClient();
+            BusinessBase obj = BusinessBaseProvider.RetreiveObject(HttpContext, objectName, "0");
+
+            resp.plural = obj.Definition.Plural;
+            resp.data = obj.Get();
+            
+            return resp;
         }
 
         [HttpPost]

@@ -1,4 +1,5 @@
-﻿<link rel="import" href="../../../lib/app-layout/app-toolbar/app-toolbar.html">
+﻿<link rel="import" href="../../../lib/polymer/polymer.html">
+<link rel="import" href="../../../lib/app-layout/app-toolbar/app-toolbar.html">
 <link rel="import" href="../../../lib/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../../../lib/iron-icons/iron-icons.html">
 <link rel="import" href="../../../AWSLib/awsl-toolbar-behavior">
@@ -13,6 +14,7 @@
             app-toolbar {
                 background-color: #4285f4;
                 color: #fff;
+                height: 48px;
             }
             paper-icon-button {
                 --paper-icon-button-ink-color: white;
@@ -27,7 +29,7 @@
             <paper-icon-button id="refresh" icon="refresh" on-tap="_onRefresh"></paper-icon-button>
             <paper-icon-button id="new" icon="add" on-tap="_onNew">+</paper-icon-button>
             <paper-icon-button id="delete" icon="delete" on-tap="_onDelete">+</paper-icon-button>
-            <span main-title class="sp">[[title]]</span>
+            <span main-title class="sp"></span>
             <paper-icon-button id="ok" icon="done" on-tap="_onOK"></paper-icon-button>
             <paper-icon-button id="clear" icon="close" on-tap="_onClear"></paper-icon-button>
         </app-toolbar>

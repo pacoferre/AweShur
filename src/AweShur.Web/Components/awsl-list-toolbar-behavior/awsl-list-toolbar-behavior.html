@@ -1,0 +1,23 @@
+﻿<link rel="import" href="../lib/polymer/polymer.html">
+
+<script>
+    var AWSLBehaviors = AWSLBehaviors || {};
+
+    (function () {
+        AWSLBehaviors.ListToolBarBehavior = {
+            properties: {
+                title: {
+                    type: String,
+                },
+            },
+            _onRefresh: function()
+            {
+                this.fire('awsl-refresh');
+            },
+            _onNew: function()
+            {
+                this.fire('awsl-new');
+            },
+        };
+    })();
+</script>

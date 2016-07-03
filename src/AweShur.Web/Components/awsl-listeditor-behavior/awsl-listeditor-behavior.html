@@ -39,7 +39,8 @@
                 wasAttached: false,
             },
             _handleFormResponse: function (event) {
-                this.items = event.detail.response;
+                this.items = event.detail.response.data;
+                this.fire('awsl-set-title', { title: event.detail.response.plural });
             },
             _handleFormError: function (event) {
                 debugger;

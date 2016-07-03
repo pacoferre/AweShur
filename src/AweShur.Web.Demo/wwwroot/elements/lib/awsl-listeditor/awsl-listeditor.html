@@ -9,6 +9,7 @@
 <link rel="import" href="../../../lib/app-route/app-route.html">
 
 <link rel="import" href="../../../AWSLib/awsl-listeditor-behavior">
+<link rel="import" href="/elements/lib/awsl-list-toolbar/awsl-list-toolbar.html">
 <link rel="import" href="../awsl-editor/awsl-editor.html">
 
 <dom-module id="awsl-listeditor">
@@ -62,9 +63,9 @@
         <neon-animated-pages id="pages" class="flex" entry-animation="slide-from-right-animation" exit-animation="slide-left-animation">
             <neon-animatable>
                 <div id="listContent">
+                    <awsl-list-toolbar on-awsl-new="_onNew"></awsl-list-toolbar>
                     <iron-list id="itemsList" as="item" items="[[items]]" scroll-target="listContent">
                     </iron-list>
-                    <paper-fab icon="add" on-tap="_onAdd"></paper-fab>
                 </div>
             </neon-animatable>
             <neon-animatable>
@@ -145,7 +146,7 @@
                 this.key = e.model.item.key;
                 this.set('route.path', '/' + this.key);
             },
-            _onAdd: function () {
+            _onNew: function () {
                 this.key = "0";
                 this.set('route.path', '/' + this.key);
             },
