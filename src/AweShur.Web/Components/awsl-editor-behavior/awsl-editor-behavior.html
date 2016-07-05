@@ -132,14 +132,14 @@
 
                 if (elementWithDataFieldName != null)
                 {
-                    var val = elementWithDataFieldName.getDataField();
+                    var val = elementWithDataFieldName.getData();
 
                     this.lastChangedElement = elementWithDataFieldName;
 
-                    this.toserver.root.changed[elementWithDataFieldName.dataFieldName] =
+                    this.toserver.root.changed[elementWithDataFieldName.dataField] =
                         val;
 
-                    //console.log("Changed " + elementWithDataFieldName.dataFieldName + " = '" + val + "'");
+                    //console.log("Changed " + elementWithDataFieldName.dataField + " = '" + val + "'");
 
                     this.debounce('changed', function () {
                         this._doPost("changed");
@@ -152,7 +152,7 @@
                 {
                     return null;
                 }
-                if (node.dataFieldName !== undefined)
+                if (node.dataField !== undefined)
                 {
                     return node;
                 }

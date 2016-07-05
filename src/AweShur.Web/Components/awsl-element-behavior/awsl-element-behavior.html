@@ -71,7 +71,7 @@
             },
             _registerElementData: function (element)
             {
-                var name = element.dataFieldName;
+                var name = element.dataField;
 
                 element.parentElement = this;
                 this.elements.push(element);
@@ -104,21 +104,21 @@
                         }
                     }
 
-                    if (element.dataFieldName === undefined)
+                    if (element.dataField === undefined)
                     {
                         var name = element.getAttribute('data-field');
 
                         if (name !== null && name != "") {
-                            element.dataFieldName = name;
+                            element.dataField = name;
                         }
                     }
 
-                    if (element.dataFieldName !== undefined && element.dataFieldName != "") {
+                    if (element.dataField !== undefined && element.dataField != "") {
                         this._registerElementData(element);
 
                         if (element.isCustomControl === undefined) {
                             element.setData = function (fromserver) {
-                                var name = this.dataFieldName;
+                                var name = this.dataField;
 
                                 if (name != null) {
                                     var value = fromserver.data[name];
@@ -149,8 +149,8 @@
                                     }
                                 }
                             };
-                            element.getDataField = function () {
-                                var name = this.dataFieldName;
+                            element.getData = function () {
+                                var name = this.dataField;
 
                                 if (name != null) {
                                     var value;
@@ -205,11 +205,11 @@
                 }
 
                 for (var el, i = 0; el = this.elements[i], i < this.elements.length; i++) {
-                    var index = this.dataNames.indexOf(el.dataFieldName);
+                    var index = this.dataNames.indexOf(el.dataField);
 
                     if (index > -1)
                     {
-                        root.data[index] = el.getDataField();
+                        root.data[index] = el.getData();
                     }
                 }
             },

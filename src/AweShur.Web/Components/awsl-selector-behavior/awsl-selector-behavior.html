@@ -28,7 +28,7 @@
                 }
             },
             setData : function (fromserver) {
-                var name = this.dataFieldName;
+                var name = this.dataField;
 
                 if (name != null) {
                     var value = fromserver.data[name];
@@ -38,8 +38,8 @@
                     }
                 }
             },
-            getDataField: function () {
-                var name = this.dataFieldName;
+            getData: function () {
+                var name = this.dataField;
 
                 if (name != null) {
                     return this.value;

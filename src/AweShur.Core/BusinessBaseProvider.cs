@@ -158,16 +158,26 @@ namespace AweShur.Core
                 obj = (BusinessBase)objTemp;
             }
             else
-            { 
+            {
+                bool readFromDB = true;
+
                 obj = Instance.CreateObject(objectName, dbNumber);
 
                 data = GetData(objectKey);
 
                 if (data != null)
                 {
-                    obj.Deserialize(data);
+                    try
+                    {
+                        obj.Deserialize(data);
+                        readFromDB = false;
+                    }
+                    catch
+                    {
+                        // Sometimes Redis returns bad data.
+                    }
                 }
-                else
+                if (readFromDB)
                 {
                     if (key != "0")
                     {
