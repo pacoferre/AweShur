@@ -37,11 +37,17 @@ namespace AweShur.Core
                 {
                     if (value != null && values[index] != null)
                     {
-                        IsModified = ((IComparable)values[index]).CompareTo(value) != 0;
+                        if (((IComparable)values[index]).CompareTo(value) != 0)
+                        {
+                            IsModified = true;
+                        }
                     }
                     else
                     {
-                        IsModified = !(value == null && values[index] == null);
+                        if (!(value == null && values[index] == null))
+                        {
+                            IsModified = true;
+                        }
                     }
                 }
 

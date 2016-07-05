@@ -83,7 +83,7 @@ namespace AweShur.Core
 
                     AfterReadFromDB();
                 }
-                catch
+                catch(Exception exp)
                 {
                     readed = false;
                 }
@@ -118,7 +118,7 @@ namespace AweShur.Core
                         IsModified = false;
                         IsDeleting = false;
 
-                        BusinessBaseProvider.ListProvider.Invalidate(TableName);
+                        BusinessBaseProvider.ListProvider.Invalidate(ObjectName);
 
                         AfterStoreToDB(wasNew, wasModified, wasDeleting);
                     }

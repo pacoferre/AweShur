@@ -54,6 +54,7 @@ namespace AweShur.Web.Controllers
 
                     toClient.formToken = Guid.NewGuid().ToString();
                     toClient.sequence = 1;
+                    toClient.action = "init";
 
                     return new JsonResult(toClient);
                 }

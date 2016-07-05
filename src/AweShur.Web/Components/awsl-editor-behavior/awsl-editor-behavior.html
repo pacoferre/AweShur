@@ -51,15 +51,16 @@
                         return obj;
                     }
                 },
-                wasAttached: false,
                 lastChangedElement: {
                     type: Object,
                     value: function () { return null; }
                 },
-                waitingResponse: false,
             },
+            wasInitialized: false,
+            waitingResponse: false,
+            pendingLoad: false,
             listeners: {
-                'awsl-refresh': '_onRefresh',
+                'awsl-refresh': 'refresh',
                 'awsl-new': '_onNew',
                 'awsl-delete': '_onDelete',
                 'awsl-ok': '_onOK',
@@ -69,7 +70,7 @@
                 'keyup': '_onChanged'
             },
             attached: function () {
-                if (this.wasAttached) {
+                if (this.wasInitialized) {
                     return;
                 }
 
@@ -84,8 +85,6 @@
 
                 this.toserver.oname = this.oname;
 
-                this.wasAttached = true;
-
                 this.async(function () {
                     this.importHref(this.edithref, function (e) {
                         var newElement = document.createElement(this.editelement);
@@ -93,11 +92,14 @@
 
                         this.theelement = Polymer.dom(this.getMain()).appendChild(newElement);
 
-                        this._init();
+                        this._doPost("init");
                     }, function (e) {
                         debugger;
                     });
                 });
+            },
+            refresh: function () {
+                this.load();
             },
             load: function (newKey) {
                 if (newKey !== undefined) {
@@ -109,14 +111,6 @@
                 {
                     this._doPost("load");
                 }
-            },
-            _init: function () {
-                this.async(function () {
-                    this._doPost("init");
-                });
-            },
-            _onRefresh: function() {
-                this.load();
             },
             _onNew: function () {
                 this._doPost("new");
@@ -131,7 +125,6 @@
                 this._doPost("clear");
             },
             _onClose: function () {
-                this._doPost("clear");
                 this.fire('close');
             },
             _onChanged: function (elementChanged) {
@@ -167,10 +160,22 @@
                 return this._searchElementWithDataFieldName(node.parentNode, level + 1);
             },
             _doPost: function (action) {
-                if (this.waitingResponse || !this.wasAttached) {
-                    this.async(function () {
-                        this._doPost(action);
-                    }, 10);
+                var hold = action != "init";
+
+                if (hold)
+                {
+                    hold = this.waitingResponse || !this.wasInitialized;
+                }
+
+                if (hold) {
+                    if (action == "load") {
+                        this.pendingLoad = true;
+                    }
+                    else {
+                        this.async(function () {
+                            this._doPost(action);
+                        }, 10);
+                    }
                 }
                 else {
                     this.waitingResponse = true;
@@ -205,43 +210,44 @@
                 this.waitingResponse = false;
                 this.toserver.sequence++;
 
-                if (this.toserver.formToken == "")
-                {
-                    this.lastChangedElement = null;
-                    this.toserver.formToken = fromServer.formToken;
-                    this.fire('elementready');
-
-                    return;
-                }
-
                 if (fromServer.ok) {
-                    this.title = fromServer.title;
+                    if (fromServer.action == "init") {
+                        this.wasInitialized = true;
+                        this.toserver.formToken = fromServer.formToken;
+                        this.fire('elementready');
+                    }
+                    else {
+                        this.title = fromServer.title;
 
-                    this.fire('awsl-set-title', { title: fromServer.title });
+                        this.fire('awsl-set-title', { title: fromServer.title });
 
-                    this.key = fromServer.keyObject;
-                    this.toserver.root.key = fromServer.keyObject;
+                        this.key = fromServer.keyObject;
+                        this.toserver.root.key = fromServer.keyObject;
 
-                    if (fromServer.action != "changed" && this.lastChangedElement != null)
-                    {
+                        if (fromServer.action != "changed" && this.lastChangedElement != null) {
+                            this.lastChangedElement = null;
+                        }
+
+                        this.theelement.setData(fromServer, this.lastChangedElement);
                         this.lastChangedElement = null;
+
+                        if (fromServer.normalMessage != "") {
+                            this.showMessage(fromServer.normalMessage);
+                        }
+
+                        this.setToolBar(fromServer);
+
+                        if (fromServer.action == "ok") {
+                            this.fire('saved');
+                        }
+                        if (fromServer.wasDeleting) {
+                            this.fire('close');
+                        }
                     }
 
-                    this.theelement.setData(fromServer, this.lastChangedElement);
-                    this.lastChangedElement = null;
-
-                    if (fromServer.normalMessage != "") {
-                        this.showMessage(fromServer.normalMessage);
-                    }
-
-                    this.setToolBar(fromServer);
-
-                    if (fromServer.action == "ok") {
-                        this.fire('saved');
-                    }
-                    if (fromServer.wasDeleting)
-                    {
-                        this.fire('close');
+                    if (this.pendingLoad) {
+                        this.pendingLoad = false;
+                        this.load();
                     }
                 }
                 else {

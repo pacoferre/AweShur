@@ -27,6 +27,21 @@ namespace AweShur.Core
             lazyDB = new Lazy<DB>(() => DB.InstanceNumber(DBNumber));
         }
 
+        public virtual string ObjectName
+        {
+            get
+            {
+                string objectName = ToString();
+
+                if (objectName.Contains("BusinessBase"))
+                {
+                    return TableName;
+                }
+
+                return objectName.Substring(objectName.LastIndexOf(".") + 1);
+            }
+        }
+
         public virtual string Key
         {
             get
@@ -50,53 +65,6 @@ namespace AweShur.Core
         public virtual void PostSetNew()
         {
 
-        }
-
-        public virtual bool IsReadOnly(string property)
-        {
-            return false;
-        }
-
-        public bool IsNew
-        {
-            get
-            {
-                return dataItem.IsNew;
-            }
-
-            set
-            {
-                dataItem.IsNew = value;
-            }
-        }
-
-        public bool IsModified
-        {
-            get
-            {
-                return dataItem.IsModified;
-            }
-
-            set
-            {
-                dataItem.IsModified = value;
-            }
-        }
-
-        public bool IsDeleting
-        {
-            get
-            {
-                return dataItem.IsDeleting;
-            }
-            set
-            {
-                if (IsNew && value)
-                {
-                    throw new Exception("New object, can't mark as deleting.");
-                }
-                dataItem.IsDeleting = value;
-            }
         }
 
         public virtual object this[string property]

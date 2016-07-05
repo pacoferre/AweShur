@@ -5,7 +5,7 @@
     var AWSLBehaviors = AWSLBehaviors || {};
 
     (function () {
-        AWSLBehaviors.ListEditorBehaviorImpl = {
+        AWSLBehaviors.ListEditorBehavior = {
             properties: {
                 key: {
                     type: String,
@@ -36,11 +36,11 @@
                     type: Object,
                     notify: true
                 },
-                wasAttached: false,
                 lastTitle: {
                     type: String
                 }
             },
+            wasAttached: false,
             listeners: {
                 'awsl-refresh': 'refresh',
             },
@@ -49,8 +49,9 @@
                 {
                     this.fire('awsl-set-title', { title: this.lastTitle });
                 }
-                this.notifyResize();
-                this.ajaxlist.generateRequest();
+                if (this.wasAttached) {
+                    this.ajaxlist.generateRequest();
+                }
             },
             _handleFormResponse: function (event) {
                 this.items = event.detail.response.data;
@@ -64,7 +65,6 @@
                 if (this.wasAttached) {
                     return;
                 }
-                this.wasAttached = true;
 
                 this.ajaxlist = document.createElement('iron-ajax');
 
@@ -79,6 +79,7 @@
                         Polymer.dom(this.getItemsList()).appendChild(this.getListTemplate());
 
                         this.ajaxlist.url = "/CRUD/List/" + this.oname;
+                        this.wasAttached = true;
                     }, function (e) {
                         debugger;
                     });
@@ -94,7 +95,5 @@
                 this.refresh();
             }
         };
-
-        AWSLBehaviors.ListEditorBehavior = [AWSLBehaviors.ListEditorBehaviorImpl, Polymer.IronResizableBehavior]
     })();
 </script>

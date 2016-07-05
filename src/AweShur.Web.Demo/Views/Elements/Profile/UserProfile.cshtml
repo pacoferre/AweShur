@@ -22,7 +22,10 @@
             },
             _elementready: function () {
                 this.$.editor.load(@idappuser);
-            }
+            },
+            refresh: function () {
+                this.$.editor.refresh();
+            },
         });
     </script>
 </dom-module>

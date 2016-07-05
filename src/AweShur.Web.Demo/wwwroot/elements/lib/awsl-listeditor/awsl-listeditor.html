@@ -41,9 +41,6 @@
             }
 
             #listContent {
-                height:calc(100vh - 64px);
-                height:-moz-calc(100vh - 64px);
-                height:-webkit-calc(100vh - 64px);
                 overflow-x: hidden;
                 overflow-y: auto;
             }
@@ -72,7 +69,8 @@
             <neon-animatable>
                 <div>
                     <awsl-editor id="editor" on-saved="_onSaved" on-close="_onClose" oname="{{oname}}"
-                                    edithref="[[edithref]]" editelement="[[editelement]]">
+                                 on-awsl-set-title="_editorSetTitle"
+                                 edithref="[[edithref]]" editelement="[[editelement]]">
                     </awsl-editor>
                 </div>
             </neon-animatable>
@@ -81,8 +79,7 @@
     <script>
         Polymer({
             is: 'awsl-listeditor',
-            behaviors: AWSLBehaviors.ListEditorBehavior,
-
+            behaviors: [AWSLBehaviors.ListEditorBehavior],
             observers: [
               '_routeChanged(route)',
               '_viewChanged(routeData.key)'
@@ -91,18 +88,24 @@
                 if (newRoute.path == "")
                 {
                     this.set('routeData.key', '');
+                    if (this.key !== undefined && this.key != "") {
+                        this._viewChanged('');
+                    }
                 }
             },
             _viewChanged: function (key) {
-                if (key !== undefined && key != "") {
-                    this.key = key;
-                    this.$.pages.entryAnimation = "slide-from-right-animation";
-                    this.$.pages.exitAnimation = "slide-left-animation";
-                    this.$.pages.selected = 1;
-                    this.$.editor.load(this.key);
-                }
-                else {
+                if (key === undefined || key == "") {
                     this.reset();
+                }
+                else
+                {
+                    if (this.route.prefix == "/" + this.path) {
+                        this.key = key;
+                        this.$.pages.entryAnimation = "slide-from-right-animation";
+                        this.$.pages.exitAnimation = "slide-left-animation";
+                        this.$.pages.selected = 1;
+                        this.$.editor.load(this.key);
+                    }
                 }
             },
 
@@ -134,6 +137,7 @@
             reset: function () {
                 if (this.$.pages.selected != 0) {
                     this._onClose();
+                    this.refresh();
                 }
             },
             _computedClass: function (isSelected) {
@@ -157,6 +161,11 @@
                 this.set('route.path', '');
                 this.set('routeData.key', '');
                 this.$.pages.selected = 0;
+            },
+            _editorSetTitle: function (event) {
+                if (this.$.pages.selected == 0) {
+                    event.stopPropagation();
+                }
             }
         });
     </script>
