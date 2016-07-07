@@ -7,6 +7,13 @@
 
 <dom-module id="awsl-date">
     <template>
+        <style>
+            paper-icon-button {
+                width: 24px;
+                height: 24px;
+                padding: 0px 2px 4px 2px;
+            }
+        </style>
         <paper-input label="[[label]]" always-float-label="[[alwaysFloatLabel]]" id="inputDate" readonly>
             <paper-icon-button suffix hidden="[[noedit]]" on-tap="_openCalendar" icon="icons:today" alt="calendar" title="calendar">
             </paper-icon-button>
