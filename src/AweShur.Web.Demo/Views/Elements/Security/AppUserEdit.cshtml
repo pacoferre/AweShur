@@ -4,23 +4,21 @@
 }
 <link rel="import" href="/lib/polymer/polymer.html">
 <link rel="import" href="/lib/paper-input/paper-input.html">
-<link rel="import" href="/lib/paper-input/paper-textarea.html">
-
+<link rel="import" href="/lib/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="/lib/gold-email-input/gold-email-input.html">
 <link rel="import" href="/AWSLib/awsl-element-behavior">
-<link rel="import" href="/AWSLib/awsl-selector">
-<link rel="import" href="/AWSLib/awsl-date">
 
-<dom-module id="aswd-customeredit">
+<dom-module id="aswd-useredit">
     <template>
-        @Html.PolEditor(Model, "idCustomerType")
+        @Html.PolEditor(Model, "deactivated")
+        @Html.PolEditor(Model, "email")
+        @Html.PolEditor(Model, "password")
         @Html.PolEditor(Model, "name")
-        @Html.PolEditor(Model, "creationDate")
-        @Html.PolEditor(Model, "memo")
-        @Html.PolEditor(Model, "nextCall")
+        @Html.PolEditor(Model, "surname")
     </template>
     <script>
     Polymer({
-        is: 'aswd-customeredit',
+        is: 'aswd-useredit',
         behaviors: [AWSLBehaviors.ElementBehavior],
     });
     </script>

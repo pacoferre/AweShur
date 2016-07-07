@@ -139,10 +139,10 @@
             };
 
             if (e == "profile") {
-                this.importHref('@("/Elements/Load/Profile/UserProfile/" + idappuser)', onload, null, !0)
+                this.importHref('@("/Elements/Load/Profile/UserProfile/AppUser/" + idappuser)', onload, null, !0)
             }
             else {
-                this.importHref('@("/Elements/Load/Template/ListEdit/" + idappuser)' + '?e=' + e, onload, null, !0)
+                this.importHref('@("/Elements/LoadTemplate/ListEdit/" + idappuser)' + '?e=' + e, onload, null, !0)
             }
 
         },

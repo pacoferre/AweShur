@@ -1,0 +1,110 @@
+﻿<link rel="import" href="../lib/polymer/polymer.html">
+<link rel="import" href="../lib/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../lib/paper-input/paper-input.html">
+<link rel="import" href="../lib/jv-datepicker/app-datepicker-animations.html">
+<link rel="import" href="../lib/jv-datepicker/app-datepicker-dialog.html">
+<link rel="import" href="/AWSLib/awsl-control-behavior">
+
+<dom-module id="awsl-date">
+    <template>
+        <paper-input label="[[label]]" always-float-label="[[alwaysFloatLabel]]" id="inputDate" readonly>
+            <paper-icon-button suffix hidden="[[noedit]]" on-tap="_openCalendar" icon="icons:today" alt="calendar" title="calendar">
+            </paper-icon-button>
+            <paper-icon-button suffix hidden="[[_hideClear(noedit,noclear)]]" on-tap="_clear" icon="clear" alt="clear" title="clear">
+            </paper-icon-button>        
+        </paper-input>
+        <app-datepicker-dialog id="datePicker" format="yyyy/mm/dd" date="{{currentDate}}" no-animation
+                               auto-update-date></app-datepicker-dialog>
+    </template>
+    <script>
+    Polymer({
+        is: "awsl-date",
+        behaviors: [AWSLBehaviors.ControlBehavior],
+        properties: {
+            alwaysFloatLabel: {
+                type: Boolean,
+                value: !0
+            },
+            emptyDate: {
+                type: String,
+                value: !0
+            },
+            currentDate: {
+                type: String,
+            },
+            noedit: {
+                type: Boolean,
+                value: !1
+            },
+            noclear: {
+                type: Boolean,
+                value: !1
+            }
+        },
+        ready: function () {
+            this.$.datePicker.disableDays = [];
+        },
+        _hideClear: function (noedit, noclear) {
+            return noedit || noclear;
+        },
+        listeners: {
+            'iron-overlay-closed': '_onClose'
+        },
+        _openCalendar: function() {
+            this.$.datePicker.open();
+        },
+        _onClose: function (event) {
+            this.async(function () {
+                if (event.detail.confirmed) {
+                    if (this.$.inputDate.value != this.$.datePicker.$.datePicker.date) {
+                        this.$.inputDate.value = this.$.datePicker.$.datePicker.date;
+                        this.$.value = this.$.datePicker.$.datePicker.date;
+                        this.fire('change');
+                    }
+                }
+            });
+        },
+        _clear: function ()
+        {
+            if (this.$.inputDate.value != "")
+            {
+                this.$.inputDate.value = "";
+                this.fire('change');
+            }
+        },
+        setData: function (fromserver) {
+            var name = this.dataField;
+
+            if (name != null) {
+                var value = fromserver.data[name];
+
+                if (value == null || value == "")
+                {
+                    if (this.$.inputDate.value.toString().trim() != "")
+                    {
+                        this.$.inputDate.value = "";
+                    }
+                    this.emptyDate = true;
+                }
+                else {
+                    if (!this.$.inputDate.value || this.$.inputDate.value.toString().trim() != value) {
+                        this.$.inputDate.value = value;
+                        this.$.datePicker.date = value;
+                    }
+                    this.emptyDate = false;
+                }
+            }
+        },
+        getData: function () {
+            var name = this.dataField;
+
+            if (name != null) {
+                return this.$.inputDate.value;
+            }
+
+            return "";
+        }
+    });
+    </script>
+</dom-module>
+

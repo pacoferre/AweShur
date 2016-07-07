@@ -20,12 +20,20 @@ namespace AweShur.Web
                 template: "CRUD/Post",
                 defaults: new { controller = "CRUD", action = "Post" });
             routes.MapRoute(
+                name: "elementtemplate",
+                template: "Elements/LoadTemplate/{component}/{id}",
+                defaults: new { controller = "Elements", action = "LoadTemplate" });
+            routes.MapRoute(
+                name: "elementlayout",
+                template: "Elements/LoadLayout/{component}/{id}",
+                defaults: new { controller = "Elements", action = "LoadLayout" });
+            routes.MapRoute(
                 name: "elements1",
-                template: "Elements/Load/{folder}/{component}/{id}",
+                template: "Elements/Load/{folder}/{component}/{objectName}/{id}",
                 defaults: new { controller = "Elements", action = "LoadFolder" });
             routes.MapRoute(
                 name: "elements",
-                template: "Elements/Load/{component}/{id}",
+                template: "Elements/Load/{component}/{objectName}/{id}",
                 defaults: new { controller = "Elements", action = "Load" });
             routes.MapRoute(
                 name: "AWSLib",

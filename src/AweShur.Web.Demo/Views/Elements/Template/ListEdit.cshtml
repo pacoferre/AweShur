@@ -20,11 +20,12 @@
             int? idappuser = AppUser.IDAppUser(Context);
             AweShur.Web.Demo.Views.Elements.Locations.LocationItem item = AweShur.Web.Demo.Views.Elements.Locations.Item(eref);
             string folder = item.Folder;
-            string name = item.Name;
+            string controlName = item.ControlName;
+            string objectName = item.ObjectName;
 
-            if (name == "")
+            if (controlName == "")
             {
-                name = folder;
+                controlName = folder;
             }
 
             componentName = "app-" + eref;
@@ -34,8 +35,13 @@
                 eref = "simple";
             }
 
-            listhref = "/Elements/Load/" + folder + "/" + name + "ListItem/" + idappuser;
-            edithref = "/Elements/Load/" + folder + "/" + name + "Edit/" + idappuser;
+            if (objectName == "")
+            {
+                objectName = controlName;
+            }
+
+            listhref = "/Elements/Load/" + folder + "/" + controlName + "ListItem/" + objectName + "/" + idappuser;
+            edithref = "/Elements/Load/" + folder + "/" + controlName + "Edit/" + objectName + "/" + idappuser;
             listelement = "aswd-" + eref + "listitem";
             editelement = "aswd-" + eref + "edit";
 
@@ -50,7 +56,6 @@
     Layout = "";
 }
 <link rel="import" href="/lib/polymer/polymer.html">
-
 <link rel="import" href="/elements/lib/awsl-listeditor/awsl-listeditor.html">
 
 <dom-module id="@componentName">

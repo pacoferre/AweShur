@@ -148,13 +148,13 @@
             },
             _searchElementWithDataFieldName: function(node, level)
             {
-                if (level > 5)
-                {
-                    return null;
-                }
                 if (node.dataField !== undefined)
                 {
                     return node;
+                }
+                if (node.parentNode == null || node.parentNode === undefined)
+                {
+                    return null;
                 }
 
                 return this._searchElementWithDataFieldName(node.parentNode, level + 1);

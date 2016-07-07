@@ -44,14 +44,25 @@ namespace AweShur.Web.Controllers
             }
         }
 
-        public IActionResult Load(string component, int? id)
+        public IActionResult LoadTemplate(string component, int? id)
         {
-            return PartialView("~/Views/Elements/" + component + ".cshtml");
+            return PartialView("~/Views/Elements/Template/" + component + ".cshtml");
+        }
+        public IActionResult LoadLayout(string component, int? id)
+        {
+            return PartialView("~/Views/Layouts/" + component + ".cshtml");
         }
 
-        public IActionResult LoadFolder(string folder, string component, int? id)
+        public IActionResult Load(string component, string objectName, int? id)
         {
-            return PartialView("~/Views/Elements/" + folder + "/" + component + ".cshtml");
+            return PartialView("~/Views/Elements/" + component + ".cshtml", 
+                AweShur.Core.BusinessBaseProvider.Instance.GetDefinition(objectName, 0));
+        }
+
+        public IActionResult LoadFolder(string folder, string component, string objectName, int? id)
+        {
+            return PartialView("~/Views/Elements/" + folder + "/" + component + ".cshtml",
+                AweShur.Core.BusinessBaseProvider.Instance.GetDefinition(objectName, 0));
         }
 
         private static ConcurrentDictionary<string, byte[]> componentCache = new ConcurrentDictionary<string, byte[]>();

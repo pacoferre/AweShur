@@ -53,16 +53,17 @@ namespace AweShur.Core
         public bool IsIdentity { get; } = false;
         public bool IsPrimaryKey { get; } = false;
         public bool IsReadOnly { get; set; } = false;
+        public bool IsOnlyOnNew { get; set; } = false;
         public string DBDataType { get; } = "";
         public string FieldName { get; } = "";
         public Type DataType { get; }
 
         public string Label { get; set; } = "";
         public string Format { get; set; } = "";
-        public string ErrorMessage { get; set; } = "";
         public string Pattern { get; set; } = "";
-        public int MaxLength { get; set; } = 90;
+        public int MaxLength { get; set; } = 0;
         public bool Required { get; set; } = false;
+        public string RequiredErrorMessage { get; set; } = "";
         public bool NoLabelRequired { get; set; } = false;
         public bool NoChecking { get; set; } = false;
         public string Min { get; set; } = "";
@@ -71,10 +72,11 @@ namespace AweShur.Core
         public string ListSource { get; set; } = "";
         public bool IsObjectView { get; set; } = false;
         public bool ListAjax { get; set; } = false;
-        public int Rows { get; set; } = 2;
+        public int Rows { get; set; } = 0;
         public string DefaultSearch { get; set; } = "";
         public bool SearchMultipleSelect { get; set; } = true;
         public object DefaultValue { get; set; } = null;
+        public bool AlwaysFloatLabel { get; set; } = true;
 
         public PropertyDefinition(DBDialect.ColumnDefinition colDef)
         {
@@ -88,6 +90,10 @@ namespace AweShur.Core
             IsComputed = colDef.IsComputed;
             IsIdentity = colDef.IsIdentity;
             IsPrimaryKey = colDef.IsPrimaryKey;
+            if (IsComputed)
+            {
+                IsReadOnly = true;
+            }
             if (IsComputed || IsIdentity)
             {
                 NoChecking = true;
@@ -113,7 +119,12 @@ namespace AweShur.Core
             }
             else if (BasicType == BasicType.DateTime)
             {
-                inputType = PropertyInputType.date;
+                Type = PropertyInputType.date;
+            }
+
+            if (FieldName.Length > 1)
+            {
+                Label = FieldName[0].ToString().ToUpper() + FieldName.Substring(1);
             }
         }
 
@@ -189,21 +200,42 @@ namespace AweShur.Core
             {
                 if (!(obj[FieldName] == null))
                 {
-                    value = ((DateTime)obj[FieldName]).ToString(obj.CurrentUser.ShortDateFormat);
+                    if (obj.IsReadOnly(FieldName))
+                    {
+                        value = String.Format(Format, (DateTime)obj[FieldName]);
+                    }
+                    else
+                    {
+                        value = ((DateTime)obj[FieldName]).ToString("yyyy-MM-dd");
+                    }
                 }
             }
             else if (Type == PropertyInputType.datetimeHHmm)
             {
                 if (!(obj[FieldName] == null))
                 {
-                    value = ((DateTime)obj[FieldName]).ToString(obj.CurrentUser.ShortDateFormat + " HH:mm");
+                    if (obj.IsReadOnly(FieldName))
+                    {
+                        value = String.Format(Format, (DateTime)obj[FieldName]);
+                    }
+                    else
+                    {
+                        value = ((DateTime)obj[FieldName]).ToString("yyyy-MM-dd HH:mm");
+                    }
                 }
             }
             else if (Type == PropertyInputType.datetimeHHmmss)
             {
                 if (!(obj[FieldName] == null))
                 {
-                    value = ((DateTime)obj[FieldName]).ToString(obj.CurrentUser.ShortDateFormat + " HH:mm:ss");
+                    if (obj.IsReadOnly(FieldName))
+                    {
+                        value = String.Format(Format, (DateTime)obj[FieldName]);
+                    }
+                    else
+                    {
+                        value = ((DateTime)obj[FieldName]).ToString("yyyy-MM-dd HH:mm:ss");
+                    }
                 }
             }
             else if (Type == PropertyInputType.checkbox || BasicType == BasicType.Bit)
@@ -280,10 +312,20 @@ namespace AweShur.Core
                     {
                         AppUser us = obj.CurrentUser;
                         DateTime d;
+                        string _format = "yyyy/MM/dd";
+
+                        if (Type == PropertyInputType.datetimeHHmm)
+                        {
+                            _format += " HH:mm";
+                        }
+                        else if (Type == PropertyInputType.datetimeHHmmss)
+                        {
+                            _format += " HH:mm:ss";
+                        }
 
                         try
                         {
-                            d = DateTime.ParseExact(value, Format, us.Culture);
+                            d = DateTime.ParseExact(value, _format, us.Culture);
                         }
                         catch
                         {

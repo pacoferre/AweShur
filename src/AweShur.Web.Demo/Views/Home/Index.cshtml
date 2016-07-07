@@ -15,7 +15,7 @@ else
 {
 @if (AppUser.UserIsAuthenticated(this.Context))
 {
-    @Html.Raw("<link rel='import' href='/Elements/Load/Main/" + AppUser.IDAppUser(this.Context) + "'>")
+    @Html.Raw("<link rel='import' href='/Elements/LoadLayout/Main/" + AppUser.IDAppUser(this.Context) + "'>")
 }
 else
 {

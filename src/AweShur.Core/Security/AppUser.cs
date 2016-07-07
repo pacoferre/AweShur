@@ -13,6 +13,10 @@ namespace AweShur.Core.Security
 
             Singular = "User";
             Plural = "Users";
+
+            Properties["email"].IsOnlyOnNew = true;
+            Properties["email"].Type = PropertyInputType.email;
+            Properties["password"].Type = PropertyInputType.password;
         }
     }
 
