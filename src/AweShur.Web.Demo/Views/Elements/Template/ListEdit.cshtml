@@ -1,11 +1,8 @@
 ﻿@{
     bool error = false;
     string msgError = "";
-    string componentName = "";
-    string listhref = "";
-    string edithref = "";
-    string listelement = "";
-    string editelement = "";
+    AweShur.Web.Demo.Views.Elements.CRUDLocations.CRUDLocationItem item = null;
+    int? idappuser = AppUser.IDAppUser(Context);
 
     try
     {
@@ -17,34 +14,7 @@
         }
         else
         {
-            int? idappuser = AppUser.IDAppUser(Context);
-            AweShur.Web.Demo.Views.Elements.Locations.LocationItem item = AweShur.Web.Demo.Views.Elements.Locations.Item(eref);
-            string folder = item.Folder;
-            string controlName = item.ControlName;
-            string objectName = item.ObjectName;
-
-            if (controlName == "")
-            {
-                controlName = folder;
-            }
-
-            componentName = "app-" + eref;
-
-            if (folder == "Simple")
-            {
-                eref = "simple";
-            }
-
-            if (objectName == "")
-            {
-                objectName = controlName;
-            }
-
-            listhref = "/Elements/Load/" + folder + "/" + controlName + "ListItem/" + objectName + "/" + idappuser;
-            edithref = "/Elements/Load/" + folder + "/" + controlName + "Edit/" + objectName + "/" + idappuser;
-            listelement = "aswd-" + eref + "listitem";
-            editelement = "aswd-" + eref + "edit";
-
+            item = AweShur.Web.Demo.Views.Elements.CRUDLocations.Item(eref);
         }
     }
     catch(Exception exp)
@@ -58,7 +28,7 @@
 <link rel="import" href="/lib/polymer/polymer.html">
 <link rel="import" href="/elements/lib/awsl-listeditor/awsl-listeditor.html">
 
-<dom-module id="@componentName">
+<dom-module id="@item.componentName">
     <template>
         @if (error)
         {
@@ -67,13 +37,13 @@
         else
         {
             <awsl-listeditor oname="[[oname]]" route="{{route}}" path="[[name]]" title="" id="le"
-                listhref='@listhref' listelement="@listelement"
-                edithref='@edithref' editelement="@editelement"></awsl-listeditor>
+                listhref='@(item.listhref + "/" + idappuser)' listelement="@item.listelement"
+                edithref='@(item.edithref + "/" + idappuser)' editelement="@item.editelement"></awsl-listeditor>
         }
     </template>
     <script>
     Polymer({
-        is: '@componentName',
+        is: '@item.componentName',
         properties: {
             oname: {
                 type: String

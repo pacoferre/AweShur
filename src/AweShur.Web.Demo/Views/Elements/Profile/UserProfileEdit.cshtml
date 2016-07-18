@@ -1,20 +1,14 @@
 ﻿@model BusinessBaseDefinition
 @{
-    Layout = "";
+    Layout = "_CRUDLayout";
 }
-<link rel="import" href="/lib/polymer/polymer.html">
-<link rel="import" href="/lib/paper-input/paper-input.html">
-<link rel="import" href="/lib/gold-email-input/gold-email-input.html">
-
-<link rel="import" href="/AWSLib/awsl-element-behavior">
-<link rel="import" href="/AWSLib/awsl-date">
 
 <dom-module id="aswd-userprofileedit">
     <template>
-        <gold-email-input data-field="email" value="{{item.email}}" label="Email" always-float-label readonly></gold-email-input>
-        <paper-input data-field="password" value="{{item.password}}" label="Password" always-float-label type="password"></paper-input>
-        <paper-input data-field="name" value="{{item.name}}" label="Name" always-float-label></paper-input>
-        <paper-input data-field="surname" value="{{item.surname}}" label="Surname" always-float-label></paper-input>
+        @Html.PolEditor(Model, "email")
+        @Html.PolEditor(Model, "password")
+        @Html.PolEditor(Model, "name")
+        @Html.PolEditor(Model, "surname")
     </template>
     <script>
     Polymer({

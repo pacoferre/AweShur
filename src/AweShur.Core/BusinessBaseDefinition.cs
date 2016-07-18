@@ -64,8 +64,19 @@ namespace AweShur.Core
                 Properties[column.ColumnName] = def;
             }
 
-            Singular = tableName;
-            Plural = tableName + "s";
+
+            Singular = "";
+            foreach(char letter in tableName)
+            {
+                if (Singular != "" && letter.ToString().ToUpper() == letter.ToString())
+                {
+                    Singular += " ";
+                }
+
+                Singular += letter;
+            }
+
+            Plural = Singular + "s";
 
             SetCustomProperties();
 

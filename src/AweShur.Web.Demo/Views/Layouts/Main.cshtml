@@ -1,6 +1,8 @@
 ﻿@{
     int? idappuser = AppUser.IDAppUser(Context);
     AppUser currentUser = AppUser.GetAppUser(Context);
+
+    Layout = "";
 }
 <link rel="import" href="/lib/polymer/polymer.html">
 <link rel="import" href="/lib/app-route/app-location.html">
@@ -65,12 +67,12 @@
             <app-drawer>
                 <app-toolbar>Menu</app-toolbar>
                 <iron-selector selected="[[page]]" attr-for-selected="name" class="drawer-list" role="navigation">
-                    <a name="customer" href="/#/customer">Customers</a>
-                    <a name="customertype" href="/#/customertype">Customer types</a>
+                    <a name="Customer" href="/#/Customer">Customers</a>
+                    <a name="CustomerType" href="/#/CustomerType">Customer types</a>
                     @if (currentUser["su"].NoNullBool())
                     {
-                    <a name="user" href="/#/user">Users</a>
-                    <a name="profile" href="/#/profile">My profile</a>
+                    <a name="User" href="/#/User">Users</a>
+                    <a name="Profile" href="/#/Profile">My profile</a>
                     }
                 </iron-selector>
             </app-drawer>
@@ -85,12 +87,12 @@
                     </app-toolbar>
                 </app-header>
                 <iron-pages role="main" selected="[[page]]" attr-for-selected="name" id="pages">
-                    <app-customer name="customer" oname="Customer" route="{{subroute}}"></app-customer>
-                    <app-customertype name="customertype" oname="CustomerType" route="{{subroute}}"></app-customertype>
+                    <app-customer name="Customer" oname="Customer" route="{{subroute}}"></app-customer>
+                    <app-customertype name="CustomerType" oname="CustomerType" route="{{subroute}}"></app-customertype>
                     @if (currentUser["su"].NoNullBool())
                     {
-                    <app-user name="user" oname="AppUser" route="{{subroute}}"></app-user>
-                    <aswd-profile name="profile"></aswd-profile>
+                    <app-user name="User" oname="AppUser" route="{{subroute}}"></app-user>
+                    <aswd-profile name="Profile"></aswd-profile>
                     }
                 </iron-pages>
             </app-header-layout>
@@ -121,12 +123,12 @@
         },
         _routePageChanged: function (newPage) {
             if (newPage === undefined || newPage == "") {
-                window.location = "/#/customer";
+                window.location = "/#/Customer";
                 return;
             }
-            this.page = newPage || "customer";
+            this.page = newPage || "Customer";
         },
-        _pageChanged: function (e) {
+        _pageChanged: function (newPage) {
 
             var onload = function () {
                 this.async(function () {
@@ -138,13 +140,12 @@
                 });
             };
 
-            if (e == "profile") {
+            if (newPage == "Profile") {
                 this.importHref('@("/Elements/Load/Profile/UserProfile/AppUser/" + idappuser)', onload, null, !0)
             }
             else {
-                this.importHref('@("/Elements/LoadTemplate/ListEdit/" + idappuser)' + '?e=' + e, onload, null, !0)
+                this.importHref('@("/Elements/LoadTemplate/ListEdit/" + idappuser)' + '?e=' + newPage, onload, null, !0)
             }
-
         },
         _exit: function () {
             window.location = "/Home/Exit";

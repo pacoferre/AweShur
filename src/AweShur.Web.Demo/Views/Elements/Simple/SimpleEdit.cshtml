@@ -1,15 +1,17 @@
 ﻿@model BusinessBaseDefinition
 @{
-    Layout = "";
+    Layout = "_CRUDLayout";
 }
-<link rel="import" href="/lib/polymer/polymer.html">
-<link rel="import" href="/lib/paper-input/paper-input.html">
-
-<link rel="import" href="/AWSLib/awsl-element-behavior">
 
 <dom-module id="aswd-simpleedit">
     <template>
-        <paper-input data-field="name" label="Name" always-float-label></paper-input>
+        @foreach (PropertyDefinition prop in Model.ListProperties)
+        {
+            if (!prop.IsIdentity)
+            {
+                @Html.PolEditor(Model, prop.FieldName)
+            }
+        }
     </template>
     <script>
     Polymer({
