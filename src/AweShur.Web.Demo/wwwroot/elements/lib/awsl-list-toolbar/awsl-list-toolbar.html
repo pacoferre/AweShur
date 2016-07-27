@@ -2,7 +2,11 @@
 <link rel="import" href="../../../lib/app-layout/app-toolbar/app-toolbar.html">
 <link rel="import" href="../../../lib/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../../../lib/iron-icons/iron-icons.html">
+<link rel="import" href="../../../lib/paper-input/paper-input.html">
+<link rel="import" href="../../../lib/iron-collapse/iron-collapse.html">
+
 <link rel="import" href="../../../AWSLib/awsl-list-toolbar-behavior">
+<link rel="import" href="../../../lib/iron-flex-layout/iron-flex-layout.html">
 
 <dom-module id="awsl-list-toolbar">
     <template>
@@ -24,19 +28,41 @@
             paper-icon-button + [main-title] {
                 margin-left: 24px;
             }
+            
+            paper-input {
+                @apply(--layout-self-end);
+                --paper-input-container-color: white;
+                --paper-input-container-input-color: white;
+                --paper-input-container-focus-color: white;
+            }
         </style>
 
         <app-toolbar id="tool" style="height:48px">
             <paper-icon-button id="refresh" icon="refresh" on-tap="_onRefresh"></paper-icon-button>
             <paper-icon-button id="new" icon="add" on-tap="_onNew">+</paper-icon-button>
-            <span main-title class="sp">[[title]]</span>
-            <paper-icon-button icon="search"></paper-icon-button>
+            <span main-title class="sp"></span>
+            <iron-collapse id="cosearch" horizontal>
+                <div class="content">
+                    <paper-input id="search" label="Search" no-label-float value="{{fastsearch}}">
+                        <paper-icon-button suffix icon="clear" on-tap="_ClearSearch"></paper-icon-button>
+                    </paper-input>
+                </div>
+            </iron-collapse>
+            <paper-icon-button icon="search" on-tap="_Search"></paper-icon-button>
         </app-toolbar>
     </template>
     <script>
     Polymer({
         is: 'awsl-list-toolbar',
         behaviors: [AWSLBehaviors.ListToolBarBehavior],
+        _Search: function () {
+            this.$.cosearch.toggle();
+            this.$.search.focus();
+        },
+        _ClearSearch: function () {
+            this.$.fastsearch = "";
+            this.$.cosearch.toggle();
+        }
     });
     </script>
 </dom-module>

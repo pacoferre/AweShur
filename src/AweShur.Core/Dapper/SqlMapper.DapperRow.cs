@@ -209,6 +209,14 @@ namespace Dapper
             }
 
             #endregion
+
+            public object[] Values
+            {
+                get
+                {
+                    return values;
+                }
+            }
         }
     }
 }

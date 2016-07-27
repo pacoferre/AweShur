@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Data;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
@@ -107,6 +106,11 @@ namespace AweShur.Core
             definition.SetProperties(tableName, dbNumber);
 
             return definition;
+        }
+
+        public FilterBase GetFilter(AppUser user, string objectName)
+        {
+            return new FilterBase(GetDefinition(objectName, 0), 0);
         }
 
         private static string ObjectKey(string objectName, int dbNumber, string key)

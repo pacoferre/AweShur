@@ -18,6 +18,7 @@ using Microsoft.Extensions.Caching;
 using StackExchange.Redis;
 using AweShur.Web.Demo.Views.Elements;
 using static AweShur.Web.Demo.Views.Elements.CRUDLocations;
+using System.Data;
 
 namespace AweShur.Web.Demo
 {
@@ -101,6 +102,14 @@ namespace AweShur.Web.Demo
                 { "Customer", new CRUDLocationItem { Folder = "Customer" } },
                 { "User", new CRUDLocationItem { Folder = "Security", ControlName = "AppUser" } },
             };
+
+            DBDialect.GetStaticConnection =
+                new Func<DBDialectEnum, string, IDbConnection>(GetConnection);
+        }
+
+        public static IDbConnection GetConnection(DBDialectEnum Dialect, string connectionString)
+        {
+            return new System.Data.SqlClient.SqlConnection(connectionString);
         }
     }
 }

@@ -35,11 +35,19 @@ namespace AweShur.Web.Controllers
         public ListModelToClient List(string objectName)
         {
             ListModelToClient resp = new ListModelToClient();
-            BusinessBase obj = BusinessBaseProvider.RetreiveObject(HttpContext, objectName, "0");
+            FilterBase filter = BusinessBaseProvider.Instance.GetFilter(
+                AppUser.GetAppUser(this.HttpContext), objectName);
 
-            resp.plural = obj.Definition.Plural;
-            resp.data = obj.Get();
-            
+            if (Request.Query["fastsearch"].Count != 0)
+            {
+                filter.FastSearchActivated = true;
+                filter.FastSearch = this.Request.Query["fastsearch"].NoNullString();
+            }
+
+            resp.plural = filter.Definition.Plural;
+            resp.data = Dapper.SqlMapper.ToList(filter.Get(1, SortDirection.Ascending, 0, 100));
+            resp.fastsearch = filter.FastSearch;
+
             return resp;
         }
 
@@ -76,7 +84,7 @@ namespace AweShur.Web.Controllers
 
         private static Dictionary<Guid, string> cruds = new Dictionary<Guid, string>();
 
-
+        public object DapperRow { get; private set; }
     }
 }
 

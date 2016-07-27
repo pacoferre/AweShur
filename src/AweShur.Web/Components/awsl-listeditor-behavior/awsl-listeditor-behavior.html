@@ -38,9 +38,13 @@
                 },
                 lastTitle: {
                     type: String
+                },
+                fastsearch: {
+                    type: String
                 }
             },
             wasAttached: false,
+            firstResponse: false,
             listeners: {
                 'awsl-refresh': 'refresh',
             },
@@ -57,6 +61,13 @@
                 this.items = event.detail.response.data;
                 this.lastTitle = event.detail.response.plural;
                 this.fire('awsl-set-title', { title: event.detail.response.plural });
+
+                if (this.fastsearch != event.detail.response.fastsearch)
+                {
+                    this.fastsearch = event.detail.response.fastsearch;
+                }
+
+                this.firstResponse = true;
             },
             _handleFormError: function (event) {
                 debugger;
@@ -65,6 +76,7 @@
                 if (this.wasAttached) {
                     return;
                 }
+                this.wasAttached = true;
 
                 this.ajaxlist = document.createElement('iron-ajax');
 
@@ -79,7 +91,6 @@
                         Polymer.dom(this.getItemsList()).appendChild(this.getListTemplate());
 
                         this.ajaxlist.url = "/CRUD/List/" + this.oname;
-                        this.wasAttached = true;
                     }, function (e) {
                         debugger;
                     });
@@ -93,7 +104,17 @@
             },
             _onSaved: function () {
                 this.refresh();
-            }
+            },
+            _fastsearchChanged: function (fastsearch) {
+                if (this.firstResponse) {
+                    this.debounce('click', function () {
+
+                        this.ajaxlist.params = { fastsearch: this.fastsearch };
+                        this.ajaxlist.generateRequest();
+
+                    }, 100);
+                }
+            },
         };
     })();
 </script>

@@ -61,7 +61,7 @@
         <neon-animated-pages id="pages" class="flex" entry-animation="slide-from-right-animation" exit-animation="slide-left-animation">
             <neon-animatable>
                 <div id="listContent">
-                    <awsl-list-toolbar on-awsl-new="_onNew"></awsl-list-toolbar>
+                    <awsl-list-toolbar on-awsl-new="_onNew" fastsearch="{{fastsearch}}"></awsl-list-toolbar>
                     <iron-list id="itemsList" as="item" items="[[items]]" scroll-target="listContent">
                     </iron-list>
                 </div>
@@ -82,7 +82,8 @@
             behaviors: [AWSLBehaviors.ListEditorBehavior],
             observers: [
               '_routeChanged(route)',
-              '_viewChanged(routeData.key)'
+              '_viewChanged(routeData.key)',
+              '_fastsearchChanged(fastsearch)'
             ],
             _routeChanged: function (newRoute) {
                 if (newRoute.path == "")

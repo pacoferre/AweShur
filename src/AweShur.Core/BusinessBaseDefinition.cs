@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace AweShur.Core
 {
-    public class BusinessBaseDefinition
+    public partial class BusinessBaseDefinition
     {
         public Dictionary<string, PropertyDefinition> Properties { get; } = new Dictionary<string, PropertyDefinition>();
         public List<PropertyDefinition> ListProperties { get; } = new List<PropertyDefinition>();
@@ -38,10 +38,17 @@ namespace AweShur.Core
         public BusinessBaseDefinition()
         {
             selectBuilder = new Lazy<string>(PrepareSelectQuery);
-            filterSelectBuilder = new Lazy<string>(PrepareFilterSelectQuery);
             insertBuilder = new Lazy<string>(PrepareInsertQuery);
             updateBuilder = new Lazy<string>(PrepareUpdateQuery);
             deleteBuilder = new Lazy<string>(PrepareDeleteQuery);
+        }
+
+        public string TableName
+        {
+            get
+            {
+                return tableName;
+            }
         }
 
         internal int IndexOfName(string name)
@@ -146,24 +153,6 @@ namespace AweShur.Core
             get
             {
                 return selectBuilder.Value;
-            }
-        }
-
-        protected virtual string PrepareFilterSelectQuery()
-        {
-            StringBuilder sql = new StringBuilder("select ");
-
-            sql.Append(dialect.SQLListColumns(ListProperties));
-            sql.Append(" from " + dialect.Encapsulate(tableName));
-
-            return sql.ToString();
-        }
-
-        public string FilterSelectQuery
-        {
-            get
-            {
-                return filterSelectBuilder.Value;
             }
         }
 

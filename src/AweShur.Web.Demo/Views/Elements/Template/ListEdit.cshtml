@@ -25,8 +25,8 @@
 
     Layout = "";
 }
-<link rel="import" href="/lib/polymer/polymer.html">
-<link rel="import" href="/elements/lib/awsl-listeditor/awsl-listeditor.html">
+<link rel="import" href="~/lib/polymer/polymer.html">
+<link rel="import" href="~/elements/lib/awsl-listeditor/awsl-listeditor-vaadin.html">
 
 <dom-module id="@item.componentName">
     <template>
@@ -36,9 +36,9 @@
         }
         else
         {
-            <awsl-listeditor oname="[[oname]]" route="{{route}}" path="[[name]]" title="" id="le"
+            <awsl-listeditor-vaadin oname="[[oname]]" route="{{route}}" path="[[name]]" title="" id="le"
                 listhref='@(item.listhref + "/" + idappuser)' listelement="@item.listelement"
-                edithref='@(item.edithref + "/" + idappuser)' editelement="@item.editelement"></awsl-listeditor>
+                edithref='@(item.edithref + "/" + idappuser)' editelement="@item.editelement"></awsl-listeditor-vaadin>
         }
     </template>
     <script>

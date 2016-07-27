@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace AweShur.Core
 {
@@ -27,6 +26,7 @@ namespace AweShur.Core
         public string Encapsulation { get; }
         public string GetIdentitySql { get; }
         public string GetPagedListSql { get; }
+        public string GetFromToListSql { get; }
         public string GetSchemaSql { get; }
 
         private static DBDialect Retreive(DBDialectEnum dialect)
@@ -108,25 +108,27 @@ namespace AweShur.Core
             return DB.InstanceNumber(dbNumber).Query<ColumnDefinition>(GetSchemaSql, new { TableName = tableName, TableSchema = tableSchema });
         }
 
+        public static Func<DBDialectEnum, string, IDbConnection> GetStaticConnection;
+
         public IDbConnection GetConnection(string connectionString)
         {
-            IDbConnection conn = null;
+            IDbConnection conn = GetStaticConnection.Invoke(Dialect, connectionString);
 
-            switch (Dialect)
-            {
-                case DBDialectEnum.PostgreSQL:
-                    conn = new Npgsql.NpgsqlConnection(connectionString);
-                    break;
-                case DBDialectEnum.SQLite:
-                    throw new Exception("To come for .NET Core 1.0");
+//            switch (Dialect)
+//            {
+//                case DBDialectEnum.PostgreSQL:
+//                    conn = new Npgsql.NpgsqlConnection(connectionString);
 //                    break;
-                case DBDialectEnum.MySQL:
-                    throw new Exception("To come for .NET Core 1.0");
+//                case DBDialectEnum.SQLite:
+//                    throw new Exception("To come for .NET Core 1.0");
+////                    break;
+//                case DBDialectEnum.MySQL:
+//                    throw new Exception("To come for .NET Core 1.0");
+////                    break;
+//                default:
+//                    conn = new System.Data.SqlClient.SqlConnection(connectionString);
 //                    break;
-                default:
-                    conn = new System.Data.SqlClient.SqlConnection(connectionString);
-                    break;
-            }
+//            }
 
             return conn;
         }
@@ -139,25 +141,29 @@ namespace AweShur.Core
                     Dialect = DBDialectEnum.PostgreSQL;
                     Encapsulation = "{0}";
                     GetIdentitySql = string.Format("SELECT LASTVAL() AS id");
-                    GetPagedListSql = "Select {SelectColumns} from {TableName} {WhereClause} Order By {OrderBy} LIMIT {RowsPerPage} OFFSET (({PageNumber}-1) * {RowsPerPage})";
+                    GetPagedListSql = "Select {SelectColumns} from {FromClause} {WhereClause} Order By {OrderBy} LIMIT {RowsPerPage} OFFSET (({PageNumber}-1) * {RowsPerPage})";
+                    GetFromToListSql = "Select {SelectColumns} from {FromClause} {WhereClause} Order By {OrderBy} LIMIT {RowCount} OFFSET ({FromRecord})";
                     break;
                 case DBDialectEnum.SQLite:
                     Dialect = DBDialectEnum.SQLite;
                     Encapsulation = "{0}";
                     GetIdentitySql = string.Format("SELECT LAST_INSERT_ROWID() AS id");
-                    GetPagedListSql = "Select {SelectColumns} from {TableName} {WhereClause} Order By {OrderBy} LIMIT {RowsPerPage} OFFSET (({PageNumber}-1) * {RowsPerPage})";
+                    GetPagedListSql = "Select {SelectColumns} from {FromClause} {WhereClause} Order By {OrderBy} LIMIT {RowsPerPage} OFFSET (({PageNumber}-1) * {RowsPerPage})";
+                    GetFromToListSql = "Select {SelectColumns} from {FromClause} {WhereClause} Order By {OrderBy} LIMIT {RowCount} OFFSET ({FromRecord})";
                     break;
                 case DBDialectEnum.MySQL:
                     Dialect = DBDialectEnum.MySQL;
                     Encapsulation = "`{0}`";
                     GetIdentitySql = string.Format("SELECT LAST_INSERT_ID() AS id");
-                    GetPagedListSql = "Select {SelectColumns} from {TableName} {WhereClause} Order By {OrderBy} LIMIT {Offset},{RowsPerPage}";
+                    GetPagedListSql = "Select {SelectColumns} from {FromClause} {WhereClause} Order By {OrderBy} LIMIT {Offset},{RowsPerPage}";
+                    GetFromToListSql = "Select {SelectColumns} from {FromClause} {WhereClause} Order By {OrderBy} LIMIT {FromRecord},{RowCount}";
                     break;
                 default:
                     Dialect = DBDialectEnum.SQLServer;
                     Encapsulation = "[{0}]";
                     GetIdentitySql = string.Format("SELECT CAST(SCOPE_IDENTITY() AS BIGINT) AS [id]");
-                    GetPagedListSql = "SELECT * FROM (SELECT ROW_NUMBER() OVER(ORDER BY {OrderBy}) AS PagedNumber, {SelectColumns} FROM {TableName} {WhereClause}) AS u WHERE PagedNUMBER BETWEEN (({PageNumber}-1) * {RowsPerPage} + 1) AND ({PageNumber} * {RowsPerPage})";
+                    GetPagedListSql = "SELECT {SelectNamedColumns} FROM (SELECT ROW_NUMBER() OVER(ORDER BY {OrderBy}) AS PagedNumber, {SelectColumns} FROM {FromClause} {WhereClause}) AS u WHERE PagedNUMBER BETWEEN (({PageNumber}-1) * {RowsPerPage} + 1) AND ({PageNumber} * {RowsPerPage})";
+                    GetFromToListSql = "SELECT {SelectNamedColumns} FROM (SELECT ROW_NUMBER() OVER(ORDER BY {OrderBy}) AS PagedNumber, {SelectColumns} FROM {FromClause} {WhereClause}) AS u WHERE PagedNUMBER BETWEEN ({FromRecord} + 1) AND ({FromRecord} + {RowCount})";
                     GetSchemaSql = @"SELECT col.COLUMN_NAME AS ColumnName
 , col.DATA_TYPE AS DBDataType
 , col.CHARACTER_MAXIMUM_LENGTH AS MaxLength
@@ -194,47 +200,47 @@ ORDER BY col.ORDINAL_POSITION";
             return _instance[(int)dialect].Value;
         }
 
-        public string SQLListColumns(List<PropertyDefinition> properties)
-        {
-            StringBuilder sb = new StringBuilder();
-            string keyExpression = "";
-            var addedAny = false;
+        //public string SQLListColumns(List<PropertyDefinition> properties)
+        //{
+        //    StringBuilder sb = new StringBuilder();
+        //    string keyExpression = "";
+        //    var addedAny = false;
 
-            foreach (PropertyDefinition prop in properties)
-            {
-                if (prop.IsDBField)
-                {
-                    if (prop.IsPrimaryKey)
-                    {
-                        if (keyExpression != "")
-                        {
-                            keyExpression += ",";
-                        }
-                        if (prop.BasicType == BasicType.Number)
-                        {
-                            //SQL Server.
-                            keyExpression += "LTRIM(STR(" + Encapsulate(prop.FieldName) + "))";
-                        }
-                        else
-                        {
-                            keyExpression += Encapsulate(prop.FieldName);
-                        }
-                    }
-                    else
-                    {
-                        if (addedAny)
-                        {
-                            sb.Append(",");
-                        }
-                        sb.Append(Encapsulate(prop.FieldName));
+        //    foreach (PropertyDefinition prop in properties)
+        //    {
+        //        if (prop.IsDBField)
+        //        {
+        //            if (prop.IsPrimaryKey)
+        //            {
+        //                if (keyExpression != "")
+        //                {
+        //                    keyExpression += ",";
+        //                }
+        //                if (prop.BasicType == BasicType.Number)
+        //                {
+        //                    //SQL Server.
+        //                    keyExpression += "LTRIM(STR(" + Encapsulate(prop.FieldName) + "))";
+        //                }
+        //                else
+        //                {
+        //                    keyExpression += Encapsulate(prop.FieldName);
+        //                }
+        //            }
+        //            else
+        //            {
+        //                if (addedAny)
+        //                {
+        //                    sb.Append(",");
+        //                }
+        //                sb.Append(Encapsulate(prop.FieldName));
 
-                        addedAny = true;
-                    }
-                }
-            }
+        //                addedAny = true;
+        //            }
+        //        }
+        //    }
 
-            return keyExpression + " As " + Encapsulate("key") + ", " + sb.ToString();
-        }
+        //    return keyExpression + " As " + Encapsulate("key") + ", " + sb.ToString();
+        //}
 
         public string SQLAllColumns(List<PropertyDefinition> properties)
         {

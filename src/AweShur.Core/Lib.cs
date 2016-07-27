@@ -7,6 +7,49 @@ using System.Threading.Tasks;
 
 namespace AweShur.Core
 {
+    public enum SortDirection
+    {
+        //
+        // Summary:
+        //     Sort from smallest to largest. For example, from A to Z.
+        Ascending = 0,
+        //
+        // Summary:
+        //     Sort from largest to smallest. For example, from Z to A.
+        Descending = 1
+    }
+
+    public enum ElementType
+    {
+        View,
+        Collection
+    }
+
+    public enum HorizontalAlign
+    {
+        //
+        // Summary:
+        //     The horizontal alignment is not set.
+        NotSet = 0,
+        //
+        // Summary:
+        //     The contents of a container are left justified.
+        Left = 1,
+        //
+        // Summary:
+        //     The contents of a container are centered.
+        Center = 2,
+        //
+        // Summary:
+        //     The contents of a container are right justified.
+        Right = 3,
+        //
+        // Summary:
+        //     The contents of a container are uniformly spread out and aligned with both the
+        //     left and right margins.
+        Justify = 4
+    }
+
     public static class Lib
     {
         public static string NoNullString(this object myObject)
