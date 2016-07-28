@@ -1,0 +1,124 @@
+﻿<link rel="import" href="../lib/polymer/polymer.html">
+<link rel="import" href="../lib/iron-ajax/iron-ajax.html">
+
+<script>
+    var AWSLBehaviors = AWSLBehaviors || {};
+
+    (function () {
+        AWSLBehaviors.ListEditorVaadinBehavior = {
+            properties: {
+                key: {
+                    type: String,
+                },
+                oname: {
+                    type: String,
+                },
+                listhref: {
+                    type: String,
+                },
+                listelement: {
+                    type: String,
+                },
+                edithref: {
+                    type: String,
+                },
+                editelement: {
+                    type: String,
+                },
+                ajaxlist: {
+                    type: Object
+                },
+                items: {
+                    type: Array,
+                    observer: '_itemsChanged'
+                },
+                route: {
+                    type: Object,
+                    notify: true
+                },
+                lastTitle: {
+                    type: String
+                },
+                fastsearch: {
+                    type: String
+                }
+            },
+            wasAttached: false,
+            firstResponse: false,
+            listeners: {
+                'awsl-refresh': 'refresh',
+            },
+            refresh: function () {
+                if (this.lastTitle !== undefined && this.lastTitle != "")
+                {
+                    this.fire('awsl-set-title', { title: this.lastTitle });
+                }
+                if (this.wasAttached) {
+                    this.ajaxlist.generateRequest();
+                }
+            },
+            _handleFormResponse: function (event) {
+                this.items = event.detail.response.data;
+                this.lastTitle = event.detail.response.plural;
+                this.fire('awsl-set-title', { title: event.detail.response.plural });
+
+                if (this.fastsearch != event.detail.response.fastsearch)
+                {
+                    this.fastsearch = event.detail.response.fastsearch;
+                }
+
+                this.firstResponse = true;
+            },
+            _handleFormError: function (event) {
+                debugger;
+            },
+            attached: function () {
+                if (this.wasAttached) {
+                    return;
+                }
+                this.wasAttached = true;
+
+                this.ajaxlist = document.createElement('iron-ajax');
+
+                this.ajaxlist.method = 'GET';
+                this.ajaxlist.contentType = 'application/json';
+
+                this.ajaxlist.addEventListener('response', this._handleFormResponse.bind(this));
+                this.ajaxlist.addEventListener('error', this._handleFormError.bind(this));
+
+
+
+                this.ajaxlist.url = "/CRUD/List/" + this.oname;
+
+                //this.async(function () {
+                //    this.importHref(this.listhref, function (e) {
+                //        Polymer.dom(this.getItemsList()).appendChild(this.getListTemplate());
+
+                //        this.ajaxlist.url = "/CRUD/List/" + this.oname;
+                //    }, function (e) {
+                //        debugger;
+                //    });
+                //});
+            },
+            getItemsList: function () {
+                return null;
+            },
+            getListTemplate: function() {
+                return null;
+            },
+            _onSaved: function () {
+                this.refresh();
+            },
+            _fastsearchChanged: function (fastsearch) {
+                if (this.firstResponse) {
+                    this.debounce('click', function () {
+
+                        this.ajaxlist.params = { fastsearch: this.fastsearch };
+                        this.ajaxlist.generateRequest();
+
+                    }, 100);
+                }
+            },
+        };
+    })();
+</script>
