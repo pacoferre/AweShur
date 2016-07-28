@@ -29,46 +29,47 @@ namespace AweShur.Web.Demo.Views.Elements
             return item;
         }
 
-        public class CRUDLocationItem
+    }
+
+    public class CRUDLocationItem
+    {
+        public string Folder { get; set; }
+        public string ControlName { get; set; } = "";
+        public string ObjectName { get; set; } = "";
+        public string componentName { get; set; } = "";
+        public string listhref { get; set; } = "";
+        public string edithref { get; set; } = "";
+        public string listelement { get; set; } = "";
+        public string editelement { get; set; } = "";
+        public string eref { get; set; } = "";
+
+        public void Initialize()
         {
-            public string Folder { get; set; }
-            public string ControlName { get; set; } = "";
-            public string ObjectName { get; set; } = "";
-            public string componentName { get; set; } = "";
-            public string listhref { get; set; } = "";
-            public string edithref { get; set; } = "";
-            public string listelement { get; set; } = "";
-            public string editelement { get; set; } = "";
-            public string eref { get; set; } = "";
+            string folder = Folder;
+            string controlName = ControlName;
+            string objectName = ObjectName;
 
-            public void Initialize()
+            if (controlName == "")
             {
-                string folder = Folder;
-                string controlName = ControlName;
-                string objectName = ObjectName;
-
-                if (controlName == "")
-                {
-                    controlName = folder;
-                }
-
-                componentName = "app-" + eref;
-
-                if (folder == "Simple")
-                {
-                    eref = "simple";
-                }
-
-                if (objectName == "")
-                {
-                    objectName = controlName;
-                }
-
-                listhref = "/Elements/Load/" + folder + "/" + controlName + "ListItem/" + objectName;
-                edithref = "/Elements/Load/" + folder + "/" + controlName + "Edit/" + objectName;
-                listelement = "aswd-" + eref + "listitem";
-                editelement = "aswd-" + eref + "edit";
+                controlName = folder;
             }
+
+            componentName = "app-" + eref;
+
+            if (folder == "Simple")
+            {
+                eref = "simple";
+            }
+
+            if (objectName == "")
+            {
+                objectName = controlName;
+            }
+
+            listhref = "/Elements/Load/" + folder + "/" + controlName + "ListItem/" + objectName;
+            edithref = "/Elements/Load/" + folder + "/" + controlName + "Edit/" + objectName;
+            listelement = "aswd-" + eref + "listitem";
+            editelement = "aswd-" + eref + "edit";
         }
     }
 }

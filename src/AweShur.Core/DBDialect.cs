@@ -355,6 +355,16 @@ ORDER BY col.ORDINAL_POSITION";
 
         public string Encapsulate(string databaseword)
         {
+            if (Dialect == DBDialectEnum.SQLServer && databaseword.Contains("."))
+            {
+                string[] parts = databaseword.Split('.');
+
+                // No more than 2.
+
+                return string.Format(Encapsulation, parts[0]) + "."
+                    + string.Format(Encapsulation, parts[1]);
+            }
+
             return string.Format(Encapsulation, databaseword);
         }
     }

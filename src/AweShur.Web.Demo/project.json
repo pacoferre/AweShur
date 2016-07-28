@@ -1,20 +1,14 @@
 {
-  "version": "0.0.1-alpha",
+  "version": "1.0.0",
   "dependencies": {
-    "AweShur.Core": "0.0.1-alpha",
-    "AweShur.Web": "0.0.1-alpha",
+    "AweShur.Core": "1.0.2",
     "Newtonsoft.Json": "9.0.1",
     "StackExchange.Redis": "1.1.604-alpha",
-    "Microsoft.NETCore.App": {
-      "version": "1.0.0",
-      "type": "platform"
-    },
     "Microsoft.AspNetCore.Diagnostics": "1.0.0",
     "Microsoft.AspNetCore.Razor.Tools": {
       "version": "1.0.0-preview2-final",
       "type": "build"
     },
-    "Microsoft.AspNetCore.Server.IISIntegration.Tools": "1.0.0-preview2-final",
     "Microsoft.AspNetCore.Session": "1.0.0",
     "Microsoft.AspNetCore.StaticFiles": "1.0.0",
     "Microsoft.Extensions.Configuration.EnvironmentVariables": "1.0.0",
@@ -29,7 +23,8 @@
     "Microsoft.AspNetCore.Mvc": "1.0.0",
     "Microsoft.AspNetCore.Server.IISIntegration": "1.0.0",
     "Microsoft.AspNetCore.Server.Kestrel": "1.0.0",
-    "System.Data.SqlClient": "4.1.0"
+    "System.Data.SqlClient": "4.1.0",
+    "AweShur.Web": "1.0.1"
   },
 
   "tools": {
@@ -38,10 +33,20 @@
   },
 
   "frameworks": {
+    "net46": {},
     "netcoreapp1.0": {
       "imports": [
         "dnxcore50"
-      ]
+      ],
+      "buildOptions": {
+        "define": [ "COREFX" ]
+      },
+      "dependencies": {
+        "Microsoft.NETCore.App": {
+          "version": "1.0.0",
+          "type": "platform"
+        }
+      }
     }
   },
 

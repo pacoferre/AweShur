@@ -59,7 +59,7 @@ namespace AweShur.Core
                 fieldNameLookup.TryGetValue(name, out result)) ? result : -1;
         }
 
-        public void SetProperties(string tableName, int dbNumber)
+        public virtual void SetProperties(string tableName, int dbNumber)
         {
             this.tableName = tableName;
             dialect = DB.InstanceNumber(dbNumber).Dialect;

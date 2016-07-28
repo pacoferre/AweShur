@@ -69,6 +69,7 @@
                 <iron-selector selected="[[page]]" attr-for-selected="name" class="drawer-list" role="navigation">
                     <a name="Customer" href="/#/Customer">Customers</a>
                     <a name="CustomerType" href="/#/CustomerType">Customer types</a>
+                    <a name="CustomerRanking" href="/#/CustomerRanking">Customer ranking</a>
                     @if (currentUser["su"].NoNullBool())
                     {
                     <a name="User" href="/#/User">Users</a>
@@ -89,6 +90,7 @@
                 <iron-pages role="main" selected="[[page]]" attr-for-selected="name" id="pages">
                     <app-customer name="Customer" oname="Customer" route="{{subroute}}"></app-customer>
                     <app-customertype name="CustomerType" oname="CustomerType" route="{{subroute}}"></app-customertype>
+                    <app-customerranking name="CustomerRanking" oname="CustomerRanking" route="{{subroute}}"></app-customerranking>
                     @if (currentUser["su"].NoNullBool())
                     {
                     <app-user name="User" oname="AppUser" route="{{subroute}}"></app-user>

@@ -27,6 +27,11 @@ namespace AweShur.Core.Security
 
         }
 
+        public AppUser(bool noDB)
+        {
+
+        }
+
         public override string Description
         {
             get

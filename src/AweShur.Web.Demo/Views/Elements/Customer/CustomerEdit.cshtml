@@ -6,10 +6,12 @@
 <dom-module id="aswd-customeredit">
     <template>
         @Html.PolEditor(Model, "idCustomerType")
+        @Html.PolEditor(Model, "idCustomerRanking")
         @Html.PolEditor(Model, "name")
         @Html.PolEditor(Model, "creationDate")
         @Html.PolEditor(Model, "memo")
         @Html.PolEditor(Model, "nextCall")
+        @Html.PolEditor(Model, "address")
     </template>
     <script>
     Polymer({

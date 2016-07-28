@@ -17,7 +17,6 @@ using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Caching;
 using StackExchange.Redis;
 using AweShur.Web.Demo.Views.Elements;
-using static AweShur.Web.Demo.Views.Elements.CRUDLocations;
 using System.Data;
 
 namespace AweShur.Web.Demo

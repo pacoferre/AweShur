@@ -17,6 +17,11 @@ namespace AweShur.Core
         public BusinessBaseDefinition Definition { get; }
         private DataItem dataItem = null;
 
+        public BusinessBase()
+        {
+            // No database implementation
+        }
+
         public BusinessBase(string tableName, int dbNumber = 0)
         {
             TableName = tableName;

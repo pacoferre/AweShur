@@ -1,8 +1,8 @@
 {
-  "version": "0.0.1-alpha",
+  "version": "1.0.1",
 
   "dependencies": {
-    "AweShur.Core": "0.0.1-alpha",
+    "AweShur.Core": "1.0.2",
     "Microsoft.AspNetCore.Mvc": "1.0.0",
     "Microsoft.AspNetCore.Mvc.ViewFeatures": "1.0.0",
     "NETStandard.Library": "1.6.0",
@@ -15,8 +15,12 @@
   },
 
   "frameworks": {
+    "net46": {},
     "netstandard1.6": {
-      "imports": "dnxcore50"
+      "imports": "dnxcore50",
+      "buildOptions": {
+        "define": [ "COREFX" ]
+      }
     }
   }
 }

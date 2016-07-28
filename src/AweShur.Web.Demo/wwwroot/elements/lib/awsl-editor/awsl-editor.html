@@ -41,6 +41,8 @@
             this.$.toastOk.open();
         },
         showError: function (msg) {
+            window.alert(msg);
+
             this.$.toastError.text = msg;
             this.$.toastError.fitInto = this.getMain();
             this.$.toastError.open();

@@ -1,5 +1,5 @@
 {
-  "version": "0.0.1-alpha",
+  "version": "1.0.2",
   "dependencies": {
     "StackExchange.Redis": "1.1.604-alpha",
     "Microsoft.AspNetCore.Cryptography.KeyDerivation": "1.0.0",
@@ -15,12 +15,22 @@
     "System.Data.Common": "4.1.0"
   },
   "frameworks": {
+    "net46": {
+      "buildOptions": {
+        "define": [ "ASYNC" ]
+      },
+      "frameworkAssemblies": {
+        "System.Data": "4.0.0.0",
+        "System.Xml": "4.0.0.0",
+        "System.Xml.Linq": "4.0.0.0"
+      }
+    },
     "netstandard1.6": {
+      "buildOptions": {
+        "optimize": true,
+        "define": [ "ASYNC", "COREFX" ]
+      },
       "imports": "dnxcore50"
     }
   },
-  "buildOptions": {
-    "optimize": true,
-    "define": [ "ASYNC", "COREFX" ]
-  }
 }

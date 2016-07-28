@@ -72,8 +72,13 @@ namespace AweShur.Web.Controllers
         {
 #if (DEBUG)
             string fileName = component + ".html";
+            string directory = GetType().GetTypeInfo().Assembly.Location;
 
-            DirectoryInfo info = new DirectoryInfo(GetType().GetTypeInfo().Assembly.Location.Replace("AweShur.Web.dll", "") + @"..\..\..\..\AweShur.Web\Components\" + component);
+#if (NET46)
+            DirectoryInfo info = new DirectoryInfo(directory.Replace("AweShur.Web.dll", "") + @"..\..\..\..\..\AweShur.Web\Components\" + component);
+#else
+            DirectoryInfo info = new DirectoryInfo(directory.Replace("AweShur.Web.dll", "") + @"..\..\..\..\AweShur.Web\Components\" + component);
+#endif
 
             byte[] content = System.IO.File.ReadAllBytes(info.FullName + "\\" + fileName);
 

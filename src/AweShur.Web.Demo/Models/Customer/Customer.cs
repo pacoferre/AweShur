@@ -17,6 +17,13 @@ namespace AweShur.Web.Demo.Models.Customer
             prop.ListSource = "CustomerType";
             prop.Label = "Customer type";
 
+            prop = Properties["idCustomerRanking"];
+
+            prop.Type = PropertyInputType.select; // Will not be usefull untill we got HtmlHelpers
+            prop.DefaultValue = BusinessBaseProvider.ListProvider.GetList("CustomerType").First[0];
+            prop.ListSource = "CustomerRanking";
+            prop.Label = "Customer ranking";
+
             Properties["memo"].Type = PropertyInputType.textarea;
         }
     }
@@ -25,6 +32,24 @@ namespace AweShur.Web.Demo.Models.Customer
     {
         public Customer() : base("Customer")
         {
+        }
+
+        public override bool Validate()
+        {
+            bool valid = base.Validate();
+
+            if (valid)
+            {
+                if (this["name"].NoNullString().ToLower().Contains("utrilla"))
+                {
+                    this.LastErrorMessage = "La empresa no puede ser Utrilla";
+                    this.LastErrorProperty = "name";
+
+                    valid = false;
+                }
+            }
+
+            return valid;
         }
 
         public override string Description
