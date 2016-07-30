@@ -39,7 +39,6 @@ namespace AweShur.Core
             {
                 return dataItem.IsNew;
             }
-
             set
             {
                 dataItem.IsNew = value;

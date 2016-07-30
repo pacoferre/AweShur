@@ -24,7 +24,7 @@ namespace AweShur.Core
         public string Plural { get; set; } = "";
 
         private Dictionary<string, int> fieldNameLookup;
-        protected DBDialect dialect;
+        protected DBDialect dialect = null;
         protected string tableName;
         protected string[] names;
         protected PropertyDefinition firstStringProperty;
@@ -71,9 +71,8 @@ namespace AweShur.Core
                 Properties[column.ColumnName] = def;
             }
 
-
             Singular = "";
-            foreach(char letter in tableName)
+            foreach (char letter in tableName)
             {
                 if (Singular != "" && letter.ToString().ToUpper() == letter.ToString())
                 {
@@ -87,6 +86,15 @@ namespace AweShur.Core
 
             SetCustomProperties();
 
+            PostSetCustomProperties();
+        }
+
+        protected virtual void SetCustomProperties()
+        {
+        }
+
+        protected void PostSetCustomProperties()
+        { 
             ListProperties.AddRange(Properties.Values.ToList());
             fieldNameLookup = new Dictionary<string, int>(Properties.Count, StringComparer.Ordinal);
 
@@ -107,14 +115,12 @@ namespace AweShur.Core
                 prop.Index = i;
             }
 
-            primaryKeyIsOneInt = PrimaryKeys.Count == 1 && ListProperties[PrimaryKeys[0]].DataType == typeof(Int32);
-            primaryKeyIsOneLong = PrimaryKeys.Count == 1 && ListProperties[PrimaryKeys[0]].DataType == typeof(Int64);
-            primaryKeyIsOneGuid = PrimaryKeys.Count == 1 && ListProperties[PrimaryKeys[0]].DataType == typeof(Guid);
-
-        }
-
-        protected virtual void SetCustomProperties()
-        {
+            primaryKeyIsOneInt = PrimaryKeys.Count == 1 && 
+                ListProperties[PrimaryKeys[0]].DataType == typeof(Int32);
+            primaryKeyIsOneLong = PrimaryKeys.Count == 1 && 
+                ListProperties[PrimaryKeys[0]].DataType == typeof(Int64);
+            primaryKeyIsOneGuid = PrimaryKeys.Count == 1 && 
+                ListProperties[PrimaryKeys[0]].DataType == typeof(Guid);
         }
 
         public virtual DataItem New(BusinessBase owner)

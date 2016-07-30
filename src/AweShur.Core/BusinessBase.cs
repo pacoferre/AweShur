@@ -14,22 +14,33 @@ namespace AweShur.Core
         public readonly string TableName = "";
         public readonly int DBNumber = 0;
 
-        public BusinessBaseDefinition Definition { get; }
-        private DataItem dataItem = null;
+        protected BusinessBaseDefinition definition = null;
+        protected DataItem dataItem = null;
 
-        public BusinessBase()
+        public BusinessBase(string tableName, bool noDB)
         {
-            // No database implementation
+            TableName = tableName;
+            DBNumber = 0;
+            definition = BusinessBaseProvider.Instance.GetDefinition(this);
+            dataItem = Definition.New(this);
         }
 
         public BusinessBase(string tableName, int dbNumber = 0)
         {
             TableName = tableName;
             DBNumber = dbNumber;
-            Definition = BusinessBaseProvider.Instance.GetDefinition(this);
+            definition = BusinessBaseProvider.Instance.GetDefinition(this);
             dataItem = Definition.New(this);
 
             lazyDB = new Lazy<DB>(() => DB.InstanceNumber(DBNumber));
+        }
+
+        public BusinessBaseDefinition Definition
+        {
+            get
+            {
+                return definition;
+            }
         }
 
         public virtual string ObjectName

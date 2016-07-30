@@ -56,7 +56,7 @@ namespace AweShur.Core
         public bool IsOnlyOnNew { get; set; } = false;
         public string DBDataType { get; } = "";
         public string FieldName { get; } = "";
-        public Type DataType { get; }
+        public Type DataType { get; set; }
 
         public string Label { get; set; } = "";
         public string Format { get; set; } = "";
@@ -128,7 +128,8 @@ namespace AweShur.Core
             }
         }
 
-        public PropertyDefinition(string propertyName, string label, BasicType basicType = BasicType.Text, PropertyInputType type = PropertyInputType.text)
+        public PropertyDefinition(string propertyName, string label, BasicType basicType = BasicType.Text, 
+            PropertyInputType type = PropertyInputType.text, bool isPrimaryKey = false)
         {
             FieldName = propertyName;
             Label = label;
@@ -141,6 +142,8 @@ namespace AweShur.Core
             {
                 this.MaxLength = 90;
             }
+
+            IsPrimaryKey = isPrimaryKey;
         }
 
         public string InputType

@@ -48,8 +48,11 @@ namespace AweShur.Core
 
         public virtual void RegisterBusinessCreators()
         {
-            creators.Add("AppUser", () => new Security.AppUser() );
-            decorators.Add("AppUser", () => new Security.AppUserDecorator() );
+            creators.Add("AppUser", () => new Security.AppUser());
+            decorators.Add("AppUser", () => new Security.AppUserDecorator());
+
+            creators.Add("AppUserNoDB", () => new Security.AppUserNoDB());
+            decorators.Add("AppUserNoDB", () => new Security.AppUserNoDBDecorator());
         }
 
         public virtual BusinessBase CreateObject(string objectName, int dbNumber = 0)

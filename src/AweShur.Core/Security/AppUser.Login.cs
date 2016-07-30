@@ -10,7 +10,9 @@ namespace AweShur.Core.Security
 {
     public partial class AppUser
     {
-        private static string CurrentUserIDSessionKey = "USER_ID";
+        internal static bool UseAppUserNoDB = false;
+
+        internal static string CurrentUserIDSessionKey = "USER_ID";
         public static byte[] SALT;
 
         public static bool Login(string email, string password, HttpContext context)
@@ -111,7 +113,7 @@ namespace AweShur.Core.Security
             return req.Session.GetInt32(CurrentUserIDSessionKey);
         }
 
-        private static void SetAppUser(AppUser user, HttpContext context)
+        protected static void SetAppUser(AppUser user, HttpContext context)
         {
             // New user logon.
             context.Session.Clear();
@@ -132,7 +134,8 @@ namespace AweShur.Core.Security
 
             if (idAppUser > 0)
             {
-                return (AppUser)BusinessBaseProvider.RetreiveObject(context, "AppUser", idAppUser.ToString());
+                return (AppUser)BusinessBaseProvider.RetreiveObject(context, 
+                    UseAppUserNoDB ? "AppUserNoDB" : "AppUser", idAppUser.ToString());
             }
 
             return null;

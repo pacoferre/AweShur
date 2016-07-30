@@ -27,9 +27,8 @@ namespace AweShur.Core.Security
 
         }
 
-        public AppUser(bool noDB)
+        public AppUser(string tableName, bool noDB) : base(tableName, noDB)
         {
-
         }
 
         public override string Description

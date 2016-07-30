@@ -70,23 +70,33 @@ namespace AweShur.Web.Controllers
 //        [ResponseCache(Location = ResponseCacheLocation.Any, Duration = 10)]
         public IActionResult AWSLib(string component)
         {
+            byte[] content = null;
+
 #if (DEBUG)
-            string fileName = component + ".html";
-            string directory = GetType().GetTypeInfo().Assembly.Location;
+            try
+            {
+                string fileName = component + ".html";
+                string directory = GetType().GetTypeInfo().Assembly.Location;
 
 #if (NET46)
-            DirectoryInfo info = new DirectoryInfo(directory.Replace("AweShur.Web.dll", "") + @"..\..\..\..\..\AweShur.Web\Components\" + component);
+                DirectoryInfo info = new DirectoryInfo(directory.Replace("AweShur.Web.dll", "") + @"..\..\..\..\..\AweShur.Web\Components\" + component);
 #else
-            DirectoryInfo info = new DirectoryInfo(directory.Replace("AweShur.Web.dll", "") + @"..\..\..\..\AweShur.Web\Components\" + component);
+                DirectoryInfo info = new DirectoryInfo(directory.Replace("AweShur.Web.dll", "") + @"..\..\..\..\AweShur.Web\Components\" + component);
 #endif
 
-            byte[] content = System.IO.File.ReadAllBytes(info.FullName + "\\" + fileName);
+                content = System.IO.File.ReadAllBytes(info.FullName + "\\" + fileName);
+            }
+            catch
+            {
 
-            return File(content, "text/html");
-#else
-            string name = "AweShur.Web.Components." + component.Replace('-', '_') + "." + component + ".html";
+            }
+#endif
 
-            byte[] result = componentCache.GetOrAdd(name, (key) =>
+            if (content == null)
+            {
+                string name = "AweShur.Web.Components." + component.Replace('-', '_') + "." + component + ".html";
+
+                content = componentCache.GetOrAdd(name, (key) =>
                 {
                     using (Stream stream = GetType().GetTypeInfo().Assembly.GetManifestResourceStream(name))
                     {
@@ -98,9 +108,9 @@ namespace AweShur.Web.Controllers
                         }
                     }
                 });
+            }
 
-            return File(result, "text/html");
-#endif
+            return File(content, "text/html");
         }
     }
 }

@@ -1,5 +1,5 @@
 {
-  "version": "1.0.2",
+  "version": "1.0.6",
   "dependencies": {
     "StackExchange.Redis": "1.1.604-alpha",
     "Microsoft.AspNetCore.Cryptography.KeyDerivation": "1.0.0",
