@@ -22,17 +22,13 @@ namespace AweShur.Core
         protected bool alwaysMustSave = false;
         private List<BusinessBase> list = new List<BusinessBase>();
 
-        public virtual BusinessBase CreateNewChild()
-        {
-            return BusinessBaseProvider.Instance.CreateObject(childObjectName, dbNumber);
-        }
-
-        protected BusinessCollectionBase(BusinessBase parent, string parentRelationFieldName, 
+        public BusinessCollectionBase(BusinessBase parent, string parentRelationFieldName, 
             string childObjectName, string sql, int dbNumber = 0)
         {
             this.dbNumber = dbNumber;
             this.Parent = parent;
             this.parentRelationFieldName = parentRelationFieldName;
+            this.childObjectName = childObjectName;
             this.childRelationFieldName = BusinessBaseProvider.Instance.GetDefinition(childObjectName, dbNumber).ListProperties[0].FieldName;
             this.sql = sql;
         }
@@ -113,6 +109,11 @@ namespace AweShur.Core
             }
         }
 
+        public virtual BusinessBase CreateNewChild()
+        {
+            return BusinessBaseProvider.Instance.CreateObject(childObjectName, dbNumber);
+        }
+
         public BusinessBase CreateNew()
         {
             BusinessBase b;
@@ -121,6 +122,7 @@ namespace AweShur.Core
             b.Parent = this;
             b.SetPropertiesFrom(Parent);
 
+            Add(b);
             ActiveObject = b;
 
             return b;
@@ -189,9 +191,8 @@ namespace AweShur.Core
             {
                 if (sql != "" && !readed)
                 {
-                    DB.Instance.ReadBusinessCollection(this);
-
                     readed = true;
+                    DB.Instance.ReadBusinessCollection(this);
 
                     afterReadFromDBPending = true;
                 }
@@ -485,6 +486,7 @@ namespace AweShur.Core
 
             ActiveObject.CopyTo(target, null);
 
+            Add(target);
             ActiveObject = target;
 
             return ActiveObject;

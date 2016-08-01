@@ -81,12 +81,40 @@
                 this.ajaxlist.addEventListener('error', this._handleFormError.bind(this));
 
                 this.ajaxlist.url = "/CRUD/List/" + this.oname;
+
+                this.getItemsList().reallythis = this;
+                this.getItemsList().addEventListener('selected-items-changed', this._selectedItemChanged);
             },
             getItemsList: function () {
                 return null;
             },
-            getListTemplate: function() {
-                return null;
+            _selectedItemChanged: function () {
+                // this here is vaadin-grid !!!
+                var select = this.selection.selected();
+
+                var reallythis = this.reallythis;
+
+                if (select.length > 0) {
+                    var index = select[0];
+
+                    reallythis.key = reallythis.items[index][0];
+                    reallythis.set('route.path', '/' + reallythis.key);
+
+                    //this.async(function () {
+                    //    this.$.itemsList.selection.deselect(index);
+                    //}, 100);
+                }
+            },
+            _itemsChanged: function () {
+                //this.async(function () {
+                //    if (this.$.listContent.offsetHeight > 0)
+                //    {
+                //        this.$.itemsList._render();
+                //    }
+                //    else {
+                //        this._itemsChanged();
+                //    }
+                //}, 5);
             },
             _onSaved: function () {
                 this.refresh();

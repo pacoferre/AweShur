@@ -52,7 +52,7 @@ namespace AweShur.Core
 
                 if (!mod)
                 {
-                    foreach (BusinessCollectionBase col in objetosSub.Values)
+                    foreach (BusinessCollectionBase col in relatedCollections.Values)
                     {
                         if (col.IsModified)
                         {

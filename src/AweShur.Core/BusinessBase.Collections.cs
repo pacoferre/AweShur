@@ -7,7 +7,7 @@ namespace AweShur.Core
 {
     public partial class BusinessBase
     {
-        protected Dictionary<string, BusinessCollectionBase> objetosSub 
+        protected Dictionary<string, BusinessCollectionBase> relatedCollections 
             = new Dictionary<string, BusinessCollectionBase>();
 
         public BusinessCollectionBase Parent { get; set; } = null;
@@ -32,7 +32,7 @@ namespace AweShur.Core
 
             try
             {
-                col = objetosSub[collectionName];
+                col = relatedCollections[collectionName];
                 if (col == null)
                 {
                     throw new Exception("Not possible.");
@@ -48,7 +48,7 @@ namespace AweShur.Core
 
         public virtual bool IsCollection(string collectionName)
         {
-            return objetosSub.ContainsKey(collectionName);
+            return relatedCollections.ContainsKey(collectionName);
         }
     }
 }

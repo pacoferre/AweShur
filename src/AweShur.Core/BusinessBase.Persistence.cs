@@ -17,7 +17,7 @@ namespace AweShur.Core
 
             if (!withoutCollections)
             {
-                foreach (BusinessCollectionBase col in objetosSub.Values)
+                foreach (BusinessCollectionBase col in relatedCollections.Values)
                 {
                     col.SetNew(preserve, withoutCollections);
                 }
@@ -105,7 +105,7 @@ namespace AweShur.Core
 
         public virtual void AfterReadFromDB()
         {
-            foreach (BusinessCollectionBase c in objetosSub.Values)
+            foreach (BusinessCollectionBase c in relatedCollections.Values)
             {
                 c.Reset();
             }
@@ -130,7 +130,7 @@ namespace AweShur.Core
 
                         if (IsDeleting)
                         {
-                            foreach (BusinessCollectionBase col in objetosSub.Values)
+                            foreach (BusinessCollectionBase col in relatedCollections.Values)
                             {
                                 col.SetForDeletion();
                                 col.StoreToDB();
@@ -139,7 +139,7 @@ namespace AweShur.Core
 
                         CurrentDB.StoreBusinessObject(this);
 
-                        foreach (BusinessCollectionBase col in objetosSub.Values)
+                        foreach (BusinessCollectionBase col in relatedCollections.Values)
                         {
                             if (col.MustSave)
                             {

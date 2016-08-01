@@ -3,6 +3,8 @@
     Layout = "_CRUDLayout";
 }
 
+<link rel="import" href="~/elements/lib/awsl-collection/awsl-collection.html">
+
 <dom-module id="aswd-customeredit">
     <template>
         @Html.PolEditor(Model, "idCustomerType")
@@ -12,6 +14,7 @@
         @Html.PolEditor(Model, "memo")
         @Html.PolEditor(Model, "nextCall")
         @Html.PolEditor(Model, "address")
+        <awsl-collection path="ColContact"></awsl-collection>
     </template>
     <script>
     Polymer({

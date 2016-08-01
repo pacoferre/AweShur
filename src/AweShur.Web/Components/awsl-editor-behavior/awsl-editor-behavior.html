@@ -44,8 +44,9 @@
                                 key: "",
                                 data: [],
                                 changed: {},
-                                childreen: []
-                            }
+                                children: []
+                            },
+                            collections: []
                         };
 
                         return obj;
@@ -183,7 +184,7 @@
 
                     if (action == "load") {
                         this.toserver.root.data = [];
-                        this.toserver.root.childreen = [];
+                        this.toserver.root.children = this.theelement.childrenArray;
                     }
                     else if (action == "init") {
                         this.toserver.dataNames = this.theelement.dataNames;

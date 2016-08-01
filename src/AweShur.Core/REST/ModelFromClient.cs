@@ -22,7 +22,7 @@ namespace AweShur.Core.REST
         public string key { get; set; } = "";
         public List<string> data { get; set; }
         public Dictionary<string, string> changed { get; set; }
-        public List<ModelFromClientCollection> childreen { get; set; }
+        public List<ModelFromClientCollection> children { get; set; }
     }
 
     public class ModelFromClientCollection

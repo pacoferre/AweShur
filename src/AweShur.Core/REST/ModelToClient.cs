@@ -52,6 +52,8 @@ namespace AweShur.Core.REST
 
         public BusinessObjectPermisson permisson = new BusinessObjectPermisson();
 
+        public Dictionary<string, List<ModelToClient>> collections;
+
         public ModelToClient()
         {
             this.ok = true;

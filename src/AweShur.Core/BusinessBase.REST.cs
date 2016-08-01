@@ -121,6 +121,110 @@ namespace AweShur.Core
 
             model.action = fromClient.action;
 
+            if (fromClient.root.children != null && fromClient.root.children.Count > 0)
+            {
+                model.collections = new Dictionary<string, List<ModelToClient>>(fromClient.root.children.Count);
+
+                foreach(ModelFromClientCollection clientCol in fromClient.root.children)
+                {
+                    BusinessCollectionBase col = Collection(clientCol.path);
+                    List<ModelToClient> elements = new List<ModelToClient>(col.Count);
+
+                    foreach(BusinessBase obj in col)
+                    {
+                        ModelFromClientData clientElement = null;
+
+                        if (clientCol.elements != null)
+                        {
+                            foreach (ModelFromClientData element in clientCol.elements)
+                            {
+                                if (obj.Key == element.key)
+                                {
+                                    clientElement = element;
+                                }
+                            }
+                        }
+
+                        elements.Add(obj.CreateResponse(null, clientCol, clientElement, fromClient.action));
+                    }
+
+                    model.collections.Add(clientCol.path, elements);
+                }
+            }
+
+            return model;
+        }
+
+        public virtual ModelToClient CreateResponse(HttpContext context, ModelFromClientCollection fromClient,
+            ModelFromClientData element, string fromClientAction)
+        {
+            ModelToClient model = new ModelToClient();
+
+            model.wasNew = IsNew;
+            model.wasDeleting = IsDeleting;
+            model.wasModified = IsModified;
+
+            // Too much copy/paste
+            if (element != null)
+            {
+                if (fromClientAction == "changed")
+                {
+                    foreach (KeyValuePair<string, string> item in element.changed)
+                    {
+                        PropertyDefinition prop = Definition.Properties[item.Key];
+
+                        prop.SetValue(this, item.Value);
+                    }
+                }
+                else if (fromClientAction == "ok")
+                {
+                    for (int index = 0; index < fromClient.dataNames.Count; ++index)
+                    {
+                        PropertyDefinition prop = Definition.Properties[fromClient.dataNames[index]];
+
+                        prop.SetValue(this, element.data[index]);
+                    }
+                }
+            }
+
+            // Send object data.
+            model.data = new Dictionary<string, string>(Definition.ListProperties.Count);
+            if (fromClient.dataNames != null)
+            {
+                foreach (PropertyDefinition prop in Definition.ListProperties)
+                {
+                    if (fromClient.dataNames.Contains(prop.FieldName))
+                    {
+                        model.data.Add(prop.FieldName, prop.GetValue(this));
+                    }
+                }
+            }
+
+            model.keyObject = Key;
+            model.isNew = IsNew;
+            model.isModified = IsModified;
+            model.isDeleting = IsDeleting;
+
+            model.ClientRefreshPending = ClientRefreshPending;
+
+            model.title = Title;
+
+            // First level now...
+            //if (relatedCollections.Count > 0)
+            //{
+            //    model.collections = new Dictionary<string, List<ModelToClient>>(relatedCollections.Count);
+
+            //    foreach (BusinessCollectionBase col in relatedCollections.Values)
+            //    {
+            //        List<ModelToClient> elements = new List<ModelToClient>(col.Count);
+
+            //        foreach (BusinessBase obj in col)
+            //        {
+            //            elements.Add(obj.CreateResponse(null, null));
+            //        }
+            //    }
+            //}
+
             return model;
         }
 

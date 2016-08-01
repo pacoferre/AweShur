@@ -19,6 +19,10 @@
                     type: Array,
                     value: function () { return []; }
                 },
+                childrenArray: {
+                    type: Array,
+                    value: function () { return []; }
+                },
                 listNames: {
                     type: Array,
                     value: function () { return []; }
@@ -86,6 +90,12 @@
                         if (this.listNames.indexOf(element.listName) == -1) {
                             this.listNames.push(element.listName);
                         }
+                    }
+                    if (element.isChildren !== undefined) {
+                        this.childrenArray.push({
+                            path: element.path,
+                            dataNames: element.dataNames
+                        });
                     }
                 }
             },
@@ -183,15 +193,12 @@
                 this.setListItems(fromserver);
 
                 for (var el, i = 0; el = this.elements[i], i < this.elements.length; i++) {
-                    if (lastChanged != null && el === lastChanged)
-                    {
-                        if (!el.focused)
-                        {
+                    if (lastChanged != null && el === lastChanged) {
+                        if (!el.focused) {
                             el.setData(fromserver);
                         }
                     }
-                    else
-                    {
+                    else {
                         el.setData(fromserver);
                     }
                 }
@@ -205,11 +212,17 @@
                 }
 
                 for (var el, i = 0; el = this.elements[i], i < this.elements.length; i++) {
-                    var index = this.dataNames.indexOf(el.dataField);
 
-                    if (index > -1)
+                    if (el.isChildren !== undefined)
                     {
-                        root.data[index] = el.getData();
+                        el.getOwnDataData(root);
+                    }
+                    else
+                    {
+                        var index = this.dataNames.indexOf(el.dataField);
+                        if (index > -1) {
+                            root.data[index] = el.getData();
+                        }
                     }
                 }
             },
@@ -222,7 +235,7 @@
                         }
                     }
                 }
-            }
+            },
         };
     })();
 </script>

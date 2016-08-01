@@ -20,7 +20,7 @@ namespace AweShur.Core
             {
                 string errorMessage = lastErrorMessage;
 
-                foreach (BusinessCollectionBase col in objetosSub.Values)
+                foreach (BusinessCollectionBase col in relatedCollections.Values)
                 {
                     if (col.LastErrorMessage != "")
                     {
@@ -39,7 +39,7 @@ namespace AweShur.Core
                 this.lastErrorMessage = value;
                 if (value == "")
                 {
-                    foreach (BusinessCollectionBase col in objetosSub.Values)
+                    foreach (BusinessCollectionBase col in relatedCollections.Values)
                     {
                         col.LastErrorMessage = "";
                     }
@@ -60,7 +60,7 @@ namespace AweShur.Core
             {
                 BusinessCollectionBase col;
 
-                foreach (string collectionName in objetosSub.Keys)
+                foreach (string collectionName in relatedCollections.Keys)
                 {
                     col = NotEnsuredCollection(collectionName);
 
