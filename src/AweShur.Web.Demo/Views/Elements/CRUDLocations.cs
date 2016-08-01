@@ -45,29 +45,25 @@ namespace AweShur.Web.Demo.Views.Elements
 
         public void Initialize()
         {
-            string folder = Folder;
-            string controlName = ControlName;
-            string objectName = ObjectName;
-
-            if (controlName == "")
+            if (ControlName == "")
             {
-                controlName = folder;
+                ControlName = Folder;
             }
 
             componentName = "app-" + eref;
 
-            if (folder == "Simple")
+            if (Folder == "Simple")
             {
                 eref = "simple";
             }
 
-            if (objectName == "")
+            if (ObjectName == "")
             {
-                objectName = controlName;
+                ObjectName = ControlName;
             }
 
-            listhref = "/Elements/Load/" + folder + "/" + controlName + "ListItem/" + objectName;
-            edithref = "/Elements/Load/" + folder + "/" + controlName + "Edit/" + objectName;
+            listhref = "/Elements/Load/" + Folder + "/" + ControlName + "ListItem/" + ObjectName;
+            edithref = "/Elements/Load/" + Folder + "/" + ControlName + "Edit/" + ObjectName;
             listelement = "aswd-" + eref + "listitem";
             editelement = "aswd-" + eref + "edit";
         }

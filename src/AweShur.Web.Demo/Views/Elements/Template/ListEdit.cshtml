@@ -3,6 +3,7 @@
     string msgError = "";
     AweShur.Web.Demo.Views.Elements.CRUDLocationItem item = null;
     int? idappuser = AppUser.IDAppUser(Context);
+    Dictionary<string, DataViewColumn> columns = null;
 
     try
     {
@@ -16,8 +17,13 @@
         {
             item = AweShur.Web.Demo.Views.Elements.CRUDLocations.Item(eref);
         }
+
+        columns = BusinessBaseProvider.Instance.GetFilter(
+                AppUser.GetAppUser(Context),
+                item.ObjectName).Definition.
+                GetFilterColumnsAndFromClause().Item1;
     }
-    catch(Exception exp)
+    catch (Exception exp)
     {
         error = true;
         msgError = exp.ToString();
@@ -37,8 +43,31 @@
         else
         {
             <awsl-listeditor-vaadin oname="[[oname]]" route="{{route}}" path="[[name]]" title="" id="le"
-                listhref='@(item.listhref + "/" + idappuser)' listelement="@item.listelement"
-                edithref='@(item.edithref + "/" + idappuser)' editelement="@item.editelement"></awsl-listeditor-vaadin>
+                edithref='@(item.edithref + "/" + idappuser)' editelement="@item.editelement">
+                <table>
+                    <colgroup>
+                        @foreach (DataViewColumn v in columns.Values)
+                        {
+                            @if (v.Hidden)
+                            {
+                                <col hidden="">
+                            }
+                            else
+                            {
+                                <col>
+                            }
+                        }
+                    </colgroup>
+                    <thead>
+                        <tr>
+                            @foreach (DataViewColumn v in columns.Values)
+                            {
+                                <th>@v.Label</th>
+                            }
+                        </tr>
+                    </thead>
+                </table>
+            </awsl-listeditor-vaadin>
         }
     </template>
     <script>
