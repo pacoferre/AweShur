@@ -10,7 +10,7 @@ namespace AweShur.Core.Security
     {
         public override void SetProperties(string tableName, int dbNumber)
         {
-            this.tableName = tableName;
+            this.tableNameNormal = tableName;
 
             SetCustomProperties();
         }

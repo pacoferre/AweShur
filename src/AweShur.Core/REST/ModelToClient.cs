@@ -26,6 +26,8 @@ namespace AweShur.Core.REST
         public bool isNew { get; set; }
         public bool isDeleting { get; set; }
 
+        public bool ClientRefreshPending { get; set; }
+
         public Dictionary<string, string> data { get; set; }
         public Dictionary<string, string> props { get; set; }
 
@@ -36,8 +38,8 @@ namespace AweShur.Core.REST
         public string title { get; set; }
 
         public string errorMessage { get; set; }
-        public string errorColection { get; set; }
-        public string errorColectionKey { get; set; }
+        public string errorCollection { get; set; }
+        public string errorCollectionKey { get; set; }
         public string errorProperty { get; set; }
         public string normalMessage { get; set; }
         public string resultData { get; set; }
@@ -55,8 +57,8 @@ namespace AweShur.Core.REST
             this.ok = true;
             this.normalMessage = "";
             this.errorMessage = "";
-            this.errorColection = "";
-            this.errorColectionKey = "";
+            this.errorCollection = "";
+            this.errorCollectionKey = "";
             this.errorProperty = "";
             this.goBack = false;
             this.filterPosition = -1;

@@ -14,6 +14,13 @@ namespace AweShur.Core
 {
     public class BusinessBaseProvider
     {
+        public static Dictionary<string, string> TableSchemas { get; set; } = new Dictionary<string, string>();
+
+        public Func<string, int, BusinessBase> DefaultBusinessBase =
+            (objectName, dbNumber) => new BusinessBase(objectName, dbNumber);
+        public Func<BusinessBaseDefinition> DefaultBusinessBaseDefinition =
+            () => new BusinessBaseDefinition();
+
         protected Dictionary<string, Func<BusinessBase>> creators = new Dictionary<string, Func<BusinessBase>>();
         protected Dictionary<string, Func<BusinessBaseDefinition>> decorators = new Dictionary<string, Func<BusinessBaseDefinition>>();
         private ConcurrentDictionary<string, Lazy<BusinessBaseDefinition>>
@@ -71,18 +78,13 @@ namespace AweShur.Core
             }
             else
             {
-                obj = new BusinessBase(objectName, dbNumber);
+                obj = DefaultBusinessBase(objectName, dbNumber);
             }
 
             return obj;
         }
 
-        public BusinessBaseDefinition GetDefinition(BusinessBase business)
-        {
-            return GetDefinition(business.TableName, business.DBNumber);
-        }
-
-        public BusinessBaseDefinition GetDefinition(string name, int dbNumber)
+        public BusinessBaseDefinition GetDefinition(string name, int dbNumber = 0)
         {
             Lazy<BusinessBaseDefinition> lazy = definitionsCreators.GetOrAdd(
                 name,
@@ -104,7 +106,7 @@ namespace AweShur.Core
             }
             else
             {
-                definition = new BusinessBaseDefinition();
+                definition = DefaultBusinessBaseDefinition();
             }
             definition.SetProperties(tableName, dbNumber);
 
@@ -123,7 +125,7 @@ namespace AweShur.Core
 
         public static void StoreObject(BusinessBase obj, string objectName)
         {
-            string objectKey = ObjectKey(objectName, obj.DBNumber, obj.Key);
+            string objectKey = ObjectKey(objectName, obj.Definition.DBNumber, obj.Key);
 
             StoreData(objectKey, obj.Serialize());
         }

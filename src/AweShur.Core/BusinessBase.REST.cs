@@ -115,11 +115,26 @@ namespace AweShur.Core
             model.isModified = IsModified;
             model.isDeleting = IsDeleting;
 
+            model.ClientRefreshPending = ClientRefreshPending;
+
             model.title = Title;
 
             model.action = fromClient.action;
 
             return model;
+        }
+
+        private bool clientRefreshPending = false;
+        public virtual bool ClientRefreshPending
+        {
+            get
+            {
+                return clientRefreshPending;
+            }
+            set
+            {
+                clientRefreshPending = value;
+            }
         }
     }
 }

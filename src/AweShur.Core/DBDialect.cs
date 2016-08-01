@@ -93,10 +93,26 @@ namespace AweShur.Core
             return basicTypesDict[type];
         }
 
+        public string GetFullTableName(string tableName)
+        {
+            if (BusinessBaseProvider.TableSchemas.ContainsKey(tableName))
+            {
+                return BusinessBaseProvider.TableSchemas[tableName] + "." + tableName;
+            }
+
+            return tableName;
+        }
+
         public IEnumerable<ColumnDefinition> GetSchema(string tableName, int dbNumber = 0)
         {
-            string tableSchema = "dbo";
+            string tableSchema = "";
             
+            if (Dialect == DBDialectEnum.SQLServer)
+            {
+                tableSchema = "dbo";
+                tableName = tableName.Replace("[", "").Replace("]", "");
+            }
+
             if (tableName.Contains('.'))
             {
                 string[] parts = tableName.Split('.');

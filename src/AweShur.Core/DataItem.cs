@@ -12,6 +12,7 @@ namespace AweShur.Core
     {
         private bool keyIsDirty = true;
         private string key = "";
+        private string newKey = "";
 
         private object[] values;
         public bool IsNew { get; set; } = false;
@@ -88,8 +89,26 @@ namespace AweShur.Core
                     SetKey();
                 }
 
-                return IsNew ? "0" : key;
+                return IsNew ? GetNewKey() : key;
             }
+        }
+
+        private string GetNewKey()
+        {
+            if (newKey == "")
+            {
+                lock (newKey)
+                {
+                    if (newKey == "")
+                    {
+                        int k = Guid.NewGuid().GetHashCode();
+
+                        newKey = (k > 0 ? -k : k).ToString();
+                    }
+                }
+            }
+
+            return newKey;
         }
 
         public byte[] Serialize()

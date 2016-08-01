@@ -3544,6 +3544,18 @@ namespace Dapper
             ReadBusinessObjectImpl(cnn, Row.Single, ref command, obj);
         }
 
+
+        public static void ReadBusinessCollection(
+                    this IDbConnection cnn, BusinessCollectionBase col, IDbTransaction transaction = null, bool buffered = true, int? commandTimeout = null, CommandType? commandType = null
+                )
+        {
+            string sql = col.SQLQuery;
+            object param = col.SQLParameters;
+            var command = new CommandDefinition(sql, param, transaction, commandTimeout, commandType, buffered ? CommandFlags.Buffered : CommandFlags.None);
+
+            ReadBusinessCollectionImpl(cnn, command, col);
+        }
+
         private static void ReadBusinessObjectImpl(IDbConnection cnn, Row row, ref CommandDefinition command, BusinessBase obj)
         {
             object param = command.Parameters;
@@ -3578,7 +3590,7 @@ namespace Dapper
                         object val = reader.GetValue(i);
 
                         obj[i] = val is DBNull ? null : val;
-                    };
+                    }
 
                     if ((row & Row.Single) != 0 && reader.Read()) ThrowMultipleRows(row);
                     while (reader.Read()) { }
@@ -3586,6 +3598,71 @@ namespace Dapper
                 else if ((row & Row.FirstOrDefault) == 0) // demanding a row, and don't have one
                 {
                     ThrowZeroRows(row);
+                }
+                while (reader.NextResult()) { }
+                // happy path; close the reader cleanly - no
+                // need for "Cancel" etc
+                reader.Dispose();
+                reader = null;
+
+                command.OnCompleted();
+            }
+            finally
+            {
+                if (reader != null)
+                {
+                    if (!reader.IsClosed) try { cmd.Cancel(); }
+                        catch { /* don't spoil the existing exception */ }
+                    reader.Dispose();
+                }
+                if (wasClosed) cnn.Close();
+                cmd?.Dispose();
+            }
+        }
+
+        private static void ReadBusinessCollectionImpl(IDbConnection cnn, CommandDefinition command, BusinessCollectionBase col)
+        {
+            object param = command.Parameters;
+            var identity = new Identity(command.CommandText, command.CommandType, cnn, col.GetType(), param?.GetType(), null);
+            var info = GetCacheInfo(identity, param, command.AddToCache);
+
+            IDbCommand cmd = null;
+            IDataReader reader = null;
+
+            bool wasClosed = cnn.State == ConnectionState.Closed;
+            try
+            {
+                cmd = command.SetupCommand(cnn, info.ParamReader);
+
+                if (wasClosed) cnn.Open();
+                reader = ExecuteReaderWithFlagsFallback(cmd, wasClosed, CommandBehavior.SequentialAccess | CommandBehavior.SingleResult);
+                wasClosed = false; // *if* the connection was closed and we got this far, then we now have a reader
+                                   // with the CloseConnection flag, so the reader will deal with the connection; we
+                                   // still need something in the "finally" to ensure that broken SQL still results
+                                   // in the connection closing itself
+                if (command.AddToCache) SetQueryCache(identity, info);
+
+                int fieldCount = reader.FieldCount;
+
+                col.Clear();
+
+                if (fieldCount != 0)
+                {
+                    while (reader.Read())
+                    {
+                        BusinessBase obj = col.CreateNew();
+
+                        //Store data into BusinessObject
+                        for (int i = 0; i < fieldCount; ++i)
+                        {
+                            object val = reader.GetValue(i);
+
+                            obj[i] = val is DBNull ? null : val;
+                        }
+
+                        obj.IsModified = false;
+                        obj.IsNew = false;
+                    }
                 }
                 while (reader.NextResult()) { }
                 // happy path; close the reader cleanly - no

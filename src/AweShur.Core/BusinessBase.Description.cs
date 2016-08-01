@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -31,9 +32,7 @@ namespace AweShur.Core
             return Definition.Properties[propertyName].IsReadOnly;
         }
 
-
-
-        public bool IsNew
+        public virtual bool IsNew
         {
             get
             {
@@ -45,20 +44,33 @@ namespace AweShur.Core
             }
         }
 
-        public bool IsModified
+        public virtual bool IsModified
         {
             get
             {
-                return dataItem.IsModified;
-            }
+                bool mod = dataItem.IsModified;
 
+                if (!mod)
+                {
+                    foreach (BusinessCollectionBase col in objetosSub.Values)
+                    {
+                        if (col.IsModified)
+                        {
+                            mod = true;
+                            break;
+                        }
+                    }
+                }
+
+                return mod;
+            }
             set
             {
                 dataItem.IsModified = value;
             }
         }
 
-        public bool IsDeleting
+        public virtual bool IsDeleting
         {
             get
             {
@@ -72,6 +84,32 @@ namespace AweShur.Core
                 }
                 dataItem.IsDeleting = value;
             }
+        }
+
+        public virtual bool CanDelete
+        {
+            get
+            {
+                return !(IsNew || IsDeleting);
+            }
+        }
+
+        public virtual bool IsNewOrChanged
+        {
+            get
+            {
+                return IsModified || IsNew || IsDeleting;
+            }
+        }
+
+        public virtual string Value(string valueName)
+        {
+            if (valueName == "Description")
+            {
+                return this.Description;
+            }
+
+            return "";
         }
     }
 }

@@ -77,7 +77,7 @@ namespace AweShur.Core.Security
                 //    usu["email"] = "admin@local";
                 //    usu["password"] = "admin";
                 //    usu.creacionAutomatica = true;
-                //    usu.Guardar(false);
+                //    usu.StoreToDB(false);
                 //    usu.creacionAutomatica = false;
                 //}
             }
@@ -120,7 +120,7 @@ namespace AweShur.Core.Security
 
             context.Session.SetInt32(CurrentUserIDSessionKey, (int)user[0]);
 
-            BusinessBaseProvider.StoreObject(user, "AppUser");
+            BusinessBaseProvider.StoreObject(user, UseAppUserNoDB ? "AppUserNoDB" : "AppUser");
         }
 
         public static AppUser GetAppUserWithoutHttpContext()

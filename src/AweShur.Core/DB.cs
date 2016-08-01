@@ -255,6 +255,15 @@ namespace AweShur.Core
             CloseConnection();
         }
 
+        public void ReadBusinessCollection(BusinessCollectionBase col)
+        {
+            OpenConnection();
+
+            conn.ReadBusinessCollection(col);
+
+            CloseConnection();
+        }
+
         public void StoreBusinessObject(BusinessBase obj)
         {
             BusinessBaseDefinition def = obj.Definition;

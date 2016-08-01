@@ -7,10 +7,21 @@ namespace AweShur.Core
 {
     public partial class BusinessBase
     {
-        public void SetNew()
+        public void SetNew(bool preserve = false, bool withoutCollections = false)
         {
-            dataItem = Definition.New(this);
+            if (!preserve)
+            {
+                dataItem = Definition.New(this);
+            }
             IsNew = true;
+
+            if (!withoutCollections)
+            {
+                foreach (BusinessCollectionBase col in objetosSub.Values)
+                {
+                    col.SetNew(preserve, withoutCollections);
+                }
+            }
             PostSetNew();
         }
 
@@ -92,8 +103,13 @@ namespace AweShur.Core
             return readed;
         }
 
-        protected virtual void AfterReadFromDB()
-        { }
+        public virtual void AfterReadFromDB()
+        {
+            foreach (BusinessCollectionBase c in objetosSub.Values)
+            {
+                c.Reset();
+            }
+        }
 
         public virtual void StoreToDB()
         {
@@ -102,7 +118,7 @@ namespace AweShur.Core
 
             if (IsDeleting || IsNew || IsModified)
             {
-                bool isValidated = Validate();
+                bool isValidated = IsDeleting ? true : Validate();
 
                 if (isValidated)
                 {
@@ -112,7 +128,24 @@ namespace AweShur.Core
                         bool wasModified = IsModified;
                         bool wasDeleting = IsDeleting;
 
+                        if (IsDeleting)
+                        {
+                            foreach (BusinessCollectionBase col in objetosSub.Values)
+                            {
+                                col.SetForDeletion();
+                                col.StoreToDB();
+                            }
+                        }
+
                         CurrentDB.StoreBusinessObject(this);
+
+                        foreach (BusinessCollectionBase col in objetosSub.Values)
+                        {
+                            if (col.MustSave)
+                            {
+                                col.StoreToDB();
+                            }
+                        }
 
                         IsNew = false;
                         IsModified = false;
@@ -136,6 +169,29 @@ namespace AweShur.Core
         }
 
         protected virtual void AfterStoreToDB(bool wasNew, bool wasModified, bool wasDeleting)
-        { }
+        {
+        }
+
+        public virtual void SetPropertiesFrom(BusinessBase source)
+        {
+        }
+
+        public virtual void PostSetNew()
+        {
+        }
+
+        public virtual void CopyTo(BusinessBase Target, List<string> excludeFieldNames)
+        {
+            foreach (PropertyDefinition prop in Definition.ListProperties)
+            {
+                if (!prop.IsReadOnly
+                    && !prop.IsPrimaryKey
+                    && (excludeFieldNames == null || (excludeFieldNames != null
+                    && !excludeFieldNames.Contains(prop.FieldName))))
+                {
+                    Target[prop.FieldName] = this[prop.FieldName];
+                }
+            }
+        }
     }
 }

@@ -485,7 +485,7 @@ namespace AweShur.Core
             return LetrasNIF[n % 23].ToString();
         }
 
-        public static bool ValidarNIF(ref string nif, ref string mensaje)
+        public static bool ValidarNIF(ref string nif, ref string Message)
         {
             bool correcto = true;
             string letraAnterior = "";
@@ -513,7 +513,7 @@ namespace AweShur.Core
                 catch (Exception exp)
                 {
                     correcto = false;
-                    mensaje = exp.Message;
+                    Message = exp.Message;
                 }
             }
 
@@ -522,7 +522,7 @@ namespace AweShur.Core
                 if (letra != letraAnterior)
                 {
                     correcto = false;
-                    mensaje = "Letra " + letraAnterior + " incorrecta.";
+                    Message = "Letra " + letraAnterior + " incorrecta.";
                 }
             }
 
@@ -531,7 +531,7 @@ namespace AweShur.Core
             return correcto;
         }
 
-        public static bool ValidarCIF(string cif, ref string mensaje)
+        public static bool ValidarCIF(string cif, ref string Message)
         {
             bool correcto = true;
             int[] v1 = new int[] { 0, 2, 4, 6, 8, 1, 3, 5, 7, 9 };
@@ -546,7 +546,7 @@ namespace AweShur.Core
             if (cif.Length != 9)
             {
                 correcto = false;
-                mensaje = "El CIF debe constar de una letra y 9 dígitos.";
+                Message = "El CIF debe constar de una letra y 9 dígitos.";
             }
 
             if (correcto)
@@ -556,7 +556,7 @@ namespace AweShur.Core
                 if (!int.TryParse(cif.Substring(1, 6), out v))
                 {
                     correcto = false;
-                    mensaje = "El CIF debe constar de una letra y 9 dígitos.";
+                    Message = "El CIF debe constar de una letra y 9 dígitos.";
                 }
 
                 if (correcto)
@@ -564,7 +564,7 @@ namespace AweShur.Core
                     if (v.ToString() != cif.Substring(1, 6))
                     {
                         correcto = false;
-                        mensaje = "El CIF debe constar de una letra y 9 dígitos.";
+                        Message = "El CIF debe constar de una letra y 9 dígitos.";
                     }
                 }
             }
@@ -874,7 +874,7 @@ namespace AweShur.Core
                         break;
                     default:
                         correcto = false;
-                        mensaje = "Letra incorrecta, debe ser una de estas (A,B,C,D,E,F,G,H,J,K,L,M,N,P,Q,R,S,U,V,W).";
+                        Message = "Letra incorrecta, debe ser una de estas (A,B,C,D,E,F,G,H,J,K,L,M,N,P,Q,R,S,U,V,W).";
                         break;
                 }
             }
@@ -884,13 +884,13 @@ namespace AweShur.Core
                 if (cif.Substring(8, 1) != Digito)
                 {
                     correcto = false;
-                    mensaje = "Dígito de control incorrecto.";
+                    Message = "Dígito de control incorrecto.";
                 }
             }
 
             if (correcto)
             {
-                mensaje = "CIF : <b>" + cif.Substring(0, 8) + "-" + Digito + "</b><br>Tipo: <b> " + Tipo + "</b><br>Con sede (si es anterior a 2009) en: <b>" + Provincia + "</b><br>N&ordm; Secuencial: <b>" + value.Substring(3, 5) + "</b><br>D&iacute;gito de Control: <b>" + Digito + "</b>";
+                Message = "CIF : <b>" + cif.Substring(0, 8) + "-" + Digito + "</b><br>Tipo: <b> " + Tipo + "</b><br>Con sede (si es anterior a 2009) en: <b>" + Provincia + "</b><br>N&ordm; Secuencial: <b>" + value.Substring(3, 5) + "</b><br>D&iacute;gito de Control: <b>" + Digito + "</b>";
             }
 
             return correcto;

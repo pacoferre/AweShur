@@ -13,12 +13,6 @@
                 oname: {
                     type: String,
                 },
-                listhref: {
-                    type: String,
-                },
-                listelement: {
-                    type: String,
-                },
                 edithref: {
                     type: String,
                 },
@@ -86,19 +80,7 @@
                 this.ajaxlist.addEventListener('response', this._handleFormResponse.bind(this));
                 this.ajaxlist.addEventListener('error', this._handleFormError.bind(this));
 
-
-
                 this.ajaxlist.url = "/CRUD/List/" + this.oname;
-
-                //this.async(function () {
-                //    this.importHref(this.listhref, function (e) {
-                //        Polymer.dom(this.getItemsList()).appendChild(this.getListTemplate());
-
-                //        this.ajaxlist.url = "/CRUD/List/" + this.oname;
-                //    }, function (e) {
-                //        debugger;
-                //    });
-                //});
             },
             getItemsList: function () {
                 return null;

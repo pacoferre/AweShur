@@ -25,7 +25,10 @@ namespace AweShur.Core
 
         private Dictionary<string, int> fieldNameLookup;
         protected DBDialect dialect = null;
-        protected string tableName;
+        protected int dbNumber;
+        protected string tableNameNormal;
+        protected string tableNameEncapsulated;
+        protected string objectName;
         protected string[] names;
         protected PropertyDefinition firstStringProperty;
 
@@ -43,11 +46,27 @@ namespace AweShur.Core
             deleteBuilder = new Lazy<string>(PrepareDeleteQuery);
         }
 
-        public string TableName
+        public int DBNumber
         {
             get
             {
-                return tableName;
+                return dbNumber;
+            }
+        }
+
+        public string TableNameNormal
+        {
+            get
+            {
+                return tableNameNormal;
+            }
+        }
+
+        public string TableNameEncapsulated
+        {
+            get
+            {
+                return tableNameEncapsulated;
             }
         }
 
@@ -61,18 +80,26 @@ namespace AweShur.Core
 
         public virtual void SetProperties(string tableName, int dbNumber)
         {
-            this.tableName = tableName;
+            this.dbNumber = dbNumber;
+            objectName = tableName;
             dialect = DB.InstanceNumber(dbNumber).Dialect;
+            tableNameEncapsulated = dialect.Encapsulate(dialect.GetFullTableName(tableName));
 
-            foreach (DBDialect.ColumnDefinition column in dialect.GetSchema(tableName, dbNumber))
+            foreach (DBDialect.ColumnDefinition column in dialect.GetSchema(
+                tableNameEncapsulated, dbNumber))
             {
                 PropertyDefinition def = new PropertyDefinition(column);
 
                 Properties[column.ColumnName] = def;
             }
 
+            if (Properties.Count == 0)
+            {
+                throw new Exception("No Schema found for " + tableName + ".");
+            }
+
             Singular = "";
-            foreach (char letter in tableName)
+            foreach (char letter in objectName)
             {
                 if (Singular != "" && letter.ToString().ToUpper() == letter.ToString())
                 {
@@ -148,7 +175,7 @@ namespace AweShur.Core
             StringBuilder sql = new StringBuilder("select ");
 
             sql.Append(dialect.SQLAllColumns(ListProperties));
-            sql.Append(" from " + dialect.Encapsulate(tableName));
+            sql.Append(" from " + tableNameEncapsulated);
             sql.Append(" where " + dialect.SQLWherePrimaryKey(ListProperties));
 
             return sql.ToString();
@@ -164,7 +191,7 @@ namespace AweShur.Core
 
         protected virtual string PrepareInsertQuery()
         {
-            StringBuilder sql = new StringBuilder("insert into " + dialect.Encapsulate(tableName));
+            StringBuilder sql = new StringBuilder("insert into " + tableNameEncapsulated);
 
             sql.Append(" (" + dialect.SQLInsertProperties(ListProperties) + ")");
             sql.Append(" values (" + dialect.SQLInsertValues(ListProperties) + ") ");
@@ -194,7 +221,7 @@ namespace AweShur.Core
 
         protected virtual string PrepareUpdateQuery()
         {
-            StringBuilder sql = new StringBuilder("update " + dialect.Encapsulate(tableName));
+            StringBuilder sql = new StringBuilder("update " + tableNameEncapsulated);
 
             sql.Append(" set " + dialect.SQLUpdatePropertiesValues(ListProperties));
             sql.Append(" where " + dialect.SQLWherePrimaryKey(ListProperties));
@@ -214,7 +241,7 @@ namespace AweShur.Core
         {
             StringBuilder sql = new StringBuilder("delete");
 
-            sql.Append(" from " + dialect.Encapsulate(tableName));
+            sql.Append(" from " + tableNameEncapsulated);
             sql.Append(" where " + dialect.SQLWherePrimaryKey(ListProperties));
 
             return sql.ToString();
@@ -276,7 +303,7 @@ namespace AweShur.Core
         public virtual string GetListSQL(string listName)
         {
             string sql = "Select " + dialect.Encapsulate(names[PrimaryKeys[0]]) + " As ID, "
-                + dialect.Encapsulate(firstStringProperty.FieldName) + " From " + dialect.Encapsulate(tableName)
+                + dialect.Encapsulate(firstStringProperty.FieldName) + " From " + tableNameEncapsulated
                 + " Order By " + dialect.Encapsulate(firstStringProperty.FieldName);
 
             return sql;
