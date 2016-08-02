@@ -12,7 +12,7 @@ namespace AweShur.Core.Lists
         private ConcurrentDictionary<Tuple<string, string>, Lazy<ListTable>>
             listProviders = new ConcurrentDictionary<Tuple<string, string>, Lazy<ListTable>>();
 
-        public ListTable GetList(string objectName, string listName)
+        public ListTable GetList(string objectName, string listName = "")
         {
             Lazy<ListTable> lazy = listProviders.GetOrAdd(
                 new Tuple<string, string>(objectName, listName),

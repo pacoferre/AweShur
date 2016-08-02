@@ -14,14 +14,14 @@ namespace AweShur.Web.Demo.Models.Customer
 
             prop.Type = PropertyInputType.select; // Will not be usefull untill we got HtmlHelpers
             prop.DefaultValue = BusinessBaseProvider.ListProvider.GetList("CustomerType").First[0];
-            prop.ListSource = "CustomerType";
+            prop.ListObjectName = "CustomerType";
             prop.Label = "Customer type";
 
             prop = Properties["idCustomerRanking"];
 
             prop.Type = PropertyInputType.select; // Will not be usefull untill we got HtmlHelpers
             prop.DefaultValue = BusinessBaseProvider.ListProvider.GetList("CustomerType").First[0];
-            prop.ListSource = "CustomerRanking";
+            prop.ListObjectName = "CustomerRanking";
             prop.Label = "Customer ranking";
 
             Properties["memo"].Type = PropertyInputType.textarea;
