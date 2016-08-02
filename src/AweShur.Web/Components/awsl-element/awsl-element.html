@@ -1,0 +1,40 @@
+﻿<link rel="import" href="../lib/polymer/polymer.html">
+<link rel="import" href="/AWSLib/awsl-collection">
+
+<dom-module id="awsl-element">
+    <template>
+        <div id="cnt"></div>
+    </template>
+    <script>
+    Polymer({
+        is: 'awsl-element',
+        behaviors: [AWSLBehaviors.ElementBehavior],
+        properties: {
+            childelement: {
+                type: String,
+            },
+            theelement: {
+                type: Object,
+                value: function () { return null; }
+            },
+        },
+        wasInitialized: false,
+        attached: function () {
+            if (this.wasInitialized) {
+                return;
+            }
+
+            this.async(function () {
+                this.importHref(this.childhref, function (e) {
+                    var newElement = document.createElement(this.editelement);
+                    newElement.id = "theelement";
+
+                    this.theelement = Polymer.dom(this.$.cnt).appendChild(newElement);
+                }, function (e) {
+                    debugger;
+                });
+            });
+        },
+    });
+    </script>
+</dom-module>

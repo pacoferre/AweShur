@@ -31,7 +31,7 @@
                     type: Array,
                     value: function () { return []; }
                 },
-                parentElement: {
+                containerElement: {
                     type: Object,
                     value: function () { return null; }
                 }
@@ -48,8 +48,8 @@
             },
 
             detached: function () {
-                if (this.parentElement) {
-                    this.parentElement.fire('awsl-element-unregister', { target: this });
+                if (this.containerElement) {
+                    this.containerElement.fire('awsl-element-unregister', { target: this });
                 }
             },
             _registerElement: function (e) {
@@ -69,6 +69,14 @@
                     if (index > -1) {
                         this.elements.splice(index, 1);
                     }
+
+                    if (target.isChildren !== undefined)
+                    {
+                        index = this.childrenArray.indexOf(target);
+                        if (index > -1) {
+                            this.childrenArray.splice(index, 1);
+                        }
+                    }
                 }
 
                 e.stopPropagation();
@@ -77,7 +85,7 @@
             {
                 var name = element.dataField;
 
-                element.parentElement = this;
+                element.containerElement = this;
                 this.elements.push(element);
 
                 if (name != undefined && name != "") {
@@ -92,10 +100,7 @@
                         }
                     }
                     if (element.isChildren !== undefined) {
-                        this.childrenArray.push({
-                            path: element.path,
-                            dataNames: element.dataNames
-                        });
+                        this.childrenArray.push(element);
                     }
                 }
             },
@@ -193,15 +198,23 @@
                 this.setListItems(fromserver);
 
                 for (var el, i = 0; el = this.elements[i], i < this.elements.length; i++) {
-                    if (lastChanged != null && el === lastChanged) {
-                        if (!el.focused) {
+                    if (el.isChildren !== undefined) {
+                        el.setChildData(fromserver);
+                    }
+                    else {
+                        if (lastChanged != null && el === lastChanged) {
+                            if (!el.focused) {
+                                el.setData(fromserver);
+                            }
+                        }
+                        else {
                             el.setData(fromserver);
                         }
                     }
-                    else {
-                        el.setData(fromserver);
-                    }
                 }
+
+
+
             },
             getData: function (root) {
 
@@ -215,7 +228,7 @@
 
                     if (el.isChildren !== undefined)
                     {
-                        el.getOwnDataData(root);
+                        el.getChildData(root);
                     }
                     else
                     {
@@ -225,6 +238,9 @@
                         }
                     }
                 }
+
+
+
             },
 
             setListItems: function (fromserver) {
@@ -233,6 +249,41 @@
                         if (el.isSelector !== undefined) {
                             el.setListItem(fromserver);
                         }
+                    }
+                }
+            },
+
+            setInitChildren: function (childrenToServer) {
+                for (var index in this.childrenArray) {
+                    var element = this.childrenArray[index];
+
+                    childrenToServer.push({
+                        path: element.path,
+                        dataNames: element.getDataNames(),
+                        elements: []
+                    });
+
+                    element.childindex = childrenToServer.length - 1;
+                }
+            },
+
+            setLoadChildren: function (childrenToServer)
+            {
+                for (var index in childrenToServer) {
+                    var childToServer = childrenToServer[index];
+
+                    for (var index2 in childToServer.elements) {
+                        childToServer.elements[index2].data = [];
+                    }
+                }
+            },
+
+            setNoChangedChildren: function (childrenToServer) {
+                for (var index in childrenToServer) {
+                    var childToServer = childrenToServer[index];
+
+                    for (var index2 in childToServer.elements) {
+                        childToServer.elements[index2].changed = {};
                     }
                 }
             },

@@ -169,11 +169,14 @@ namespace AweShur.Core
             {
                 if (fromClientAction == "changed")
                 {
-                    foreach (KeyValuePair<string, string> item in element.changed)
+                    if (element.changed != null)
                     {
-                        PropertyDefinition prop = Definition.Properties[item.Key];
+                        foreach (KeyValuePair<string, string> item in element.changed)
+                        {
+                            PropertyDefinition prop = Definition.Properties[item.Key];
 
-                        prop.SetValue(this, item.Value);
+                            prop.SetValue(this, item.Value);
+                        }
                     }
                 }
                 else if (fromClientAction == "ok")

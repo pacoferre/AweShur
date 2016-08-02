@@ -1,9 +1,13 @@
 ﻿@model BusinessBaseDefinition
 @{
     Layout = "_CRUDLayout";
+
+    int? idappuser = AppUser.IDAppUser(Context);
 }
 
-<link rel="import" href="~/elements/lib/awsl-collection/awsl-collection.html">
+<link rel="import" href="/AWSLib/awsl-collection">
+<link rel="import" href="/AWSLib/awsl-element">
+<link rel="import" href="@("/Elements/Load/Customer/CustomerContactEdit/Contact/" + idappuser)">
 
 <dom-module id="aswd-customeredit">
     <template>
@@ -14,7 +18,10 @@
         @Html.PolEditor(Model, "memo")
         @Html.PolEditor(Model, "nextCall")
         @Html.PolEditor(Model, "address")
-        <awsl-collection path="ColContact"></awsl-collection>
+
+        <h1>Contactos</h1>
+        <awsl-collection path="ColContact" childelement="aswd-customercontactedit">
+        </awsl-collection>
     </template>
     <script>
     Polymer({

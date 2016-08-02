@@ -1,0 +1,37 @@
+﻿<link rel="import" href="../lib/polymer/polymer.html">
+<link rel="import" href="../lib/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../lib/paper-input/paper-input.html">
+<link rel="import" href="../lib/jv-datepicker/app-datepicker-animations.html">
+<link rel="import" href="../lib/jv-datepicker/app-datepicker-dialog.html">
+<link rel="import" href="/AWSLib/awsl-collection-behavior">
+<link rel="import" href="/AWSLib/awsl-element">
+
+<dom-module id="awsl-collection">
+    <template>
+        <iron-list id="itemsList" as="item" items="[[items]]">
+        </iron-list>
+        <div style="display:none" id="dummy">
+        </div>
+    </template>
+    <script>
+    Polymer({
+        is: 'awsl-collection',
+        behaviors: [AWSLBehaviors.CollectionBehavior],
+        getItemsList: function () {
+            return this.$.itemsList;
+        },
+        getDummy: function () {
+            return this.$.dummy;
+        },
+        getListTemplate: function () {
+            var ironlisttemplate = document.createElement('template');
+
+            ironlisttemplate.id = "tempList";
+
+            ironlisttemplate.innerHTML = "<" + this.childelement + " item='[[item]]' />";
+
+            return ironlisttemplate;
+        },
+    });
+    </script>
+</dom-module>

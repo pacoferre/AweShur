@@ -279,7 +279,7 @@ namespace AweShur.Core
 
                 var result = conn.QuerySingle(def.InsertQuery, def.GetInsertParameters(obj), trans);
 
-                if (result != 1)
+                if (result == null)
                 {
                     throw new Exception("Error insering new " + obj.Description);
                 }

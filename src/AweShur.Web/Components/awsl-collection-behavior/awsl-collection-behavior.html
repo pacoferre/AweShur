@@ -1,0 +1,221 @@
+﻿<link rel="import" href="../lib/polymer/polymer.html">
+
+<link rel="import" href="/AWSLib/awsl-element-behavior">
+
+<script>
+    var AWSLBehaviors = AWSLBehaviors || {};
+
+    (function () {
+        AWSLBehaviors.CollectionBehavior = {
+            properties: {
+                isCustomControl: {
+                    type: Boolean,
+                    value: true
+                },
+                isChildren: {
+                    type: Boolean,
+                    value: true
+                },
+                childelement: {
+                    type: String,
+                },
+                dummyElement: {
+                    type: Object,
+                },
+                path: {
+                    type: String,
+                },
+                childindex: {
+                    type: Number,
+                },
+                items: {
+                    type: Array,
+                    notify: true
+                },
+                elements: {
+                    type: Array,
+                    value: function () { return []; }
+                },
+                dataNames: {
+                    type: Array,
+                    value: function () { return []; }
+                },
+                listNames: {
+                    type: Array,
+                    value: function () { return []; }
+                },
+                listItems: {
+                    type: Array,
+                    value: function () { return []; }
+                },
+                containerElement: {
+                    type: Object,
+                    value: function () { return null; }
+                }
+            },
+            listeners: {
+                'awsl-element-register': '_registerElement',
+                'awsl-element-unregister': '_unregisterElement',
+            },
+            wasInitialized: false,
+            attached: function () {
+                if (this.wasInitialized) {
+                    return;
+                }
+
+                var newElement = document.createElement(this.childelement);
+                newElement.id = "theelement";
+
+                this.dummyElement = Polymer.dom(this.getDummy()).appendChild(newElement);
+
+                Polymer.dom(this.getItemsList()).appendChild(this.getListTemplate());
+
+                this.fire('awsl-element-register');
+            },
+
+            getDataNames: function () {
+                return this.dummyElement.dataNames;
+            },
+            getItemsList: function () {
+                return null;
+            },
+            getDummy: function () {
+                return null;
+            },
+            getListTemplate: function() {
+                return null;
+            },
+            detached: function () {
+                if (this.containerElement) {
+                    this.containerElement.fire('awsl-element-unregister', { target: this });
+                }
+            },
+            _registerElement: function (e) {
+                var element = e.target;
+
+                if (element !== this) {
+                    this._registerChildElement(element);
+
+                    e.stopPropagation();
+                }
+            },
+            _unregisterElement: function (e) {
+                var target = e.detail.target;
+
+                if (target) {
+                    var index = this.elements.indexOf(target);
+                    if (index > -1) {
+                        this.elements.splice(index, 1);
+                    }
+                }
+
+                e.stopPropagation();
+            },
+            _registerChildElement: function (element)
+            {
+                element.containerElement = this;
+                this.elements.push(element);
+            },
+
+            setChildData: function (fromserver) {
+                this.items = fromserver.collections[this.path];
+
+                this.async(function () {
+                    for (var index in this.elements)
+                    {
+                        var element = this.elements[index];
+                        var dataHost = element.dataHost;
+
+                        if (dataHost !== undefined) {
+                            element.setData(dataHost.item);
+                        }
+                    }
+                });
+            },
+
+            getChildData: function (root) {
+
+                var rootElements = root.children[this.childindex].elements;
+
+                for (var index in this.elements) {
+                    var element = this.elements[index];
+                    var dataHost = element.dataHost;
+
+                    if (dataHost !== undefined) {
+                        var found = false;
+                        var dataElement;
+
+                        for (var index2 in rootElements)
+                        {
+                            dataElement = rootElements[index2];
+
+                            if (dataElement.key == dataHost.item.keyObject)
+                            {
+                                found = true;
+                                element.getData(dataElement);
+                            }
+                        }
+
+                        if (!found)
+                        {
+                            dataElement = {
+                                key: dataHost.item.keyObject,
+                                data: []
+                            };
+
+                            rootElements.push(dataElement);
+
+                            element.getData(dataElement);
+                        }
+                    }
+                }
+            },
+
+            setChanged: function (childrenToServer, elementWithDataFieldName, val) {
+                //dataField
+                var rootElements = childrenToServer[this.childindex].elements;
+
+                for (var index in this.elements) {
+                    var element = this.elements[index];
+                    var dataHost = element.dataHost;
+
+                    if (dataHost !== undefined) {
+                        var found = false;
+                        var dataElement;
+
+                        for (var index2 in rootElements) {
+                            dataElement = rootElements[index2];
+
+                            if (dataElement.key == dataHost.item.keyObject) {
+                                found = true;
+
+                                dataElement.changed[elementWithDataFieldName.dataField] = val;
+                            }
+                        }
+
+                        if (!found) {
+                            dataElement = {
+                                key: dataHost.item.keyObject,
+                                data: [],
+                                changed: {}
+                            };
+                            dataElement.changed[elementWithDataFieldName.dataField] = val;
+
+                            rootElements.push(dataElement);
+                        }
+                    }
+                }
+            }
+
+            //setListItems: function (fromserver) {
+            //    if (fromserver.listItems != null) {
+            //        for (var el, i = 0; el = this.elements[i], i < this.elements.length; i++) {
+            //            if (el.isSelector !== undefined) {
+            //                el.setListItem(fromserver);
+            //            }
+            //        }
+            //    }
+            //},
+        };
+    })();
+</script>

@@ -46,7 +46,6 @@
                                 changed: {},
                                 children: []
                             },
-                            collections: []
                         };
 
                         return obj;
@@ -93,7 +92,9 @@
 
                         this.theelement = Polymer.dom(this.getMain()).appendChild(newElement);
 
-                        this._doPost("init");
+                        this.async(function () {
+                            this._doPost("init");
+                        });
                     }, function (e) {
                         debugger;
                     });
@@ -137,8 +138,20 @@
 
                     this.lastChangedElement = elementWithDataFieldName;
 
-                    this.toserver.root.changed[elementWithDataFieldName.dataField] =
-                        val;
+                    // Must be better.
+                    var posibleCollection = elementWithDataFieldName.containerElement.containerElement;
+
+                    if (posibleCollection == null)
+                    {
+                        this.toserver.root.changed[elementWithDataFieldName.dataField] =
+                            val;
+                    }
+                    else
+                    {
+                        posibleCollection.setChanged(this.toserver.root.children,
+                            elementWithDataFieldName, val);
+                    }
+
 
                     //console.log("Changed " + elementWithDataFieldName.dataField + " = '" + val + "'");
 
@@ -184,14 +197,16 @@
 
                     if (action == "load") {
                         this.toserver.root.data = [];
-                        this.toserver.root.children = this.theelement.childrenArray;
+                        this.theelement.setLoadChildren(this.toserver.root.children);
                     }
                     else if (action == "init") {
                         this.toserver.dataNames = this.theelement.dataNames;
                         this.toserver.listNames = this.theelement.listNames;
+                        this.theelement.setInitChildren(this.toserver.root.children);
                     }
                     else if (action == "changed") {
                         this.toserver.root.data = [];
+                        this.theelement.setLoadChildren(this.toserver.root.children);
                     }
                     else {
                         this.theelement.getData(this.toserver.root);
@@ -203,6 +218,7 @@
                     //console.log("Post " + this.toserver.action + " " + this.toserver.sequence);
 
                     this.toserver.root.changed = {};
+                    this.theelement.setNoChangedChildren(this.toserver.root.children);
                 }
             },
             responseHandler: function () {

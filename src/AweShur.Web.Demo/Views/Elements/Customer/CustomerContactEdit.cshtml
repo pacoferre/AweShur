@@ -1,0 +1,17 @@
+﻿@model BusinessBaseDefinition
+@{
+    Layout = "_CRUDLayout";
+}
+
+<dom-module id="aswd-customercontactedit">
+    <template>
+        @Html.PolEditor(Model, "name")
+        @Html.PolEditor(Model, "surname")
+    </template>
+    <script>
+    Polymer({
+        is: 'aswd-customercontactedit',
+        behaviors: [AWSLBehaviors.ElementBehavior],
+    });
+    </script>
+</dom-module>
