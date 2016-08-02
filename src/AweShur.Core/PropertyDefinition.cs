@@ -69,7 +69,8 @@ namespace AweShur.Core
         public string Min { get; set; } = "";
         public string Max { get; set; } = "";
         public string Step { get; set; } = "";
-        public string ListSource { get; set; } = "";
+        public string ListObjectName { get; set; } = "";
+        public string ListName { get; set; } = "";
         public bool IsObjectView { get; set; } = false;
         public bool ListAjax { get; set; } = false;
         public int Rows { get; set; } = 0;
@@ -259,7 +260,7 @@ namespace AweShur.Core
                 if (Required && value == "0" && !IsObjectView)
                 {
                     // First element
-                    ListTable dt = BusinessBaseProvider.ListProvider.GetList(ListSource);
+                    ListTable dt = BusinessBaseProvider.ListProvider.GetList(ListObjectName, ListName);
 
                     if (dt.Count > 0)
                     {
@@ -495,7 +496,7 @@ namespace AweShur.Core
                     }
                     if (BasicType == BasicType.Number && value.NoNullInt() == 0)
                     {
-                        if (ListSource != "")
+                        if (ListObjectName != "")
                         {
                             lastErrorMessage = Label + " selection missing";
                         }

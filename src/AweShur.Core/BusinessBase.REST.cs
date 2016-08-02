@@ -89,7 +89,8 @@ namespace AweShur.Core
 
                 foreach (string listName in fromClient.listNames)
                 {
-                    ListTable table = BusinessBaseProvider.ListProvider.GetList(listName);
+                    string[] parts = listName.Split('*');
+                    ListTable table = BusinessBaseProvider.ListProvider.GetList(parts[0], parts[1]);
 
                     model.listItems.Add(listName, table.ToClient.Where(item => item.i != "0").ToList());
                 }

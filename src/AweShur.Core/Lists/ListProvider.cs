@@ -9,65 +9,58 @@ namespace AweShur.Core.Lists
 {
     public class ListProvider
     {
-        private ConcurrentDictionary<string, Lazy<ListTable>>
-            listProviders = new ConcurrentDictionary<string, Lazy<ListTable>>();
-        public Dictionary<string, Tuple<string, int>> listGenerators = new Dictionary<string, Tuple<string, int>>();
+        private ConcurrentDictionary<Tuple<string, string>, Lazy<ListTable>>
+            listProviders = new ConcurrentDictionary<Tuple<string, string>, Lazy<ListTable>>();
 
-        public ListTable GetList(string listName)
+        public ListTable GetList(string objectName, string listName)
         {
             Lazy<ListTable> lazy = listProviders.GetOrAdd(
-                listName,
+                new Tuple<string, string>(objectName, listName),
                 new Lazy<ListTable>(
-                    () => GetListInternal(listName),
+                    () => GetListInternal(objectName, listName),
                     LazyThreadSafetyMode.ExecutionAndPublication
                 ));
 
             return lazy.Value;
         }
 
-        public void Invalidate(string businessBaseDefinitionName)
+        public void Invalidate(string objectName)
         {
-            if (BusinessBaseProvider.ExistsData(Key(businessBaseDefinitionName)))
+            if (BusinessBaseProvider.ExistsData(Key(objectName, "")))
             {
-                GetListInternal(businessBaseDefinitionName).Invalidate();
+                GetListInternal(objectName, "").Invalidate();
             }
 
-            foreach(var kp in listGenerators)
+            foreach(var kp in listProviders)
             {
-                if (kp.Key == businessBaseDefinitionName)
+                if (kp.Key.Item1 == objectName)
                 {
-                    BusinessBaseProvider.RemoveData(Key(kp.Value.Item1));
+                    if (kp.Value.IsValueCreated)
+                    {
+                        kp.Value.Value.Invalidate();
+                    }
                 }
             }
         }
 
-        private string Key(string listName)
+        private string Key(string objectName, string listName)
         {
-            return "list_" + listName;
+            return "list_" + objectName + "_" + listName;
         }
 
-        private ListTable GetListInternal(string listName)
+        private ListTable GetListInternal(string objectName, string listName)
         {
-            string key = Key(listName);
+            string key = Key(objectName, listName);
             ListTable list;
             byte[] listData = BusinessBaseProvider.GetData(key);
 
             if (listData == null)
             {
-                string businessBaseDefinitionName = listName;
-                int dbNumber = 0;
                 BusinessBaseDefinition def;
-                Tuple<string, int> listInto;
 
-                if (listGenerators.TryGetValue(listName, out listInto))
-                {
-                    businessBaseDefinitionName = listInto.Item1;
-                    dbNumber = listInto.Item2;
-                }
+                def = BusinessBaseProvider.Instance.GetDefinition(objectName);
 
-                def = BusinessBaseProvider.Instance.GetDefinition(businessBaseDefinitionName, dbNumber);
-
-                list = def.GetList(listName, dbNumber);
+                list = def.GetList(listName, def.DBNumber);
 
                 BusinessBaseProvider.StoreData(key, list.Serialize());
             }
