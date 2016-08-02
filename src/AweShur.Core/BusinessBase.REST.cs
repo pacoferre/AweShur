@@ -100,12 +100,11 @@ namespace AweShur.Core
             model.data = new Dictionary<string, string>(Definition.ListProperties.Count);
             if (fromClient.dataNames != null)
             {
-                foreach (PropertyDefinition prop in Definition.ListProperties)
+                for (int index = 0; index < fromClient.dataNames.Count; ++index)
                 {
-                    if (fromClient.dataNames.Contains(prop.FieldName))
-                    {
-                        model.data.Add(prop.FieldName, prop.GetValue(this));
-                    }
+                    PropertyDefinition prop = Definition.Properties[fromClient.dataNames[index]];
+
+                    model.data.Add(prop.FieldName, prop.GetValue(this));
                 }
             }
 
@@ -192,12 +191,11 @@ namespace AweShur.Core
             model.data = new Dictionary<string, string>(Definition.ListProperties.Count);
             if (fromClient.dataNames != null)
             {
-                foreach (PropertyDefinition prop in Definition.ListProperties)
+                for (int index = 0; index < fromClient.dataNames.Count; ++index)
                 {
-                    if (fromClient.dataNames.Contains(prop.FieldName))
-                    {
-                        model.data.Add(prop.FieldName, prop.GetValue(this));
-                    }
+                    PropertyDefinition prop = Definition.Properties[fromClient.dataNames[index]];
+
+                    model.data.Add(prop.FieldName, prop.GetValue(this));
                 }
             }
 
