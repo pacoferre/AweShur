@@ -113,6 +113,13 @@ namespace AweShur.Core
 
         public byte[] Serialize()
         {
+            JObject obj = ToJObject();
+
+            return Encoding.Unicode.GetBytes(obj.ToString(Newtonsoft.Json.Formatting.None));
+        }
+
+        public JObject ToJObject()
+        {
             JObject obj = new JObject();
 
             obj.Add("IsNew", JToken.FromObject(IsNew ? "1" : ""));
@@ -135,7 +142,7 @@ namespace AweShur.Core
                 }
             }
 
-            return Encoding.Unicode.GetBytes(obj.ToString(Newtonsoft.Json.Formatting.None));
+            return obj;
         }
 
         public void Deserialize(byte[] data)
@@ -143,6 +150,11 @@ namespace AweShur.Core
             string json = Encoding.Unicode.GetString(data);
             JObject obj = JObject.Parse(json);
 
+            FromJObject(obj);
+        }
+
+        public void FromJObject(JObject obj)
+        {
             IsNew = obj["IsNew"].ToObject(typeof(string)).ToString() == "1";
             IsModified = obj["IsModified"].ToObject(typeof(string)).ToString() == "1";
             IsDeleting = obj["IsDeleting"].ToObject(typeof(string)).ToString() == "1";

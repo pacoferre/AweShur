@@ -18,6 +18,12 @@
     <script>
     Polymer({
         is: "awsl-selector",
+        properties: {
+            alwaysFloatLabel: {
+                type: Boolean,
+                value: false
+            },
+        },
         behaviors: AWSLBehaviors.SelectorBehavior,
         _itemSelected: function(item)
         {

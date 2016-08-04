@@ -10,6 +10,9 @@
         is: 'awsl-element',
         behaviors: [AWSLBehaviors.ElementBehavior],
         properties: {
+            childhref: {
+                type: String,
+            },
             childelement: {
                 type: String,
             },
@@ -26,7 +29,7 @@
 
             this.async(function () {
                 this.importHref(this.childhref, function (e) {
-                    var newElement = document.createElement(this.editelement);
+                    var newElement = document.createElement(this.childelement);
                     newElement.id = "theelement";
 
                     this.theelement = Polymer.dom(this.$.cnt).appendChild(newElement);

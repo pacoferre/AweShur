@@ -3662,6 +3662,8 @@ namespace Dapper
 
                         obj.IsModified = false;
                         obj.IsNew = false;
+
+                        col.Add(obj);
                     }
                 }
                 while (reader.NextResult()) { }

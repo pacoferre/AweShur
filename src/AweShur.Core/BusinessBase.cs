@@ -44,7 +44,7 @@ namespace AweShur.Core
 
                 if (objectName.Contains("BusinessBase"))
                 {
-                    return Definition.TableNameNormal;
+                    return Definition.ObjectName;
                 }
 
                 return objectName.Substring(objectName.LastIndexOf(".") + 1);

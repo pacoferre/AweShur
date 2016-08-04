@@ -3,10 +3,14 @@
     Layout = "_CRUDLayout";
 }
 
+<link rel="import" href="~/lib/paper-item/paper-item.html">
+
 <dom-module id="aswd-customercontactedit">
     <template>
-        @Html.PolEditor(Model, "name")
-        @Html.PolEditor(Model, "surname")
+        <paper-item>
+            @Html.PolEditor(Model, "name")
+            @Html.PolEditor(Model, "surname")
+        </paper-item>
     </template>
     <script>
     Polymer({

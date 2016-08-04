@@ -3,6 +3,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Newtonsoft.Json.Linq;
+using System.Text;
 
 namespace AweShur.Core
 {
@@ -10,12 +12,41 @@ namespace AweShur.Core
     {
         public virtual byte[] Serialize()
         {
-            return dataItem.Serialize();
+            JObject obj = ToJObject();
+
+            return Encoding.Unicode.GetBytes(obj.ToString(Newtonsoft.Json.Formatting.None));
+        }
+
+        public JObject ToJObject()
+        {
+            JObject obj = new JObject();
+
+            obj.Add("t", dataItem.ToJObject());
+
+            foreach (var item in relatedCollections)
+            {
+                obj.Add("c" + item.Key, item.Value.ToJObject());
+            }
+
+            return obj;
         }
 
         public virtual void Deserialize(byte[] data)
         {
-            dataItem.Deserialize(data);
+            string json = Encoding.Unicode.GetString(data);
+            JObject obj = JObject.Parse(json);
+
+            FromJObject(obj);
+        }
+
+        public void FromJObject(JObject obj)
+        {
+            dataItem.FromJObject((JObject)obj["t"]);
+
+            foreach (var item in relatedCollections)
+            {
+                item.Value.FromJObject((JObject)obj["c" + item.Key]);
+            }
         }
     }
 }

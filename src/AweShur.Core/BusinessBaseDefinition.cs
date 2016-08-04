@@ -26,7 +26,6 @@ namespace AweShur.Core
         private Dictionary<string, int> fieldNameLookup;
         protected DBDialect dialect = null;
         protected int dbNumber;
-        protected string tableNameNormal;
         protected string tableNameEncapsulated;
         protected string objectName;
         protected string[] names;
@@ -54,19 +53,19 @@ namespace AweShur.Core
             }
         }
 
-        public string TableNameNormal
-        {
-            get
-            {
-                return tableNameNormal;
-            }
-        }
-
         public string TableNameEncapsulated
         {
             get
             {
                 return tableNameEncapsulated;
+            }
+        }
+
+        public string ObjectName
+        {
+            get
+            {
+                return objectName;
             }
         }
 

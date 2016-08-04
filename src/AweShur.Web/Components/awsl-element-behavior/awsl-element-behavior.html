@@ -81,6 +81,14 @@
 
                 e.stopPropagation();
             },
+            _merge: function(dataNames)
+            {
+                for (var j = 0; j < dataNames.length; j++) {
+                    if (this.dataNames.indexOf(dataNames[j]) === -1) {
+                        this.dataNames.push(dataNames[j]);
+                    }
+                }
+            },
             _registerElementData: function (element)
             {
                 var name = element.dataField;
@@ -91,6 +99,12 @@
                 if (name != undefined && name != "") {
                     if (this.dataNames.indexOf(name) == -1) {
                         this.dataNames.push(name);
+                    }
+                }
+                else {
+                    if (element.dataNames !== undefined)
+                    {
+                        this._merge(element.dataNames);
                     }
                 }
                 if (element.isCustomControl !== undefined) {
@@ -213,14 +227,16 @@
                     }
                 }
 
-
+                this.afterSetData(fromserver, lastChanged);
+            },
+            afterSetData: function (fromserver, lastChanged) {
 
             },
             getData: function (root) {
 
                 root.data = [];
 
-                for (i = 0; i < this.dataNames.length; i++) {
+                for (i = 0; i < root.dataNames.length; i++) {
                     root.data.push("");
                 }
 
@@ -232,17 +248,20 @@
                     }
                     else
                     {
-                        var index = this.dataNames.indexOf(el.dataField);
-                        if (index > -1) {
-                            root.data[index] = el.getData();
+                        if (el.dataField === undefined) {
+                            el.getData(root);
+                        }
+                        else {
+                            var index = root.dataNames.indexOf(el.dataField);
+
+                            if (index > -1) {
+                                root.data[index] = el.getData();
+                            }
                         }
                     }
                 }
 
-
-
             },
-
             setListItems: function (fromserver) {
                 if (fromserver.listItems != null) {
                     for (var el, i = 0; el = this.elements[i], i < this.elements.length; i++) {

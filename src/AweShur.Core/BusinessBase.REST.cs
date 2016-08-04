@@ -38,6 +38,8 @@ namespace AweShur.Core
 
                     prop.SetValue(this, item.Value);
                 }
+
+                ProcessCollectionsFromClient(context, fromClient, model);
             }
             else if (fromClient.action == "ok")
             {
@@ -47,6 +49,7 @@ namespace AweShur.Core
 
                     prop.SetValue(this, fromClient.root.data[index]);
                 }
+                ProcessCollectionsFromClient(context, fromClient, model);
 
                 try
                 {
@@ -83,6 +86,7 @@ namespace AweShur.Core
                 }
             }
 
+            // Return lists.
             if (fromClient.listNames != null && fromClient.listNames.Count > 0)
             {
                 model.listItems = new Dictionary<string, List<ListItemRest>>(fromClient.listNames.Count);
@@ -107,6 +111,7 @@ namespace AweShur.Core
                     model.data.Add(prop.FieldName, prop.GetValue(this));
                 }
             }
+            ProcessCollectionsToClient(context, fromClient, model);
 
             BusinessBaseProvider.StoreObject(this, fromClient.oname);
 
@@ -121,41 +126,63 @@ namespace AweShur.Core
 
             model.action = fromClient.action;
 
+            return model;
+        }
+
+        private void ProcessCollectionsFromClient(HttpContext context, ModelFromClient fromClient, ModelToClient model)
+        {
             if (fromClient.root.children != null && fromClient.root.children.Count > 0)
             {
                 model.collections = new Dictionary<string, List<ModelToClient>>(fromClient.root.children.Count);
 
-                foreach(ModelFromClientCollection clientCol in fromClient.root.children)
+                foreach (ModelFromClientCollection clientCol in fromClient.root.children)
                 {
                     BusinessCollectionBase col = Collection(clientCol.path);
                     List<ModelToClient> elements = new List<ModelToClient>(col.Count);
+                    ModelFromClientData clientElement;
 
-                    foreach(BusinessBase obj in col)
+                    foreach (BusinessBase obj in col)
                     {
-                        ModelFromClientData clientElement = null;
+                        clientElement = null;
 
                         if (clientCol.elements != null)
                         {
-                            foreach (ModelFromClientData element in clientCol.elements)
-                            {
-                                if (obj.Key == element.key)
-                                {
-                                    clientElement = element;
-                                }
-                            }
+                            clientElement = clientCol.elements.Find(element => obj.Key == element.key);
                         }
 
-                        elements.Add(obj.CreateResponse(null, clientCol, clientElement, fromClient.action));
+                        elements.Add(obj.ProcessRequestInternalElement(context, clientCol, clientElement, fromClient.action));
                     }
 
                     model.collections.Add(clientCol.path, elements);
                 }
             }
-
-            return model;
         }
 
-        public virtual ModelToClient CreateResponse(HttpContext context, ModelFromClientCollection fromClient,
+        private void ProcessCollectionsToClient(HttpContext context, ModelFromClient fromClient, ModelToClient model)
+        {
+            if (fromClient.root.children != null && fromClient.root.children.Count > 0)
+            {
+                if (model.collections == null)
+                {
+                    ProcessCollectionsFromClient(context, fromClient, model);
+                }
+                foreach (ModelFromClientCollection clientCol in fromClient.root.children)
+                {
+                    BusinessCollectionBase col = Collection(clientCol.path);
+                    List<ModelToClient> elements = model.collections[clientCol.path];
+                    ModelToClient currentModel = null;
+
+                    foreach (BusinessBase obj in col)
+                    {
+                        currentModel = elements.Find(element => element.keyObject == obj.Key);
+
+                        obj.ProcessResponseInternalElement(context, clientCol, currentModel);
+                    }
+                }
+            }
+        }
+
+        public ModelToClient ProcessRequestInternalElement(HttpContext context, ModelFromClientCollection fromClient,
             ModelFromClientData element, string fromClientAction)
         {
             ModelToClient model = new ModelToClient();
@@ -163,6 +190,7 @@ namespace AweShur.Core
             model.wasNew = IsNew;
             model.wasDeleting = IsDeleting;
             model.wasModified = IsModified;
+            model.keyObject = Key;
 
             // Too much copy/paste
             if (element != null)
@@ -190,6 +218,13 @@ namespace AweShur.Core
                 }
             }
 
+            return model;
+        }
+
+        private void ProcessResponseInternalElement(HttpContext context, 
+            ModelFromClientCollection fromClient,
+            ModelToClient model)
+        {
             // Send object data.
             model.data = new Dictionary<string, string>(Definition.ListProperties.Count);
             if (fromClient.dataNames != null)
@@ -202,7 +237,6 @@ namespace AweShur.Core
                 }
             }
 
-            model.keyObject = Key;
             model.isNew = IsNew;
             model.isModified = IsModified;
             model.isDeleting = IsDeleting;
@@ -226,8 +260,6 @@ namespace AweShur.Core
             //        }
             //    }
             //}
-
-            return model;
         }
 
         private bool clientRefreshPending = false;

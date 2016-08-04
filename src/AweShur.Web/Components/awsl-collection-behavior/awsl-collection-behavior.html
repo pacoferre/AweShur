@@ -174,35 +174,31 @@
             setChanged: function (childrenToServer, elementWithDataFieldName, val) {
                 //dataField
                 var rootElements = childrenToServer[this.childindex].elements;
+                var dataHost = elementWithDataFieldName.dataHost;
 
-                for (var index in this.elements) {
-                    var element = this.elements[index];
-                    var dataHost = element.dataHost;
+                if (dataHost !== undefined) {
+                    var found = false;
+                    var dataElement;
 
-                    if (dataHost !== undefined) {
-                        var found = false;
-                        var dataElement;
+                    for (var index2 in rootElements) {
+                        dataElement = rootElements[index2];
 
-                        for (var index2 in rootElements) {
-                            dataElement = rootElements[index2];
+                        if (dataElement.key == dataHost.item.keyObject) {
+                            found = true;
 
-                            if (dataElement.key == dataHost.item.keyObject) {
-                                found = true;
-
-                                dataElement.changed[elementWithDataFieldName.dataField] = val;
-                            }
-                        }
-
-                        if (!found) {
-                            dataElement = {
-                                key: dataHost.item.keyObject,
-                                data: [],
-                                changed: {}
-                            };
                             dataElement.changed[elementWithDataFieldName.dataField] = val;
-
-                            rootElements.push(dataElement);
                         }
+                    }
+
+                    if (!found) {
+                        dataElement = {
+                            key: dataHost.item.keyObject,
+                            data: [],
+                            changed: {}
+                        };
+                        dataElement.changed[elementWithDataFieldName.dataField] = val;
+
+                        rootElements.push(dataElement);
                     }
                 }
             }

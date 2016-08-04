@@ -21,19 +21,49 @@ namespace AweShur.Core
         protected string lastErrorProperty = "";
         protected bool alwaysMustSave = false;
         private List<BusinessBase> list = new List<BusinessBase>();
-
-        public BusinessCollectionBase(BusinessBase parent, string parentRelationFieldName, 
-            string childObjectName, string sql, int dbNumber = 0)
-        {
-            this.dbNumber = dbNumber;
-            this.Parent = parent;
-            this.parentRelationFieldName = parentRelationFieldName;
-            this.childObjectName = childObjectName;
-            this.childRelationFieldName = BusinessBaseProvider.Instance.GetDefinition(childObjectName, dbNumber).ListProperties[0].FieldName;
-            this.sql = sql;
-        }
-
         private string collectionName = "";
+
+        public BusinessCollectionBase(BusinessBase parent,
+            string childObjectName, string sql = "", string childRelationFieldName = "", 
+            string parentRelationFieldName = "", int dbNumber = 0)
+        {
+            this.Parent = parent;
+            this.childObjectName = childObjectName;
+            if (parentRelationFieldName == "")
+            {
+                this.parentRelationFieldName = parent.Definition.ListProperties[0].FieldName;
+            }
+            else
+            {
+                this.parentRelationFieldName = parentRelationFieldName;
+            }
+            if (childRelationFieldName != "")
+            {
+                this.childRelationFieldName = childRelationFieldName;
+            }
+            else
+            {
+                this.childRelationFieldName = this.parentRelationFieldName;
+            }
+
+
+            if (sql == "")
+            {
+                sql = "Select * From " + childObjectName
+                    + " Where " + this.childRelationFieldName + " = @id";
+
+                PropertyDefinition firstStringField = 
+                    BusinessBaseProvider.Instance.GetDefinition(childObjectName, dbNumber).FirstStringProperty;
+
+                if (firstStringField != null)
+                {
+                    sql += " Order By " + firstStringField.FieldName;
+                }
+            }
+            this.sql = sql;
+
+            this.dbNumber = dbNumber;
+        }
 
         public virtual string CollectionName
         {
@@ -122,7 +152,6 @@ namespace AweShur.Core
             b.Parent = this;
             b.SetPropertiesFrom(Parent);
 
-            Add(b);
             ActiveObject = b;
 
             return b;
@@ -486,7 +515,6 @@ namespace AweShur.Core
 
             ActiveObject.CopyTo(target, null);
 
-            Add(target);
             ActiveObject = target;
 
             return ActiveObject;

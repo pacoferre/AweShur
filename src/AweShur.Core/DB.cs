@@ -259,7 +259,7 @@ namespace AweShur.Core
         {
             OpenConnection();
 
-            conn.ReadBusinessCollection(col);
+            conn.ReadBusinessCollection(col, trans);
 
             CloseConnection();
         }

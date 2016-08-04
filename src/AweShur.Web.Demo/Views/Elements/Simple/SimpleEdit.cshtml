@@ -1,9 +1,11 @@
 ﻿@model BusinessBaseDefinition
 @{
     Layout = "_CRUDLayout";
+
+    string componentName = "aswd-" + Model.TableNameNormal + "edit";
 }
 
-<dom-module id="aswd-simpleedit">
+<dom-module id="@(componentName)">
     <template>
         @foreach (PropertyDefinition prop in Model.ListProperties)
         {
@@ -15,7 +17,7 @@
     </template>
     <script>
     Polymer({
-        is: 'aswd-simpleedit',
+        is: '@(componentName)',
         behaviors: [AWSLBehaviors.ElementBehavior],
     });
     </script>

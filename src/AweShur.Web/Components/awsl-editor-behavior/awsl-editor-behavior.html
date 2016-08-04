@@ -153,7 +153,7 @@
                     }
 
 
-                    //console.log("Changed " + elementWithDataFieldName.dataField + " = '" + val + "'");
+                    console.log(elementChanged.type + "  Changed " + elementWithDataFieldName.dataField + " = '" + val + "'");
 
                     this.debounce('changed', function () {
                         this._doPost("changed");

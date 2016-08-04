@@ -32,8 +32,7 @@ namespace AweShur.Web.Demo.Models.Customer
     {
         public Customer() : base("Customer")
         {
-            this.relatedCollections.Add("ColContact", new BusinessCollectionBase(this, "idCustomer", "Contact",
-                "Select * From Contact Where idCustomer = @id Order By name"));
+            relatedCollections.Add("ColContact", new BusinessCollectionBase(this, "Contact"));
         }
 
         public override bool Validate()
