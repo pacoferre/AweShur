@@ -122,9 +122,13 @@ namespace AweShur.Core
         {
             JObject obj = new JObject();
 
-            obj.Add("IsNew", JToken.FromObject(IsNew ? "1" : ""));
-            obj.Add("IsModified", JToken.FromObject(IsModified ? "1" : ""));
-            obj.Add("IsDeleting", JToken.FromObject(IsDeleting ? "1" : ""));
+            obj.Add("N", JToken.FromObject(IsNew ? "1" : ""));
+            if (IsNew)
+            {
+                obj.Add("K", JToken.FromObject(newKey));
+            }
+            obj.Add("M", JToken.FromObject(IsModified ? "1" : ""));
+            obj.Add("D", JToken.FromObject(IsDeleting ? "1" : ""));
 
             foreach (PropertyDefinition prop in owner.Definition.ListProperties)
             {
@@ -155,9 +159,13 @@ namespace AweShur.Core
 
         public void FromJObject(JObject obj)
         {
-            IsNew = obj["IsNew"].ToObject(typeof(string)).ToString() == "1";
-            IsModified = obj["IsModified"].ToObject(typeof(string)).ToString() == "1";
-            IsDeleting = obj["IsDeleting"].ToObject(typeof(string)).ToString() == "1";
+            IsNew = obj["N"].ToObject(typeof(string)).ToString() == "1";
+            if (IsNew)
+            {
+                newKey = obj["K"].ToObject(typeof(string)).ToString();
+            }
+            IsModified = obj["M"].ToObject(typeof(string)).ToString() == "1";
+            IsDeleting = obj["D"].ToObject(typeof(string)).ToString() == "1";
             foreach (PropertyDefinition prop in owner.Definition.ListProperties)
             {
                 int index = prop.Index;

@@ -262,7 +262,7 @@ namespace AweShur.Core
                     // First element
                     ListTable dt = BusinessBaseProvider.ListProvider.GetList(ListObjectName, ListName);
 
-                    if (dt.Count > 0)
+                    if (dt.Items.Count > 0)
                     {
                         value = dt.First[0].ToString();
                     }

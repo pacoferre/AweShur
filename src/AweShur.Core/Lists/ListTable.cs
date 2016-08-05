@@ -13,7 +13,6 @@ namespace AweShur.Core.Lists
         private int dbNumber = 0;
         public string[] Names { get; private set; } = new string[0];
         public string ListName { get; private set; } = "";
-        public int Count { get; private set; }
         public List<object[]> Items { get; private set; }
         public object[] ZeroItem { get; private set; }
         private Lazy<List<ListItemRest>> generator;
@@ -30,7 +29,6 @@ namespace AweShur.Core.Lists
 
         public ListTable(string listName, string sql, int dbNumber, string allDescription = "All")
         {
-            Count = 0;  //rows.Count en Dapper do foreach
             ZeroItem = new object[] { "0", allDescription };
 
             sqlList = sql;
@@ -45,7 +43,7 @@ namespace AweShur.Core.Lists
         {
             generator = new Lazy<List<ListItemRest>>(() =>
             {
-                List<ListItemRest> list = new List<ListItemRest>(Count);
+                List<ListItemRest> list = new List<ListItemRest>(Items.Count);
 
                 list.Add(new ListItemRest(ZeroItem[0].ToString(), ZeroItem[1].ToString()));
 
@@ -130,7 +128,6 @@ namespace AweShur.Core.Lists
             obj.Add("sqlList", JToken.FromObject(sqlList));
             obj.Add("dbNumber", JToken.FromObject(dbNumber));
             obj.Add("Names", JToken.FromObject(Names));
-            obj.Add("Count", JToken.FromObject(Count));
             obj.Add("ZeroItem", JToken.FromObject(ZeroItem));
             obj.Add("Items", JToken.FromObject(Items));
             obj.Add("pending", JToken.FromObject((bool)pending ? "1" : ""));
@@ -153,7 +150,6 @@ namespace AweShur.Core.Lists
             sqlList = obj["sqlList"].ToObject(typeof(string)).ToString();
             dbNumber = (int)obj["dbNumber"].ToObject(typeof(int));
             Names = (string[])obj["Names"].ToObject(typeof(string[]));
-            Count = (int)obj["Count"].ToObject(typeof(int));
             ZeroItem = (object[]) obj["ZeroItem"].ToObject(typeof(object[]));
             Items = (List<object[]>)obj["Items"].ToObject(typeof(List<object[]>));
             pending = obj["pending"].ToObject(typeof(string)).ToString() == "1";

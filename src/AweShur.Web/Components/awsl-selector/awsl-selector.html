@@ -7,7 +7,18 @@
 
 <dom-module id="awsl-selector">
     <template>
-        <paper-dropdown-menu label="[[label]]" always-float-label="[[alwaysFloatLabel]]">
+        <style>
+            paper-dropdown-menu {
+                width: 100%;
+            }
+
+            paper-dropdown-menu paper-menu-button {
+                width: 100%;      
+                padding: 0;
+            }
+        </style>
+        <paper-dropdown-menu label="[[label]]" always-float-label="[[alwaysFloatLabel]]"
+                             horizontal-align="left">
             <paper-listbox class="dropdown-content" on-iron-select="_itemSelected" id="selector">
                 <template is="dom-repeat" items="[[listItems]]" id="tItems">
                     <paper-item>[[item.t]]</paper-item>

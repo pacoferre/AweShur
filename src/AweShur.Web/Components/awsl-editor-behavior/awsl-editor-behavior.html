@@ -55,6 +55,10 @@
                     type: Object,
                     value: function () { return null; }
                 },
+                lastFromServer: {
+                    type: Object,
+                    value: function () { return null; }
+                },
             },
             wasInitialized: false,
             waitingResponse: false,
@@ -91,6 +95,7 @@
                         newElement.id = "theelement";
 
                         this.theelement = Polymer.dom(this.getMain()).appendChild(newElement);
+                        this.theelement.rootEditor = this;
 
                         this.async(function () {
                             this._doPost("init");
@@ -202,6 +207,7 @@
                     else if (action == "init") {
                         this.toserver.dataNames = this.theelement.dataNames;
                         this.toserver.listNames = this.theelement.listNames;
+                        this.theelement.setRootEditor();
                         this.theelement.setInitChildren(this.toserver.root.children);
                     }
                     else if (action == "changed") {
@@ -209,7 +215,11 @@
                         this.theelement.setLoadChildren(this.toserver.root.children);
                     }
                     else {
-                        this.theelement.getData(this.toserver.root);
+                        this.toserver.root.data = [];
+                        for (i = 0; i < this.toserver.dataNames.length; i++) {
+                            this.toserver.root.data.push("");
+                        }
+                        this.theelement.getData(this.toserver.root, this.toserver.dataNames);
                     }
 
                     this.ajax.body = this.toserver;
@@ -221,8 +231,11 @@
                     this.theelement.setNoChangedChildren(this.toserver.root.children);
                 }
             },
+            
             responseHandler: function () {
                 var fromServer = this.ajax.lastResponse;
+
+                this.lastFromServer = fromServer;
 
                 this.waitingResponse = false;
                 this.toserver.sequence++;
@@ -246,6 +259,8 @@
                         }
 
                         this.theelement.setData(fromServer, this.lastChangedElement);
+                        this.theelement.afterSetData(fromServer);
+
                         this.lastChangedElement = null;
 
                         if (fromServer.normalMessage != "") {

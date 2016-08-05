@@ -34,7 +34,11 @@
                 containerElement: {
                     type: Object,
                     value: function () { return null; }
-                }
+                },
+                rootEditor: {
+                    type: Object,
+                    value: function () { return null; }
+                },
             },
             listeners: {
                 'awsl-element-register': '_registerElement',
@@ -94,6 +98,7 @@
                 var name = element.dataField;
 
                 element.containerElement = this;
+                element.rootEditor = this.rootEditor;
                 this.elements.push(element);
 
                 if (name != undefined && name != "") {
@@ -226,20 +231,16 @@
                         }
                     }
                 }
-
-                this.afterSetData(fromserver, lastChanged);
             },
-            afterSetData: function (fromserver, lastChanged) {
-
-            },
-            getData: function (root) {
-
-                root.data = [];
-
-                for (i = 0; i < root.dataNames.length; i++) {
-                    root.data.push("");
+            afterSetData: function (fromserver) {
+                for (var el, i = 0; el = this.elements[i], i < this.elements.length; i++) {
+                    if (el.afterSetData !== undefined)
+                    {
+                        el.afterSetData(fromserver);
+                    }
                 }
-
+            },
+            getData: function (root, dataNames) {
                 for (var el, i = 0; el = this.elements[i], i < this.elements.length; i++) {
 
                     if (el.isChildren !== undefined)
@@ -249,10 +250,10 @@
                     else
                     {
                         if (el.dataField === undefined) {
-                            el.getData(root);
+                            el.getData(root, dataNames);
                         }
                         else {
-                            var index = root.dataNames.indexOf(el.dataField);
+                            var index = dataNames.indexOf(el.dataField);
 
                             if (index > -1) {
                                 root.data[index] = el.getData();
@@ -268,6 +269,17 @@
                         if (el.isSelector !== undefined) {
                             el.setListItem(fromserver);
                         }
+                    }
+                }
+            },
+
+            setRootEditor: function ()
+            {
+                for (var el, i = 0; el = this.elements[i], i < this.elements.length; i++) {
+                    el.rootEditor = this.rootEditor;
+
+                    if (el.setRootEditor !== undefined) {
+                        el.setRootEditor();
                     }
                 }
             },

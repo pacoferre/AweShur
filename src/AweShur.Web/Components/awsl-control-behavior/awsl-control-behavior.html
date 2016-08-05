@@ -11,20 +11,63 @@
                 },
                 value: {
                     type: String,
+                    notify: true,
                     observer: '_valueChanged'
                 },
                 isCustomControl: {
                     type: Boolean,
                     value: true
                 },
-                parentElement: {
+                alwaysFloatLabel: {
+                    type: Boolean,
+                    value: !0
+                },
+                required: {
+                    type: Boolean,
+                    value: false
+                },
+                onlynew: {
+                    type: Boolean,
+                    value: false
+                },
+                readonly: {
+                    type: Boolean,
+                    value: false
+                },
+                containerElement: {
                     type: Object,
                     value: function () { return null; }
-                }
+                },
+                rootEditor: {
+                    type: Object,
+                    value: function () { return null; },
+                },
             },
             listeners: {
                 'iron-form-element-register': '_nothing',
                 'iron-form-element-unregister': '_nothing',
+            },
+            afterSetData: function (fromserver) {
+                if (this.onlynew) {
+                    this.set('onlynew', false);
+                    this.set('onlynew', true);
+                }
+            },
+            _computeReadOnly: function (readonly, onlynew) {
+                var result = readonly;
+
+                if (!result && onlynew)
+                {
+                    try
+                    {
+                        result = !this.rootEditor.lastFromServer.isNew;
+                    }
+                    catch(ede)
+                    {
+                    }
+                }
+
+                return result;
             },
 
             _valueChanged: function () {
@@ -39,8 +82,8 @@
             },
 
             detached: function () {
-                if (this.parentElement) {
-                    this.parentElement.fire('awsl-element-unregister', { target: this });
+                if (this.containerElement) {
+                    this.containerElement.fire('awsl-element-unregister', { target: this });
                 }
             },
         };

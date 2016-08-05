@@ -51,7 +51,11 @@
                 containerElement: {
                     type: Object,
                     value: function () { return null; }
-                }
+                },
+                rootEditor: {
+                    type: Object,
+                    value: function () { return null; }
+                },
             },
             listeners: {
                 'awsl-element-register': '_registerElement',
@@ -114,6 +118,7 @@
             _registerChildElement: function (element)
             {
                 element.containerElement = this;
+                element.rootEditor = this.rootEditor;
                 this.elements.push(element);
             },
 
@@ -152,7 +157,7 @@
                             if (dataElement.key == dataHost.item.keyObject)
                             {
                                 found = true;
-                                element.getData(dataElement);
+                                element.getData(dataElement, rootElements.dataNames);
                             }
                         }
 
@@ -165,7 +170,7 @@
 
                             rootElements.push(dataElement);
 
-                            element.getData(dataElement);
+                            element.getData(dataElement, rootElements.dataNames);
                         }
                     }
                 }
@@ -201,7 +206,14 @@
                         rootElements.push(dataElement);
                     }
                 }
-            }
+            },
+            afterSetData: function (fromserver) {
+                for (var el, i = 0; el = this.elements[i], i < this.elements.length; i++) {
+                    if (el.afterSetData !== undefined) {
+                        el.afterSetData(fromserver);
+                    }
+                }
+            },
 
             //setListItems: function (fromserver) {
             //    if (fromserver.listItems != null) {

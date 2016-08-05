@@ -1,0 +1,27 @@
+﻿<link rel="import" href="../lib/polymer/polymer.html">
+<link rel="import" href="../lib/vaadin-combo-box/vaadin-combo-box.html">
+<link rel="import" href="/AWSLib/awsl-selector-behavior">
+
+<dom-module id="awsl-selector-vaadin">
+    <template>
+        <vaadin-combo-box item-label-path="t" item-value-path="i" 
+                          items="[[listItems]]" value="{{value}}" label="[[label]]"
+                          always-float-label="[[alwaysFloatLabel]]"
+                          prevent-invalid-input="[[preventInvalidInput]]"
+                          required="[[required]]" readonly="[[_computeReadOnly(readonly, onlynew)]]">
+        </vaadin-combo-box>
+    </template>
+    <script>
+    Polymer({
+        is: "awsl-selector-vaadin",
+        properties: {
+            preventInvalidInput: {
+                type: Boolean,
+                value: false
+            },
+        },
+        behaviors: AWSLBehaviors.SelectorBehavior,
+    });
+    </script>
+</dom-module>
+
