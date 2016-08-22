@@ -12,16 +12,15 @@ namespace AweShur.Core.REST
         public int sequence { get; set; } = 0;
         public string action { get; set; } = "";
 
-        public List<string> dataNames { get; set; }
         public List<string> listNames { get; set; }
+        public List<string> dataNames { get; set; }
         public ModelFromClientData root { get; set; }
     }
 
     public class ModelFromClientData
     {
         public string key { get; set; } = "";
-        public List<string> data { get; set; }
-        public Dictionary<string, string> changed { get; set; }
+        public Dictionary<string, string> data { get; set; }
         public List<ModelFromClientCollection> children { get; set; }
     }
 

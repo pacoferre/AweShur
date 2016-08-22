@@ -30,9 +30,9 @@ namespace AweShur.Core
             {
                 IsDeleting = true;
             }
-            else if (fromClient.action == "changed")
+            else if (fromClient.action == "changed" || fromClient.action == "ok")
             {
-                foreach (KeyValuePair<string, string> item in fromClient.root.changed)
+                foreach (KeyValuePair<string, string> item in fromClient.root.data)
                 {
                     PropertyDefinition prop = Definition.Properties[item.Key];
 
@@ -40,33 +40,26 @@ namespace AweShur.Core
                 }
 
                 ProcessCollectionsFromClient(context, fromClient, model);
-            }
-            else if (fromClient.action == "ok")
-            {
-                for (int index = 0; index < fromClient.dataNames.Count; ++index)
+
+                if (fromClient.action == "ok")
                 {
-                    PropertyDefinition prop = Definition.Properties[fromClient.dataNames[index]];
+                    try
+                    {
+                        CurrentDB.BeginTransaction();
 
-                    prop.SetValue(this, fromClient.root.data[index]);
-                }
-                ProcessCollectionsFromClient(context, fromClient, model);
+                        StoreToDB();
 
-                try
-                {
-                    CurrentDB.BeginTransaction();
+                        model.normalMessage = Description + " saved successfully.";
 
-                    StoreToDB();
+                        CurrentDB.CommitTransaction();
+                    }
+                    catch (Exception exp)
+                    {
+                        CurrentDB.RollBackTransaction();
 
-                    model.normalMessage = Description + " saved successfully.";
-
-                    CurrentDB.CommitTransaction();
-                }
-                catch (Exception exp)
-                {
-                    CurrentDB.RollBackTransaction();
-
-                    model.ok = false;
-                    model.errorMessage = LastErrorMessage == "" ? exp.Message : LastErrorMessage;
+                        model.ok = false;
+                        model.errorMessage = LastErrorMessage == "" ? exp.Message : LastErrorMessage;
+                    }
                 }
             }
             else if (fromClient.action == "clear")
@@ -195,25 +188,16 @@ namespace AweShur.Core
             // Too much copy/paste
             if (element != null)
             {
-                if (fromClientAction == "changed")
+                if (fromClientAction == "changed" || fromClientAction == "ok")
                 {
-                    if (element.changed != null)
+                    if (element.data != null)
                     {
-                        foreach (KeyValuePair<string, string> item in element.changed)
+                        foreach (KeyValuePair<string, string> item in element.data)
                         {
                             PropertyDefinition prop = Definition.Properties[item.Key];
 
                             prop.SetValue(this, item.Value);
                         }
-                    }
-                }
-                else if (fromClientAction == "ok")
-                {
-                    for (int index = 0; index < fromClient.dataNames.Count; ++index)
-                    {
-                        PropertyDefinition prop = Definition.Properties[fromClient.dataNames[index]];
-
-                        prop.SetValue(this, element.data[index]);
                     }
                 }
             }

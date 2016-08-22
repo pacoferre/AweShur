@@ -17,35 +17,35 @@
                     type: Array,
                     value: function () { return []; }
                 },
-                isSelector: {
-                    type: Boolean,
-                    value: true
-                },
             },
-            setListItem: function (fromserver) {
-                if (fromserver.listItems != null && this.listName != "") {
-                    this.listItems = fromserver.listItems[this.listName];
+            setListItem: function (fromServer) {
+                if (fromServer.listItems != null && this.listName != "") {
+                    this.listItems = fromServer.listItems[this.listName];
                 }
             },
-            setData : function (fromserver) {
+            getData : function (fromServer) {
                 var name = this.dataField;
 
                 if (name != null) {
-                    var value = fromserver.data[name];
+                    var value = fromServer.data[name];
 
                     if (!this.value || this.value.toString().trim() != value) {
+
+                        if (this.listItems.length == 0)
+                        {
+                            this.fire('getlist', { listName: this.listName });
+                        }
+
                         this.value = value;
                     }
                 }
             },
-            getData: function () {
+            setData: function (toServer) {
                 var name = this.dataField;
 
                 if (name != null) {
-                    return this.value;
+                    toServer.data[name] = this.value;
                 }
-
-                return "";
             }
         };
 

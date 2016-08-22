@@ -2,7 +2,7 @@
   "name": "asp.net",
   "private": true,
   "dependencies": {
-    "polymer": "^1.6.0",
+    "polymer": "^1.6.1",
     "iron-elements": "PolymerElements/iron-elements#^1.0.8",
     "paper-elements": "PolymerElements/paper-elements#^1.0.0",
     "neon-elements": "PolymerElements/neon-elements#^1.0.0",
@@ -12,6 +12,7 @@
     "re-captcha": "https://github.com/cbalit/re-captcha.git",
     "jv-datepicker": "^2.7.3",
     "vaadin-grid": "^1.1.1",
-    "vaadin-upload": "^1.0.1"
+    "vaadin-upload": "^1.0.1",
+    "vaadin-combo-box": "^1.1.3"
   }
 }

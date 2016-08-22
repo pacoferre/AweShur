@@ -42,8 +42,7 @@
                             listNames: [],
                             root: {
                                 key: "",
-                                data: [],
-                                changed: {},
+                                data: {},
                                 children: []
                             },
                         };
@@ -139,8 +138,6 @@
 
                 if (elementWithDataFieldName != null)
                 {
-                    var val = elementWithDataFieldName.getData();
-
                     this.lastChangedElement = elementWithDataFieldName;
 
                     // Must be better.
@@ -148,17 +145,13 @@
 
                     if (posibleCollection == null)
                     {
-                        this.toserver.root.changed[elementWithDataFieldName.dataField] =
-                            val;
+                        elementWithDataFieldName.setData(this.toserver.root);
                     }
                     else
                     {
                         posibleCollection.setChanged(this.toserver.root.children,
-                            elementWithDataFieldName, val);
+                            elementWithDataFieldName);
                     }
-
-
-                    console.log(elementChanged.type + "  Changed " + elementWithDataFieldName.dataField + " = '" + val + "'");
 
                     this.debounce('changed', function () {
                         this._doPost("changed");
@@ -201,7 +194,7 @@
                     this.toserver.action = action;
 
                     if (action == "load") {
-                        this.toserver.root.data = [];
+                        this.toserver.root.data = {};
                         this.theelement.setLoadChildren(this.toserver.root.children);
                     }
                     else if (action == "init") {
@@ -211,15 +204,12 @@
                         this.theelement.setInitChildren(this.toserver.root.children);
                     }
                     else if (action == "changed") {
-                        this.toserver.root.data = [];
-                        this.theelement.setLoadChildren(this.toserver.root.children);
+                        //this.toserver.root.data = {};
+                        //this.theelement.setLoadChildren(this.toserver.root.children);
                     }
                     else {
-                        this.toserver.root.data = [];
-                        for (i = 0; i < this.toserver.dataNames.length; i++) {
-                            this.toserver.root.data.push("");
-                        }
-                        this.theelement.getData(this.toserver.root, this.toserver.dataNames);
+                        this.toserver.root.data = {};
+                        this.theelement.setData(this.toserver.root);
                     }
 
                     this.ajax.body = this.toserver;
@@ -227,7 +217,7 @@
 
                     //console.log("Post " + this.toserver.action + " " + this.toserver.sequence);
 
-                    this.toserver.root.changed = {};
+                    this.toserver.root.data = {};
                     this.theelement.setNoChangedChildren(this.toserver.root.children);
                 }
             },
@@ -258,8 +248,8 @@
                             this.lastChangedElement = null;
                         }
 
-                        this.theelement.setData(fromServer, this.lastChangedElement);
-                        this.theelement.afterSetData(fromServer);
+                        this.theelement.getData(fromServer, this.lastChangedElement);
+                        this.theelement.afterGetData(fromServer);
 
                         this.lastChangedElement = null;
 

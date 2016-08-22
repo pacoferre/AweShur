@@ -113,11 +113,6 @@
                     }
                 }
                 if (element.isCustomControl !== undefined) {
-                    if (element.isSelector !== undefined) {
-                        if (this.listNames.indexOf(element.listName) == -1) {
-                            this.listNames.push(element.listName);
-                        }
-                    }
                     if (element.isChildren !== undefined) {
                         this.childrenArray.push(element);
                     }
@@ -151,11 +146,11 @@
                         this._registerElementData(element);
 
                         if (element.isCustomControl === undefined) {
-                            element.setData = function (fromserver) {
+                            element.getData = function (fromServer) {
                                 var name = this.dataField;
 
                                 if (name != null) {
-                                    var value = fromserver.data[name];
+                                    var value = fromServer.data[name];
 
                                     if (this.type == 'checkbox' ||
                                         this.type == 'radio' ||
@@ -174,7 +169,7 @@
                                     }
 
                                     if (element.getAttribute('onlynew') == "1") {
-                                        if (fromserver.isNew) {
+                                        if (fromServer.isNew) {
                                             this.removeAttribute("readonly");
                                         }
                                         else {
@@ -183,7 +178,7 @@
                                     }
                                 }
                             };
-                            element.getData = function () {
+                            element.setData = function (toServer) {
                                 var name = this.dataField;
 
                                 if (name != null) {
@@ -201,10 +196,8 @@
                                         value = this.value;
                                     }
 
-                                    return value;
+                                    toServer.data[name] = value;
                                 }
-
-                                return "";
                             };
                         }
                     }
@@ -213,64 +206,44 @@
                 e.stopPropagation();
             },
 
-            setData: function (fromserver, lastChanged) {
-                this.setListItems(fromserver);
-
+            getData: function (fromServer, lastChanged) {
                 for (var el, i = 0; el = this.elements[i], i < this.elements.length; i++) {
                     if (el.isChildren !== undefined) {
-                        el.setChildData(fromserver);
+                        el.getChildData(fromServer, lastChanged);
                     }
                     else {
                         if (lastChanged != null && el === lastChanged) {
-                            if (!el.focused) {
-                                el.setData(fromserver);
+                            if (el.focused === undefined || !el.focused) {
+                                el.getData(fromServer, lastChanged);
                             }
                         }
                         else {
-                            el.setData(fromserver);
+                            el.getData(fromServer, lastChanged);
                         }
                     }
                 }
             },
-            afterSetData: function (fromserver) {
+            afterGetData: function (fromServer) {
                 for (var el, i = 0; el = this.elements[i], i < this.elements.length; i++) {
                     if (el.afterSetData !== undefined)
                     {
-                        el.afterSetData(fromserver);
+                        el.afterSetData(fromServer);
                     }
                 }
             },
-            getData: function (root, dataNames) {
+            setData: function (toServer) {
                 for (var el, i = 0; el = this.elements[i], i < this.elements.length; i++) {
 
                     if (el.isChildren !== undefined)
                     {
-                        el.getChildData(root);
+                        el.setChildData(toServer);
                     }
                     else
                     {
-                        if (el.dataField === undefined) {
-                            el.getData(root, dataNames);
-                        }
-                        else {
-                            var index = dataNames.indexOf(el.dataField);
-
-                            if (index > -1) {
-                                root.data[index] = el.getData();
-                            }
-                        }
+                        el.setData(toServer);
                     }
                 }
 
-            },
-            setListItems: function (fromserver) {
-                if (fromserver.listItems != null) {
-                    for (var el, i = 0; el = this.elements[i], i < this.elements.length; i++) {
-                        if (el.isSelector !== undefined) {
-                            el.setListItem(fromserver);
-                        }
-                    }
-                }
             },
 
             setRootEditor: function ()
@@ -304,7 +277,7 @@
                     var childToServer = childrenToServer[index];
 
                     for (var index2 in childToServer.elements) {
-                        childToServer.elements[index2].data = [];
+                        childToServer.elements[index2].data = {};
                     }
                 }
             },
@@ -314,7 +287,7 @@
                     var childToServer = childrenToServer[index];
 
                     for (var index2 in childToServer.elements) {
-                        childToServer.elements[index2].changed = {};
+                        childToServer.elements[index2].data = {};
                     }
                 }
             },

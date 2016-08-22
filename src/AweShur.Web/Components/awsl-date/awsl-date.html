@@ -82,11 +82,11 @@
                 this.fire('change');
             }
         },
-        setData: function (fromserver) {
+        getData: function (fromServer) {
             var name = this.dataField;
 
             if (name != null) {
-                var value = fromserver.data[name];
+                var value = fromServer.data[name];
 
                 if (value == null || value == "")
                 {
@@ -105,14 +105,12 @@
                 }
             }
         },
-        getData: function () {
+        setData: function (toServer) {
             var name = this.dataField;
 
             if (name != null) {
-                return this.$.inputDate.value;
+                toServer.data[name] = this.$.inputDate.value;
             }
-
-            return "";
         }
     });
     </script>

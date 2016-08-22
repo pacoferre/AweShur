@@ -47,12 +47,6 @@
                 'iron-form-element-register': '_nothing',
                 'iron-form-element-unregister': '_nothing',
             },
-            afterSetData: function (fromserver) {
-                if (this.onlynew) {
-                    this.set('onlynew', false);
-                    this.set('onlynew', true);
-                }
-            },
             _computeReadOnly: function (readonly, onlynew) {
                 var result = readonly;
 
@@ -86,6 +80,19 @@
                     this.containerElement.fire('awsl-element-unregister', { target: this });
                 }
             },
+
+            getData: function (fromServer) {
+            },
+
+            setData: function (toServer) {
+            },
+
+            afterGetData: function (fromServer) {
+                if (this.onlynew) {
+                    this.set('onlynew', false);
+                    this.set('onlynew', true);
+                }
+            }
         };
     })();
 </script>
