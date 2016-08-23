@@ -12,7 +12,6 @@ namespace AweShur.Core.REST
         public int sequence { get; set; } = 0;
         public string action { get; set; } = "";
 
-        public List<string> listNames { get; set; }
         public List<string> dataNames { get; set; }
         public ModelFromClientData root { get; set; }
     }

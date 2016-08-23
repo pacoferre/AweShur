@@ -7,8 +7,13 @@
     (function () {
         AWSLBehaviors.SelectorBehaviorImpl = {
             properties: {
+                objectName: {
+                    type: String,
+                    observer: '_parameterChange'
+                },
                 listName: {
                     type: String,
+                    observer: '_parameterChange'
                 },
                 label: {
                     type: String,
@@ -17,11 +22,24 @@
                     type: Array,
                     value: function () { return []; }
                 },
-            },
-            setListItem: function (fromServer) {
-                if (fromServer.listItems != null && this.listName != "") {
-                    this.listItems = fromServer.listItems[this.listName];
+                parameter: {
+                    type: Number,
+                    value: 0,
+                    observer: '_parameterChange'
                 }
+            },
+            _parameterChange: function (newValue, oldValue) {
+                if (this.listName !== undefined && this.objectName !== undefined) {
+                    this.refresh();
+                }
+            },
+            refresh: function (postFunction) {
+                this.fire('awsl-getlist', {
+                    objectName: this.objectName,
+                    listName: this.listName,
+                    parameter: this.parameter,
+                    postFunction: postFunction
+                });
             },
             getData : function (fromServer) {
                 var name = this.dataField;
@@ -33,10 +51,16 @@
 
                         if (this.listItems.length == 0)
                         {
-                            this.fire('getlist', { listName: this.listName });
-                        }
+                            var that = this;
 
-                        this.value = value;
+                            this.refresh(function () {
+                                that.getData(fromServer);
+                            });
+                        }
+                        else
+                        {
+                            this.value = value;
+                        }
                     }
                 }
             },

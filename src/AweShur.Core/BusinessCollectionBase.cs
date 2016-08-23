@@ -63,6 +63,11 @@ namespace AweShur.Core
             this.sql = sql;
 
             this.dbNumber = dbNumber;
+
+            if (!BusinessBaseProvider.Instance.IsDefinitionCreated(childObjectName, dbNumber))
+            {
+                BusinessBaseProvider.Instance.GetDefinition(childObjectName, dbNumber);
+            }
         }
 
         public virtual string CollectionName

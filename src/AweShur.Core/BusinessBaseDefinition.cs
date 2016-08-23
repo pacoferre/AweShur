@@ -299,7 +299,7 @@ namespace AweShur.Core
             return dynParms;
         }
 
-        public virtual string GetListSQL(string listName)
+        public virtual string GetListSQL(string listName, string parameter)
         {
             string sql = "Select " + dialect.Encapsulate(names[PrimaryKeys[0]]) + " As ID, "
                 + dialect.Encapsulate(firstStringProperty.FieldName) + " From " + tableNameEncapsulated
@@ -308,9 +308,9 @@ namespace AweShur.Core
             return sql;
         }
 
-        public virtual ListTable GetList(string listName, int dbNumber)
+        public virtual ListTable GetList(string listName, string parameter, int dbNumber)
         {
-            string sql = GetListSQL(listName);
+            string sql = GetListSQL(listName, parameter);
             ListTable list = new ListTable(listName, sql, dbNumber);
 
             return list;

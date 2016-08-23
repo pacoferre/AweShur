@@ -9,15 +9,20 @@ namespace AweShur.Core.Lists
 {
     public class ListProvider
     {
-        private ConcurrentDictionary<Tuple<string, string>, Lazy<ListTable>>
-            listProviders = new ConcurrentDictionary<Tuple<string, string>, Lazy<ListTable>>();
+        private ConcurrentDictionary<Tuple<string, string, string>, Lazy<ListTable>>
+            listProviders = new ConcurrentDictionary<Tuple<string, string, string>, Lazy<ListTable>>();
 
-        public ListTable GetList(string objectName, string listName = "")
+        public ListTable GetList(string objectName, string listName = "", string parameter = "")
         {
+            if (listName == "")
+            {
+                listName = objectName;
+            }
+
             Lazy<ListTable> lazy = listProviders.GetOrAdd(
-                new Tuple<string, string>(objectName, listName),
+                new Tuple<string, string, string>(objectName, listName, parameter),
                 new Lazy<ListTable>(
-                    () => GetListInternal(objectName, listName),
+                    () => GetListInternal(objectName, listName, parameter),
                     LazyThreadSafetyMode.ExecutionAndPublication
                 ));
 
@@ -26,9 +31,9 @@ namespace AweShur.Core.Lists
 
         public void Invalidate(string objectName)
         {
-            if (BusinessBaseProvider.ExistsData(Key(objectName, "")))
+            if (BusinessBaseProvider.ExistsData(Key(objectName, "", "")))
             {
-                GetListInternal(objectName, "").Invalidate();
+                GetListInternal(objectName, "", "").Invalidate();
             }
 
             foreach(var kp in listProviders)
@@ -43,14 +48,14 @@ namespace AweShur.Core.Lists
             }
         }
 
-        private string Key(string objectName, string listName)
+        private string Key(string objectName, string listName, string parameter)
         {
-            return "list_" + objectName + "_" + listName;
+            return "list_" + objectName + "_" + listName + "_" + parameter;
         }
 
-        private ListTable GetListInternal(string objectName, string listName)
+        private ListTable GetListInternal(string objectName, string listName, string parameter)
         {
-            string key = Key(objectName, listName);
+            string key = Key(objectName, listName, parameter);
             ListTable list;
             byte[] listData = BusinessBaseProvider.GetData(key);
 
@@ -60,7 +65,7 @@ namespace AweShur.Core.Lists
 
                 def = BusinessBaseProvider.Instance.GetDefinition(objectName);
 
-                list = def.GetList(listName, def.DBNumber);
+                list = def.GetList(listName, parameter, def.DBNumber);
 
                 BusinessBaseProvider.StoreData(key, list.Serialize());
             }

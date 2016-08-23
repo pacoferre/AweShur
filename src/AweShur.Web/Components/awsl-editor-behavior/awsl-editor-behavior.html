@@ -70,7 +70,7 @@
                 'awsl-clear': '_onClear',
                 'awsl-close': '_onClose',
                 'change': '_onChanged',
-                'keyup': '_onChanged'
+                'keyup': '_onChanged',
             },
             attached: function () {
                 if (this.wasInitialized) {
@@ -295,10 +295,12 @@
             },
             setToolBar: function() {
             },
-            showMessage: function(msg) {
+            showMessage: function (msg) {
+                this.fire('awsl-show-message', msg);
             },
             showError: function (msg) {
-            }
+                this.fire('awsl-show-error', msg);
+            },
         };
     })();
 </script>

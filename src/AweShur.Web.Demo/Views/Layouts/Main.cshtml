@@ -17,6 +17,7 @@
 <link rel="import" href="/lib/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="/lib/iron-pages/iron-pages.html">
 <link rel="import" href="/lib/iron-selector/iron-selector.html">
+<link rel="import" href="/AWSLib/awsl-main-behavior">
 
 <dom-module id="aswd-main">
     <template>
@@ -57,7 +58,6 @@
                 padding-left: 32px;
             }
         </style>
-
         <app-location use-hash-as-path route="{{route}}"></app-location>
         <app-route route="{{route}}" pattern="/:page" data="{{routeData}}" tail="{{subroute}}"></app-route>
         <app-drawer-layout fullbleed="" responsive-width="1024px">
@@ -101,6 +101,7 @@
     <script>
     Polymer({
         is: 'aswd-main',
+        behaviors: [ AWSLBehaviors.MainBehavior ],
         properties: {
             page: {
                 type: String,
@@ -112,15 +113,9 @@
                 notify: true
             }
         },
-        listeners: {
-            'awsl-set-title': '_onSetTitle',
-        },
         observers: [
             "_routePageChanged(routeData.page)",
         ],
-        _onSetTitle: function (newTitle) {
-            this.MainTitle = newTitle.detail.title;
-        },
         _routePageChanged: function (newPage) {
             if (newPage === undefined || newPage == "") {
                 window.location = "/#/Customer";

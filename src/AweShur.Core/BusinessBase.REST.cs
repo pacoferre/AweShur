@@ -45,11 +45,13 @@ namespace AweShur.Core
                 {
                     try
                     {
+                        string messageAction = IsDeleting ? "deleted" : (IsNew ? "created" : "saved");
+
                         CurrentDB.BeginTransaction();
 
                         StoreToDB();
 
-                        model.normalMessage = Description + " saved successfully.";
+                        model.normalMessage = Description + " " + messageAction + " successfully.";
 
                         CurrentDB.CommitTransaction();
                     }
@@ -76,20 +78,6 @@ namespace AweShur.Core
                     }
 
                     ReadFromDB();
-                }
-            }
-
-            // Return lists.
-            if (fromClient.listNames != null && fromClient.listNames.Count > 0)
-            {
-                model.listItems = new Dictionary<string, List<ListItemRest>>(fromClient.listNames.Count);
-
-                foreach (string listName in fromClient.listNames)
-                {
-                    string[] parts = listName.Split('*');
-                    ListTable table = BusinessBaseProvider.ListProvider.GetList(parts[0], parts[1]);
-
-                    model.listItems.Add(listName, table.ToClient.Where(item => item.i != "0").ToList());
                 }
             }
 

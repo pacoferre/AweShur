@@ -1,4 +1,5 @@
 ﻿using AweShur.Core;
+using AweShur.Core.Lists;
 using AweShur.Core.REST;
 using AweShur.Core.Security;
 using Microsoft.AspNetCore.Mvc;
@@ -49,6 +50,15 @@ namespace AweShur.Web.Controllers
             resp.fastsearch = filter.FastSearch;
 
             return resp;
+        }
+
+        [HttpPost]
+        public List<ListItemRest> GetList([FromBody]GetListRequest request)
+        {
+            ListTable table = BusinessBaseProvider.ListProvider.GetList(request.objectName, 
+                request.listName, request.parameter);
+
+            return table.ToClient.Where(item => item.i != "0").ToList();
         }
 
         [HttpPost]

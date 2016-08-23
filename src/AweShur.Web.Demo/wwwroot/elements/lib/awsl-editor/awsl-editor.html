@@ -20,8 +20,6 @@
         </style>
 
         <awsl-toolbar id="tool"></awsl-toolbar>
-        <paper-toast id="toastOk" text="" duration="5000" vertical-align="top" horizontal-align="center"></paper-toast>
-        <paper-toast id="toastError" text="" duration="8000" vertical-align="top" horizontal-align="center"></paper-toast>
         <div id="main">
         </div>
     </template>
@@ -35,18 +33,6 @@
         setToolBar: function (fromServer) {
             this.$.tool.setToolBar(fromServer);
         },
-        showMessage: function (msg) {
-            this.$.toastOk.text = msg;
-            this.$.toastOk.fitInto = this.getMain();
-            this.$.toastOk.open();
-        },
-        showError: function (msg) {
-            window.alert(msg);
-
-            this.$.toastError.text = msg;
-            this.$.toastError.fitInto = this.getMain();
-            this.$.toastError.open();
-        }
     });
     </script>
 </dom-module>

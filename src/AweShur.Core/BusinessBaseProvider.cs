@@ -25,7 +25,7 @@ namespace AweShur.Core
         protected Dictionary<string, Func<BusinessBaseDefinition>> decorators = new Dictionary<string, Func<BusinessBaseDefinition>>();
         private ConcurrentDictionary<string, Lazy<BusinessBaseDefinition>>
             definitionsCreators = new ConcurrentDictionary<string, Lazy<BusinessBaseDefinition>>();
-        public static BusinessBaseProvider Instance { get; set; }
+        public static BusinessBaseProvider Instance { get; private set; }
         private static IHttpContextAccessor HttpContextAccessor;
         private static ConnectionMultiplexer TheCache;
         public static ListProvider ListProvider { get; private set; }
@@ -84,16 +84,24 @@ namespace AweShur.Core
             return obj;
         }
 
+        public bool IsDefinitionCreated(string name, int dbNumber = 0)
+        {
+            return GetLazyCreator(name, dbNumber).IsValueCreated;
+        }
+
         public BusinessBaseDefinition GetDefinition(string name, int dbNumber = 0)
         {
-            Lazy<BusinessBaseDefinition> lazy = definitionsCreators.GetOrAdd(
+            return GetLazyCreator(name, dbNumber).Value;
+        }
+
+        private Lazy<BusinessBaseDefinition> GetLazyCreator(string name, int dbNumber = 0)
+        {
+            return definitionsCreators.GetOrAdd(
                 name,
                 new Lazy<BusinessBaseDefinition>(
                     () => GetDefinitionInternal(name, dbNumber),
                     LazyThreadSafetyMode.ExecutionAndPublication
                 ));
-
-            return lazy.Value;
         }
 
         private BusinessBaseDefinition GetDefinitionInternal(string tableName, int dbNumber)

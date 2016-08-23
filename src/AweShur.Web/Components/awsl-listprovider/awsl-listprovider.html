@@ -1,1 +1,75 @@
-﻿
+﻿<link rel="import" href="../lib/polymer/polymer.html">
+<link rel="import" href="../lib/iron-ajax/iron-ajax.html">
+
+<dom-module id="awsl-listprovider">
+    <template>
+    </template>
+    <script>
+    Polymer({
+        is: "awsl-listprovider",
+        readers: {},
+        getlist: function (target)
+        {
+            var key = target.detail.objectName + "_" + target.detail.listName + "_" + target.detail.parameter;
+            var item;
+
+            if (this.readers[key] === undefined) {
+                var item = {};
+
+                item.ready = false;
+                item.targets = [ ];
+                item.request = document.createElement('iron-ajax');
+                item.request.addEventListener('response', this._handleResponse.bind(this));
+                item.request.addEventListener('error', this._handleError.bind(this));
+                item.request.keygetlist = key;
+
+                item.request.url = "/CRUD/GetList";
+                item.request.method = "POST";
+                item.request.contentType = "application/json";
+                item.request.body = {
+                    objectName: target.detail.objectName,
+                    listName: target.detail.listName,
+                    parameter: target.detail.parameter
+                };
+
+                item.request.generateRequest();
+
+                this.readers[key] = item;
+            }
+            else {
+                item = this.readers[key];
+            }
+
+            if (item.ready)
+            {
+                this._refreshTarget(target, item);
+            }
+            else
+            {
+                item.targets.push(target);
+            }
+        },
+        _handleResponse: function (event) {
+            var item = this.readers[event.currentTarget.keygetlist];
+            var target;
+
+            item.ready = true;
+
+            while((target = item.targets.pop()) != null)
+            {
+                this._refreshTarget(target, item);
+            }
+        },
+        _refreshTarget: function (target, item) {
+            target.target.listItems = item.request.lastResponse;
+            if (target.detail.postFunction != null && target.detail.postFunction !== undefined)
+            {
+                this.async(target.detail.postFunction);
+            }
+        },
+        _handleError: function (event) {
+            debugger;
+        },
+    });
+    </script>
+</dom-module>

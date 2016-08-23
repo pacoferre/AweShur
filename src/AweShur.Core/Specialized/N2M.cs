@@ -7,10 +7,14 @@ namespace AweShur.Core.Specialized
 {
     public class N2MDecorator : BusinessBaseDefinition
     {
+        public string externalFieldNameM { get; set; }
+
         protected override void SetCustomProperties()
         {
+            PropertyDefinition external = new PropertyDefinition(externalFieldNameM, externalFieldNameM, BasicType.Number);
             PropertyDefinition active = new PropertyDefinition("Active", "Active", BasicType.Bit, PropertyInputType.checkbox);
 
+            this.Properties.Add(externalFieldNameM, external);
             this.Properties.Add("Active", active);
 
             base.SetCustomProperties();
@@ -27,7 +31,6 @@ namespace AweShur.Core.Specialized
 
         public N2M(string tableName) : base(tableName)
         {
-
         }
 
         public override string Key
@@ -60,13 +63,13 @@ namespace AweShur.Core.Specialized
 
         public override void StoreToDB()
         {
-            int codigoM = (int)base[externalFieldNameM] != 0 ? (int)base[externalFieldNameM] : (int)base[ownFieldNameM];
+            int externalID = (int)base[externalFieldNameM] != 0 ? (int)base[externalFieldNameM] : (int)base[ownFieldNameM];
             bool active = (bool)this["Active"];
 
             if (IsDeleting || !active)
             {
                 base[ownFieldNameN] = Parent.Parent.Key.NoNullInt();
-                base[ownFieldNameM] = codigoM;
+                base[ownFieldNameM] = externalID;
 
                 if (!IsDeleting)
                 {
@@ -81,14 +84,14 @@ namespace AweShur.Core.Specialized
 
                 sql = "Select count(*) From " + Definition.TableNameEncapsulated
                     + " WHERE " + ownFieldNameN + " = " + Parent.Parent.Key
-                    + " AND " + ownFieldNameM + " = " + codigoM;
+                    + " AND " + ownFieldNameM + " = " + externalID;
                 if (DB.Instance.QueryFirstOrDefault<int>(sql) == 0)
                 {
                     this.SetNew();
                 }
 
                 base[ownFieldNameN] = Parent.Parent.Key.NoNullInt();
-                base[ownFieldNameM] = codigoM;
+                base[ownFieldNameM] = externalID;
 
                 base.StoreToDB();
             }

@@ -20,6 +20,10 @@ namespace AweShur.Web
                 template: "CRUD/Post",
                 defaults: new { controller = "CRUD", action = "Post" });
             routes.MapRoute(
+                name: "crudGetList",
+                template: "CRUD/GetList",
+                defaults: new { controller = "CRUD", action = "GetList" });
+            routes.MapRoute(
                 name: "elementtemplate",
                 template: "Elements/LoadTemplate/{component}/{id}",
                 defaults: new { controller = "Elements", action = "LoadTemplate" });

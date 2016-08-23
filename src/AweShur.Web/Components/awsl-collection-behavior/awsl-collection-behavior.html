@@ -164,22 +164,24 @@
                         if (dataHost !== undefined) {
                             var dataItem = newItems[indexItem];
 
-                            if (lastChanged != null && element === lastChanged) {
-                                if (element.focused === undefined || !element.focused) {
+                            if (dataItem !== undefined) {
+                                if (lastChanged != null && element === lastChanged) {
+                                    if (element.focused === undefined || !element.focused) {
+                                        element.getData(dataItem, lastChanged);
+                                    }
+                                }
+                                else {
                                     element.getData(dataItem, lastChanged);
                                 }
-                            }
-                            else {
-                                element.getData(dataItem, lastChanged);
-                            }
 
-                            if (!reloadItems) {
-                                for (var indexRefresh in dataHost.item) {
-                                    dataHost.item[indexRefresh] = dataItem[indexRefresh];
+                                if (!reloadItems) {
+                                    for (var indexRefresh in dataHost.item) {
+                                        dataHost.item[indexRefresh] = dataItem[indexRefresh];
+                                    }
                                 }
-                            }
 
-                            indexItem++;
+                                indexItem++;
+                            }
                         }
                     }
                 });
@@ -193,7 +195,7 @@
                     var element = this.elements[index];
                     var dataHost = element.dataHost;
 
-                    if (dataHost !== undefined) {
+                    if (dataHost !== undefined && dataHost.item !== undefined) {
                         var found = false;
                         var dataElement;
 

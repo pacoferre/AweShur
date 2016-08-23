@@ -1,1 +1,54 @@
-﻿
+﻿<link rel="import" href="../lib/polymer/polymer.html">
+<link rel="import" href="../lib/paper-toast/paper-toast.html">
+<link rel="import" href="/AWSLib/awsl-listprovider">
+
+<script>
+    var AWSLBehaviors = AWSLBehaviors || {};
+
+    (function () {
+        AWSLBehaviors.MainBehavior = {
+            properties: {
+                MainTitle: {
+                    type: String
+                }
+            },
+            ready: function ()
+            {
+                var beforeNode = Polymer.dom(this.root).childNodes[0];
+
+                this.$.toastOk = document.createElement('paper-toast');
+                this.$.toastOk.duration = 5000;
+                this.$.toastError = document.createElement('paper-toast');
+                this.$.toastError.duration = 8000;
+
+                this.$.listProvider = document.createElement('awsl-listprovider');
+
+                Polymer.dom(this.root).insertBefore(this.$.toastOk, beforeNode);
+                Polymer.dom(this.root).insertBefore(this.$.toastError, beforeNode);
+                Polymer.dom(this.root).insertBefore(this.$.listProvider, beforeNode);
+            },
+            listeners: {
+                'awsl-set-title': '_onSetTitle',
+                'awsl-show-message': '_onShowMessage',
+                'awsl-show-error': '_onShowError',
+                'awsl-getlist': '_getlist'
+            },
+            _onSetTitle: function (newTitle) {
+                this.MainTitle = newTitle.detail.title;
+            },
+            _onShowMessage: function (msg) {
+                this.$.toastOk.text = msg.detail;
+                this.$.toastOk.fitInto = msg.target;
+                this.$.toastOk.open();
+            },
+            _onShowError: function (msg) {
+                this.$.toastError.text = msg.detail;
+                this.$.toastError.fitInto = msg.target;
+                this.$.toastError.open();
+            },
+            _getlist: function (target) {
+                this.$.listProvider.getlist(target);
+            }
+        };
+    })();
+</script>
