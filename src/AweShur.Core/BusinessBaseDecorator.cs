@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace AweShur.Core
 {
-    public partial class BusinessBaseDefinition
+    public partial class BusinessBaseDecorator
     {
         public Dictionary<string, PropertyDefinition> Properties { get; } = new Dictionary<string, PropertyDefinition>();
         public List<PropertyDefinition> ListProperties { get; } = new List<PropertyDefinition>();
@@ -37,7 +37,7 @@ namespace AweShur.Core
         private Lazy<string> updateBuilder;
         private Lazy<string> deleteBuilder;
 
-        public BusinessBaseDefinition()
+        public BusinessBaseDecorator()
         {
             selectBuilder = new Lazy<string>(PrepareSelectQuery);
             insertBuilder = new Lazy<string>(PrepareInsertQuery);

@@ -18,13 +18,13 @@ namespace AweShur.Core
 
         public Func<string, int, BusinessBase> DefaultBusinessBase =
             (objectName, dbNumber) => new BusinessBase(objectName, dbNumber);
-        public Func<BusinessBaseDefinition> DefaultBusinessBaseDefinition =
-            () => new BusinessBaseDefinition();
+        public Func<BusinessBaseDecorator> DefaultBusinessBaseDecorator =
+            () => new BusinessBaseDecorator();
 
         protected Dictionary<string, Func<BusinessBase>> creators = new Dictionary<string, Func<BusinessBase>>();
-        protected Dictionary<string, Func<BusinessBaseDefinition>> decorators = new Dictionary<string, Func<BusinessBaseDefinition>>();
-        private ConcurrentDictionary<string, Lazy<BusinessBaseDefinition>>
-            definitionsCreators = new ConcurrentDictionary<string, Lazy<BusinessBaseDefinition>>();
+        protected Dictionary<string, Func<BusinessBaseDecorator>> decorators = new Dictionary<string, Func<BusinessBaseDecorator>>();
+        private ConcurrentDictionary<string, Lazy<BusinessBaseDecorator>>
+            decoratorsCreators = new ConcurrentDictionary<string, Lazy<BusinessBaseDecorator>>();
         public static BusinessBaseProvider Instance { get; private set; }
         private static IHttpContextAccessor HttpContextAccessor;
         private static ConnectionMultiplexer TheCache;
@@ -84,46 +84,46 @@ namespace AweShur.Core
             return obj;
         }
 
-        public bool IsDefinitionCreated(string name, int dbNumber = 0)
+        public bool IsDecoratorCreated(string name, int dbNumber = 0)
         {
-            return GetLazyCreator(name, dbNumber).IsValueCreated;
+            return GetLazyDecorator(name, dbNumber).IsValueCreated;
         }
 
-        public BusinessBaseDefinition GetDefinition(string name, int dbNumber = 0)
+        public BusinessBaseDecorator GetDecorator(string name, int dbNumber = 0)
         {
-            return GetLazyCreator(name, dbNumber).Value;
+            return GetLazyDecorator(name, dbNumber).Value;
         }
 
-        private Lazy<BusinessBaseDefinition> GetLazyCreator(string name, int dbNumber = 0)
+        private Lazy<BusinessBaseDecorator> GetLazyDecorator(string name, int dbNumber = 0)
         {
-            return definitionsCreators.GetOrAdd(
+            return decoratorsCreators.GetOrAdd(
                 name,
-                new Lazy<BusinessBaseDefinition>(
-                    () => GetDefinitionInternal(name, dbNumber),
+                new Lazy<BusinessBaseDecorator>(
+                    () => GetDecoratorInternal(name, dbNumber),
                     LazyThreadSafetyMode.ExecutionAndPublication
                 ));
         }
 
-        private BusinessBaseDefinition GetDefinitionInternal(string tableName, int dbNumber)
+        private BusinessBaseDecorator GetDecoratorInternal(string tableName, int dbNumber)
         {
-            BusinessBaseDefinition definition;
+            BusinessBaseDecorator decorator;
 
             if (decorators.ContainsKey(tableName))
             {
-                definition = decorators[tableName].Invoke();
+                decorator = decorators[tableName].Invoke();
             }
             else
             {
-                definition = DefaultBusinessBaseDefinition();
+                decorator = DefaultBusinessBaseDecorator();
             }
-            definition.SetProperties(tableName, dbNumber);
+            decorator.SetProperties(tableName, dbNumber);
 
-            return definition;
+            return decorator;
         }
 
         public FilterBase GetFilter(AppUser user, string objectName)
         {
-            return new FilterBase(GetDefinition(objectName, 0), 0);
+            return new FilterBase(GetDecorator(objectName, 0), 0);
         }
 
         private static string ObjectKey(string objectName, int dbNumber, string key)
@@ -133,7 +133,7 @@ namespace AweShur.Core
 
         public static void StoreObject(BusinessBase obj, string objectName)
         {
-            string objectKey = ObjectKey(objectName, obj.Definition.DBNumber, obj.Key);
+            string objectKey = ObjectKey(objectName, obj.Decorator.DBNumber, obj.Key);
 
             StoreData(objectKey, obj.Serialize());
         }

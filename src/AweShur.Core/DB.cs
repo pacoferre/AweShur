@@ -246,7 +246,7 @@ namespace AweShur.Core
 
         public void ReadBusinessObject(BusinessBase obj)
         {
-            BusinessBaseDefinition def = obj.Definition;
+            BusinessBaseDecorator def = obj.Decorator;
 
             OpenConnection();
 
@@ -266,7 +266,7 @@ namespace AweShur.Core
 
         public void StoreBusinessObject(BusinessBase obj)
         {
-            BusinessBaseDefinition def = obj.Definition;
+            BusinessBaseDecorator def = obj.Decorator;
 
             OpenConnection();
 

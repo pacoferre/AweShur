@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace AweShur.Core.Security
 {
-    public class AppUserDecorator : BusinessBaseDefinition
+    public class AppUserDecorator : BusinessBaseDecorator
     {
         protected override void SetCustomProperties()
         {

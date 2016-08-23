@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace AweShur.Core
 {
-    public partial class BusinessBaseDefinition
+    public partial class BusinessBaseDecorator
     {
         public Tuple<Dictionary<string, DataViewColumn>, string> GetFilterColumnsAndFromClause(string ElementName = "")
         {

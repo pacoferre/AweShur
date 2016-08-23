@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace AweShur.Core.Specialized
 {
-    public class N2MDecorator : BusinessBaseDefinition
+    public class N2MDecorator : BusinessBaseDecorator
     {
         public string externalFieldNameM { get; set; }
 
@@ -82,7 +82,7 @@ namespace AweShur.Core.Specialized
             {
                 string sql;
 
-                sql = "Select count(*) From " + Definition.TableNameEncapsulated
+                sql = "Select count(*) From " + Decorator.TableNameEncapsulated
                     + " WHERE " + ownFieldNameN + " = " + Parent.Parent.Key
                     + " AND " + ownFieldNameM + " = " + externalID;
                 if (DB.Instance.QueryFirstOrDefault<int>(sql) == 0)

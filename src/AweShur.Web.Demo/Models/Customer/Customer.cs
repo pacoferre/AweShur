@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace AweShur.Web.Demo.Models.Customer
 {
-    public class CustomerDecorator : BusinessBaseDefinition
+    public class CustomerDecorator : BusinessBaseDecorator
     {
         protected override void SetCustomProperties()
         {

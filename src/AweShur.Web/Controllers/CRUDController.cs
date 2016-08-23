@@ -45,7 +45,7 @@ namespace AweShur.Web.Controllers
                 filter.FastSearch = this.Request.Query["fastsearch"].NoNullString();
             }
 
-            resp.plural = filter.Definition.Plural;
+            resp.plural = filter.Decorator.Plural;
             resp.data = Dapper.SqlMapper.ToList(filter.Get(1, SortDirection.Ascending, 0, 100));
             resp.fastsearch = filter.FastSearch;
 

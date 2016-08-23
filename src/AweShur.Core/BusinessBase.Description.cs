@@ -12,7 +12,7 @@ namespace AweShur.Core
         {
             get
             {
-                return this[Definition.FirstStringProperty.Index].NoNullString();
+                return this[Decorator.FirstStringProperty.Index].NoNullString();
             }
         }
 
@@ -20,7 +20,7 @@ namespace AweShur.Core
         {
             get
             {
-                return Definition.Singular + " " + Description + 
+                return Decorator.Singular + " " + Description + 
                     (IsNew ? " (new)" : 
                         (IsDeleting ? " (deleting)" : 
                             (IsModified ? " (modified)" : "")));
@@ -29,7 +29,7 @@ namespace AweShur.Core
 
         public virtual bool IsReadOnly(string propertyName)
         {
-            return Definition.Properties[propertyName].IsReadOnly;
+            return Decorator.Properties[propertyName].IsReadOnly;
         }
 
         public virtual bool IsNew

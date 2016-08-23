@@ -11,28 +11,28 @@ namespace AweShur.Core
     {
         private Lazy<DB> lazyDB;
 
-        protected BusinessBaseDefinition definition = null;
+        protected BusinessBaseDecorator decorator = null;
         protected DataItem dataItem = null;
 
         public BusinessBase(string tableName, bool noDB)
         {
-            definition = BusinessBaseProvider.Instance.GetDefinition(tableName, 0);
-            dataItem = Definition.New(this);
+            decorator = BusinessBaseProvider.Instance.GetDecorator(tableName, 0);
+            dataItem = Decorator.New(this);
         }
 
         public BusinessBase(string tableName, int dbNumber = 0)
         {
-            definition = BusinessBaseProvider.Instance.GetDefinition(tableName, dbNumber);
-            dataItem = Definition.New(this);
+            decorator = BusinessBaseProvider.Instance.GetDecorator(tableName, dbNumber);
+            dataItem = Decorator.New(this);
 
             lazyDB = new Lazy<DB>(() => DB.InstanceNumber(dbNumber));
         }
 
-        public BusinessBaseDefinition Definition
+        public BusinessBaseDecorator Decorator
         {
             get
             {
-                return definition;
+                return decorator;
             }
         }
 
@@ -44,7 +44,7 @@ namespace AweShur.Core
 
                 if (objectName.Contains("BusinessBase"))
                 {
-                    return Definition.ObjectName;
+                    return Decorator.ObjectName;
                 }
 
                 return objectName.Substring(objectName.LastIndexOf(".") + 1);
@@ -63,11 +63,11 @@ namespace AweShur.Core
         {
             get
             {
-                return dataItem[Definition.IndexOfName(property)];
+                return dataItem[Decorator.IndexOfName(property)];
             }
             set
             {
-                dataItem[Definition.IndexOfName(property)] = value;
+                dataItem[Decorator.IndexOfName(property)] = value;
             }
         }
 
@@ -103,6 +103,21 @@ namespace AweShur.Core
 
                 return _currentUser;
             }
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is BusinessBase)
+            {
+                return (BusinessBase)obj == this;
+            }
+
+            return base.Equals(obj);
+        }
+
+        public override int GetHashCode()
+        {
+            return (ObjectName + "_" + Key).GetHashCode();
         }
 
         public static bool operator ==(BusinessBase b1, BusinessBase b2)

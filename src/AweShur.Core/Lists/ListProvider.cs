@@ -61,9 +61,9 @@ namespace AweShur.Core.Lists
 
             if (listData == null)
             {
-                BusinessBaseDefinition def;
+                BusinessBaseDecorator def;
 
-                def = BusinessBaseProvider.Instance.GetDefinition(objectName);
+                def = BusinessBaseProvider.Instance.GetDecorator(objectName);
 
                 list = def.GetList(listName, parameter, def.DBNumber);
 

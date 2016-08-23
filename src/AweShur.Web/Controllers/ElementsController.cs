@@ -56,13 +56,13 @@ namespace AweShur.Web.Controllers
         public IActionResult Load(string component, string objectName, int? id)
         {
             return PartialView("~/Views/Elements/" + component + ".cshtml", 
-                AweShur.Core.BusinessBaseProvider.Instance.GetDefinition(objectName, 0));
+                AweShur.Core.BusinessBaseProvider.Instance.GetDecorator(objectName, 0));
         }
 
         public IActionResult LoadFolder(string folder, string component, string objectName, int? id)
         {
             return PartialView("~/Views/Elements/" + folder + "/" + component + ".cshtml",
-                AweShur.Core.BusinessBaseProvider.Instance.GetDefinition(objectName, 0));
+                AweShur.Core.BusinessBaseProvider.Instance.GetDecorator(objectName, 0));
         }
 
         private static ConcurrentDictionary<string, byte[]> componentCache = new ConcurrentDictionary<string, byte[]>();

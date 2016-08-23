@@ -34,7 +34,7 @@ namespace AweShur.Core
             {
                 foreach (KeyValuePair<string, string> item in fromClient.root.data)
                 {
-                    PropertyDefinition prop = Definition.Properties[item.Key];
+                    PropertyDefinition prop = Decorator.Properties[item.Key];
 
                     prop.SetValue(this, item.Value);
                 }
@@ -82,12 +82,12 @@ namespace AweShur.Core
             }
 
             // Send object data.
-            model.data = new Dictionary<string, string>(Definition.ListProperties.Count);
+            model.data = new Dictionary<string, string>(Decorator.ListProperties.Count);
             if (fromClient.dataNames != null)
             {
                 for (int index = 0; index < fromClient.dataNames.Count; ++index)
                 {
-                    PropertyDefinition prop = Definition.Properties[fromClient.dataNames[index]];
+                    PropertyDefinition prop = Decorator.Properties[fromClient.dataNames[index]];
 
                     model.data.Add(prop.FieldName, prop.GetValue(this));
                 }
@@ -182,7 +182,7 @@ namespace AweShur.Core
                     {
                         foreach (KeyValuePair<string, string> item in element.data)
                         {
-                            PropertyDefinition prop = Definition.Properties[item.Key];
+                            PropertyDefinition prop = Decorator.Properties[item.Key];
 
                             prop.SetValue(this, item.Value);
                         }
@@ -198,12 +198,12 @@ namespace AweShur.Core
             ModelToClient model)
         {
             // Send object data.
-            model.data = new Dictionary<string, string>(Definition.ListProperties.Count);
+            model.data = new Dictionary<string, string>(Decorator.ListProperties.Count);
             if (fromClient.dataNames != null)
             {
                 for (int index = 0; index < fromClient.dataNames.Count; ++index)
                 {
-                    PropertyDefinition prop = Definition.Properties[fromClient.dataNames[index]];
+                    PropertyDefinition prop = Decorator.Properties[fromClient.dataNames[index]];
 
                     model.data.Add(prop.FieldName, prop.GetValue(this));
                 }

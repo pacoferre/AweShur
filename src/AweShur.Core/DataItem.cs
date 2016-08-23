@@ -53,7 +53,7 @@ namespace AweShur.Core
                 }
 
                 values[index] = value;
-                if (owner.Definition.PrimaryKeys.Contains(index))
+                if (owner.Decorator.PrimaryKeys.Contains(index))
                 {
                     keyIsDirty = true;
                 }
@@ -66,7 +66,7 @@ namespace AweShur.Core
             {
                 key = "";
 
-                foreach (int index in owner.Definition.PrimaryKeys)
+                foreach (int index in owner.Decorator.PrimaryKeys)
                 {
                     key += values[index].NoNullString() + "_";
                 }
@@ -130,7 +130,7 @@ namespace AweShur.Core
             obj.Add("M", JToken.FromObject(IsModified ? "1" : ""));
             obj.Add("D", JToken.FromObject(IsDeleting ? "1" : ""));
 
-            foreach (PropertyDefinition prop in owner.Definition.ListProperties)
+            foreach (PropertyDefinition prop in owner.Decorator.ListProperties)
             {
                 int index = prop.Index;
                 object value = values[index];
@@ -166,7 +166,7 @@ namespace AweShur.Core
             }
             IsModified = obj["M"].ToObject(typeof(string)).ToString() == "1";
             IsDeleting = obj["D"].ToObject(typeof(string)).ToString() == "1";
-            foreach (PropertyDefinition prop in owner.Definition.ListProperties)
+            foreach (PropertyDefinition prop in owner.Decorator.ListProperties)
             {
                 int index = prop.Index;
                 bool isNull = obj["n" + prop.Index].ToObject(typeof(string)).ToString() == "1";
@@ -193,7 +193,7 @@ namespace AweShur.Core
 
         public bool Validate(ref string lastErrorMessage, ref string lastErrorProperty)
         {
-            foreach(PropertyDefinition prop in owner.Definition.ListProperties)
+            foreach(PropertyDefinition prop in owner.Decorator.ListProperties)
             {
                 if (!prop.Validate(values[prop.Index], ref lastErrorMessage, ref lastErrorProperty))
                 {

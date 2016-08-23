@@ -14,11 +14,11 @@ namespace AweShur.Core
         public string FastSearch { get; set; } = "";
         public bool FastSearchActivated { get; set; } = true;
 
-        public BusinessBaseDefinition Definition { get; }
+        public BusinessBaseDecorator Decorator { get; }
 
-        public FilterBase(BusinessBaseDefinition defnition, int dbNumber = 0)
+        public FilterBase(BusinessBaseDecorator decorator, int dbNumber = 0)
         {
-            Definition = defnition;
+            Decorator = decorator;
 
             lazyDB = new Lazy<DB>(() => DB.InstanceNumber(dbNumber));
         }
@@ -71,7 +71,7 @@ namespace AweShur.Core
              
             dataView.CurrentDB = CurrentDB;
 
-            colsAndFrom = Definition.GetFilterColumnsAndFromClause(elementName);
+            colsAndFrom = Decorator.GetFilterColumnsAndFromClause(elementName);
 
             dataView.Columns = colsAndFrom.Item1;
             dataView.FromClause = colsAndFrom.Item2;

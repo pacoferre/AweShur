@@ -31,7 +31,7 @@ namespace AweShur.Core
             this.childObjectName = childObjectName;
             if (parentRelationFieldName == "")
             {
-                this.parentRelationFieldName = parent.Definition.ListProperties[0].FieldName;
+                this.parentRelationFieldName = parent.Decorator.ListProperties[0].FieldName;
             }
             else
             {
@@ -53,7 +53,7 @@ namespace AweShur.Core
                     + " Where " + this.childRelationFieldName + " = @id";
 
                 PropertyDefinition firstStringField = 
-                    BusinessBaseProvider.Instance.GetDefinition(childObjectName, dbNumber).FirstStringProperty;
+                    BusinessBaseProvider.Instance.GetDecorator(childObjectName, dbNumber).FirstStringProperty;
 
                 if (firstStringField != null)
                 {
@@ -64,9 +64,9 @@ namespace AweShur.Core
 
             this.dbNumber = dbNumber;
 
-            if (!BusinessBaseProvider.Instance.IsDefinitionCreated(childObjectName, dbNumber))
+            if (!BusinessBaseProvider.Instance.IsDecoratorCreated(childObjectName, dbNumber))
             {
-                BusinessBaseProvider.Instance.GetDefinition(childObjectName, dbNumber);
+                BusinessBaseProvider.Instance.GetDecorator(childObjectName, dbNumber);
             }
         }
 
@@ -406,14 +406,14 @@ namespace AweShur.Core
                     }
                     else
                     {
-                        if (Parent.Definition.primaryKeyIsOneInt)
+                        if (Parent.Decorator.primaryKeyIsOneInt)
                         {
                             if ((int)b[childRelationFieldName] != (int)Parent[parentRelationFieldName])
                             {
                                 b[childRelationFieldName] = Parent[parentRelationFieldName];
                             }
                         }
-                        else if (Parent.Definition.primaryKeyIsOneLong)
+                        else if (Parent.Decorator.primaryKeyIsOneLong)
                         {
                             if ((long)b[childRelationFieldName] != (long)Parent[parentRelationFieldName])
                             {
@@ -562,7 +562,7 @@ namespace AweShur.Core
                 if (readed)
                 {
                     EnsureList();
-                    if (ActiveObject.Definition.PrimaryKeys.Count != 1)
+                    if (ActiveObject.Decorator.PrimaryKeys.Count != 1)
                     {
                         foreach (BusinessBase b in this)
                         {
@@ -677,14 +677,14 @@ namespace AweShur.Core
                     {
                         if (active[childRelationFieldName] == null)
                         {
-                            if (Parent.Definition.primaryKeyIsOneInt)
+                            if (Parent.Decorator.primaryKeyIsOneInt)
                             {
                                 if ((int)Parent[parentRelationFieldName] > 0)
                                 {
                                     active[childRelationFieldName] = Parent[parentRelationFieldName];
                                 }
                             }
-                            else if (Parent.Definition.primaryKeyIsOneLong)
+                            else if (Parent.Decorator.primaryKeyIsOneLong)
                             {
                                 if ((long)Parent[parentRelationFieldName] > 0)
                                 {
@@ -701,14 +701,14 @@ namespace AweShur.Core
                         }
                         else
                         {
-                            if (Parent.Definition.primaryKeyIsOneInt)
+                            if (Parent.Decorator.primaryKeyIsOneInt)
                             {
                                 if ((int)active[childRelationFieldName] != (int)Parent[parentRelationFieldName])
                                 {
                                     active[childRelationFieldName] = Parent[parentRelationFieldName];
                                 }
                             }
-                            else if (Parent.Definition.primaryKeyIsOneLong)
+                            else if (Parent.Decorator.primaryKeyIsOneLong)
                             {
                                 if ((long)active[childRelationFieldName] != (long)Parent[parentRelationFieldName])
                                 {
@@ -1019,7 +1019,7 @@ namespace AweShur.Core
         public string SQLListUsingField(string fieldName)
         {
             string list = "";
-            bool isNumeric = ActiveObject.Definition.Properties[fieldName].BasicType
+            bool isNumeric = ActiveObject.Decorator.Properties[fieldName].BasicType
                 == BasicType.Number;
 
             foreach (BusinessBase obj in this)

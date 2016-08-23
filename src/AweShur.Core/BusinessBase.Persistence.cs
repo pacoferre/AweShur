@@ -11,7 +11,7 @@ namespace AweShur.Core
         {
             if (!preserve)
             {
-                dataItem = Definition.New(this);
+                dataItem = Decorator.New(this);
             }
             IsNew = true;
 
@@ -29,14 +29,14 @@ namespace AweShur.Core
         {
             string[] keys = DataItem.SplitKey(key);
 
-            if (key.Length != Definition.PrimaryKeys.Count)
+            if (key.Length != Decorator.PrimaryKeys.Count)
             {
                 throw new Exception("Invalid key (" + key + ") for object " + Description);
             }
 
-            foreach (int index in Definition.PrimaryKeys)
+            foreach (int index in Decorator.PrimaryKeys)
             {
-                Definition.ListProperties[index].SetValue(this, keys[index]);
+                Decorator.ListProperties[index].SetValue(this, keys[index]);
             }
 
             return ReadFromDB();
@@ -44,36 +44,36 @@ namespace AweShur.Core
 
         public virtual bool ReadFromDB(int key)
         {
-            if (!Definition.primaryKeyIsOneInt)
+            if (!Decorator.primaryKeyIsOneInt)
             {
                 throw new Exception("Primary key is not int.");
             }
 
-            this[Definition.PrimaryKeys[0]] = key;
+            this[Decorator.PrimaryKeys[0]] = key;
 
             return ReadFromDB();
         }
 
         public virtual bool ReadFromDB(long key)
         {
-            if (!Definition.primaryKeyIsOneLong)
+            if (!Decorator.primaryKeyIsOneLong)
             {
                 throw new Exception("Primary key is not long.");
             }
 
-            this[Definition.PrimaryKeys[0]] = key;
+            this[Decorator.PrimaryKeys[0]] = key;
 
             return ReadFromDB();
         }
 
         public virtual bool ReadFromDB(Guid key)
         {
-            if (!Definition.primaryKeyIsOneGuid)
+            if (!Decorator.primaryKeyIsOneGuid)
             {
                 throw new Exception("Primary key is not guid.");
             }
 
-            this[Definition.PrimaryKeys[0]] = key;
+            this[Decorator.PrimaryKeys[0]] = key;
 
             return ReadFromDB();
         }
@@ -94,7 +94,7 @@ namespace AweShur.Core
 
                     AfterReadFromDB();
                 }
-                catch(Exception exp)
+                catch
                 {
                     readed = false;
                 }
@@ -182,7 +182,7 @@ namespace AweShur.Core
 
         public virtual void CopyTo(BusinessBase Target, List<string> excludeFieldNames)
         {
-            foreach (PropertyDefinition prop in Definition.ListProperties)
+            foreach (PropertyDefinition prop in Decorator.ListProperties)
             {
                 if (!prop.IsReadOnly
                     && !prop.IsPrimaryKey

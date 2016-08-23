@@ -9,8 +9,8 @@ namespace AweShur.Core
     {
         //public IEnumerable<dynamic> Get()
         //{
-        //    return CurrentDB.Query(Definition.FilterSelectQuery
-        //        + " Order By " + Definition.FirstStringProperty.FieldName);
+        //    return CurrentDB.Query(Decorator.FilterSelectQuery
+        //        + " Order By " + Decorator.FirstStringProperty.FieldName);
         //}
     }
 }
