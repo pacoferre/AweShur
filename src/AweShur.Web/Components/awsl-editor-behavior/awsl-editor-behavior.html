@@ -301,6 +301,16 @@
             showError: function (msg) {
                 this.fire('awsl-show-error', msg);
             },
+            commonGetData: function (element, lastChanged, dataItem) {
+                if (lastChanged != null && element === lastChanged) {
+                    if (element.focused === undefined || !element.focused) {
+                        element.getData(dataItem, lastChanged);
+                    }
+                }
+                else {
+                    element.getData(dataItem, lastChanged);
+                }
+            }
         };
     })();
 </script>

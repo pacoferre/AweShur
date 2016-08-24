@@ -102,8 +102,13 @@
                 this.elements.push(element);
 
                 if (name != undefined && name != "") {
-                    if (this.dataNames.indexOf(name) == -1) {
-                        this.dataNames.push(name);
+                    if (name.indexOf(',') > 0) {
+                        this._merge(name.split(','));
+                    }
+                    else {
+                        if (this.dataNames.indexOf(name) == -1) {
+                            this.dataNames.push(name);
+                        }
                     }
                 }
                 else {
@@ -150,6 +155,11 @@
                                 var name = this.dataField;
 
                                 if (name != null) {
+
+                                    if (name.indexOf(',') > 0) {
+                                        name = name.split(',')[0];
+                                    }
+
                                     var value = fromServer.data[name];
 
                                     if (this.type == 'checkbox' ||
@@ -184,6 +194,10 @@
                                 if (name != null) {
                                     var value;
 
+                                    if (name.indexOf(',') > 0) {
+                                        name = name.split(',')[0];
+                                    }
+
                                     if (this.type == 'checkbox' ||
                                         this.type == 'radio' ||
                                         this.getAttribute('role') == 'checkbox' ||
@@ -212,14 +226,7 @@
                         el.getChildData(fromServer, lastChanged);
                     }
                     else {
-                        if (lastChanged != null && el === lastChanged) {
-                            if (el.focused === undefined || !el.focused) {
-                                el.getData(fromServer, lastChanged);
-                            }
-                        }
-                        else {
-                            el.getData(fromServer, lastChanged);
-                        }
+                        this.rootEditor.commonGetData(el, lastChanged, fromServer);
                     }
                 }
             },

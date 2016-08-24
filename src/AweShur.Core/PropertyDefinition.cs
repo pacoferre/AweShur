@@ -59,6 +59,7 @@ namespace AweShur.Core
         public Type DataType { get; set; }
 
         public string Label { get; set; } = "";
+        public bool LabelIsFieldName { get; set; } = false;
         public string Format { get; set; } = "";
         public string Pattern { get; set; } = "";
         public int MaxLength { get; set; } = 0;
@@ -134,6 +135,8 @@ namespace AweShur.Core
         {
             FieldName = propertyName;
             Label = label;
+            BasicType = basicType;
+
             if (Label == "")
             {
                 NoLabelRequired = true;

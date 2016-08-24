@@ -42,7 +42,7 @@ namespace AweShur.Core.Specialized
                 //    return fila.ClaveNuevo;
                 //}
 
-                if (this.Parent.Contains(this))
+                if (Parent.Contains(this))
                 {
                     return this[externalFieldNameM].ToString();
                 }

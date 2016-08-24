@@ -107,10 +107,11 @@ namespace AweShur.Core
 
         public override bool Equals(object obj)
         {
-            if (obj is BusinessBase)
-            {
-                return (BusinessBase)obj == this;
-            }
+            // Stackoverflow... ups
+            //if (obj is BusinessBase)
+            //{
+            //    return (BusinessBase)obj == this;
+            //}
 
             return base.Equals(obj);
         }

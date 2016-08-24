@@ -56,6 +56,10 @@
                     type: Object,
                     value: function () { return null; }
                 },
+                lastFromServer: {
+                    type: Object,
+                    value: function () { return null; }
+                }
             },
             listeners: {
                 'awsl-element-register': '_registerElement',
@@ -121,6 +125,13 @@
                 element.containerElement = this;
                 element.rootEditor = this.rootEditor;
                 this.elements.push(element);
+
+                if (this.lastFromServer != null && element.dataHost !== undefined)
+                {
+                    this.async(function () {
+                        this.rootEditor.commonGetData(element, null, element.dataHost.item);
+                    });
+                }
             },
 
             getChildData: function (fromServer, lastChanged) {
@@ -150,41 +161,49 @@
                 }
 
                 if (reloadItems) {
+                    this.lastFromServer = null;
                     this.items = newItems;
+                    this.lastFromServer = fromServer;
                     lastChanged = null;
                 }
 
                 this.async(function () {
-                    var indexItem = 0;
-                    for (var index in this.elements)
-                    {
-                        var element = this.elements[index];
-                        var dataHost = element.dataHost;
+                    this._internalGetChildData(fromServer, lastChanged, reloadItems, newItems);
+                    this.async(function () {
+                        this.getItemsList().fire('iron-resize');
+                    }, 100);
+                }, reloadItems ? 10 : 0);
+            },
 
-                        if (dataHost !== undefined) {
-                            var dataItem = newItems[indexItem];
+            _internalGetChildData: function (fromServer, lastChanged, reloadItems, newItems) {
 
-                            if (dataItem !== undefined) {
-                                if (lastChanged != null && element === lastChanged) {
-                                    if (element.focused === undefined || !element.focused) {
-                                        element.getData(dataItem, lastChanged);
-                                    }
-                                }
-                                else {
-                                    element.getData(dataItem, lastChanged);
-                                }
+                var indexItem = 0;
 
-                                if (!reloadItems) {
-                                    for (var indexRefresh in dataHost.item) {
-                                        dataHost.item[indexRefresh] = dataItem[indexRefresh];
-                                    }
-                                }
+                for (var index in this.elements) {
+                    var element = this.elements[index];
+                    var dataHost = element.dataHost;
 
+                    if (dataHost !== undefined) {
+                        var dataItem = newItems[indexItem];
+
+                        if (dataItem !== undefined) {
+                            while (dataItem.keyObject != dataHost.item.keyObject) {
                                 indexItem++;
+                                dataItem = newItems[indexItem];
                             }
+
+                            this.rootEditor.commonGetData(element, lastChanged, dataItem);
+
+                            if (!reloadItems) {
+                                for (var indexRefresh in dataHost.item) {
+                                    dataHost.item[indexRefresh] = dataItem[indexRefresh];
+                                }
+                            }
+
+                            indexItem++;
                         }
                     }
-                });
+                }
             },
 
             setChildData: function (toServer) {

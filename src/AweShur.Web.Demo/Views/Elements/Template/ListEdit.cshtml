@@ -20,7 +20,7 @@
 
         columns = BusinessBaseProvider.Instance.GetFilter(
                 AppUser.GetAppUser(Context),
-                item.ObjectName).Definition.
+                item.ObjectName).Decorator.
                 GetFilterColumnsAndFromClause().Item1;
     }
     catch (Exception exp)
