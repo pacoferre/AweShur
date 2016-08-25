@@ -13,7 +13,7 @@ namespace AweShur.Web
         {
             routes.MapRoute(
                 name: "crudList",
-                template: "CRUD/List/{objectName}",
+                template: "CRUD/List",
                 defaults: new { controller = "CRUD", action = "List" });
             routes.MapRoute(
                 name: "crudPost",

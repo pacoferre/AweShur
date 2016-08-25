@@ -123,7 +123,7 @@ namespace AweShur.Core
 
         public FilterBase GetFilter(AppUser user, string objectName)
         {
-            return new FilterBase(GetDecorator(objectName, 0), 0);
+            return GetDecorator(objectName, 0).GetFilter();
         }
 
         private static string ObjectKey(string objectName, int dbNumber, string key)

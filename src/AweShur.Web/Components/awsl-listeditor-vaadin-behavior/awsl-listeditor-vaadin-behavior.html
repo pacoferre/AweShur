@@ -24,7 +24,6 @@
                 },
                 items: {
                     type: Array,
-                    observer: '_itemsChanged'
                 },
                 route: {
                     type: Object,
@@ -32,6 +31,20 @@
                 },
                 lastTitle: {
                     type: String
+                },
+                toserver: {
+                    type: Object,
+                    value: function () {
+                        var obj = {
+                            oname: "",
+                            sortIndex: 0,
+                            sortDir: "asc",
+                            dofastsearch: true,
+                            fastsearch: ""
+                        };
+
+                        return obj;
+                    }
                 },
                 fastsearch: {
                     type: String
@@ -48,7 +61,7 @@
                     this.fire('awsl-set-title', { title: this.lastTitle });
                 }
                 if (this.wasAttached) {
-                    this.ajaxlist.generateRequest();
+                    this._doRequest();
                 }
             },
             _handleFormResponse: function (event) {
@@ -59,6 +72,16 @@
                 if (this.fastsearch != event.detail.response.fastsearch)
                 {
                     this.fastsearch = event.detail.response.fastsearch;
+                }
+
+                var sorOrder = this.getItemsList().sortOrder[0];
+
+                if (sorOrder.column != event.detail.response.sortIndex)
+                {
+                    sorOrder.column = event.detail.response.sortIndex;
+                }
+                if (sorOrder.direction != event.detail.response.sortDir) {
+                    sorOrder.direction != event.detail.response.sortDir;
                 }
 
                 this.firstResponse = true;
@@ -74,19 +97,32 @@
 
                 this.ajaxlist = document.createElement('iron-ajax');
 
-                this.ajaxlist.method = 'GET';
+                this.ajaxlist.method = 'POST';
                 this.ajaxlist.contentType = 'application/json';
 
                 this.ajaxlist.addEventListener('response', this._handleFormResponse.bind(this));
                 this.ajaxlist.addEventListener('error', this._handleFormError.bind(this));
 
-                this.ajaxlist.url = "/CRUD/List/" + this.oname;
+                this.ajaxlist.url = "/CRUD/List";
+                this.toserver.oname = this.oname;
 
                 this.getItemsList().reallythis = this;
                 this.getItemsList().addEventListener('selected-items-changed', this._selectedItemChanged);
+                this.getItemsList().addEventListener('sort-order-changed', this._sortOrderChanged);
             },
             getItemsList: function () {
                 return null;
+            },
+            _sortOrderChanged: function () {
+                // this here is vaadin-grid !!!
+                var reallythis = this.reallythis;
+
+                if (reallythis.firstResponse) {
+                    reallythis.toserver.sortIndex = this.sortOrder[0].column;
+                    reallythis.toserver.sortDir = this.sortOrder[0].direction != 'desc' ? "asc" : "desc";
+
+                    reallythis._doRequest();
+                }
             },
             _selectedItemChanged: function () {
                 // this here is vaadin-grid !!!
@@ -99,36 +135,24 @@
 
                     reallythis.key = reallythis.items[index][0];
                     reallythis.set('route.path', '/' + reallythis.key);
-
-                    //this.async(function () {
-                    //    this.$.itemsList.selection.deselect(index);
-                    //}, 100);
                 }
-            },
-            _itemsChanged: function () {
-                //this.async(function () {
-                //    if (this.$.listContent.offsetHeight > 0)
-                //    {
-                //        this.$.itemsList._render();
-                //    }
-                //    else {
-                //        this._itemsChanged();
-                //    }
-                //}, 5);
             },
             _onSaved: function () {
                 this.refresh();
             },
             _fastsearchChanged: function (fastsearch) {
                 if (this.firstResponse) {
+                    this.toserver.dofastsearch = true;
+                    this.toserver.fastsearch = fastsearch;
                     this.debounce('click', function () {
-
-                        this.ajaxlist.params = { fastsearch: this.fastsearch };
-                        this.ajaxlist.generateRequest();
-
+                        this._doRequest();
                     }, 100);
                 }
             },
+            _doRequest: function () {
+                this.ajaxlist.body = this.toserver;
+                this.ajaxlist.generateRequest();
+            }
         };
     })();
 </script>

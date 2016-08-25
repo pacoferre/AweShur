@@ -32,22 +32,35 @@ namespace AweShur.Web.Controllers
             }
         }
 
-        [HttpGet]
-        public ListModelToClient List(string objectName)
+        [HttpPost]
+        public ListModelToClient List([FromBody]ListModelFromClient request)
         {
             ListModelToClient resp = new ListModelToClient();
             FilterBase filter = BusinessBaseProvider.Instance.GetFilter(
-                AppUser.GetAppUser(this.HttpContext), objectName);
+                AppUser.GetAppUser(this.HttpContext), request.oname);
 
-            if (Request.Query["fastsearch"].Count != 0)
+            if (request.dofastsearch)
             {
                 filter.FastSearchActivated = true;
-                filter.FastSearch = this.Request.Query["fastsearch"].NoNullString();
+                filter.FastSearch = request.fastsearch;
+            }
+
+            if (request.sortIndex == 0)
+            {
+                request.sortIndex = 1;
+            }
+            if (request.sortDir != "asc" && request.sortDir != "desc")
+            {
+                request.sortDir = "asc";
             }
 
             resp.plural = filter.Decorator.Plural;
-            resp.data = Dapper.SqlMapper.ToList(filter.Get(1, SortDirection.Ascending, 0, 100));
+            resp.data = Dapper.SqlMapper.ToList(filter.Get(request.sortIndex, 
+                (request.sortDir == "asc" ? SortDirection.Ascending : SortDirection.Descending),
+                0, 1000));
             resp.fastsearch = filter.FastSearch;
+            resp.sortIndex = request.sortIndex;
+            resp.sortDir = request.sortDir;
 
             return resp;
         }

@@ -8,16 +8,9 @@ namespace AweShur.Core
 {
     public partial class BusinessBaseDecorator
     {
-        public Tuple<Dictionary<string, DataViewColumn>, string> GetFilterColumnsAndFromClause(string ElementName = "")
+        public virtual FilterBase GetFilter()
         {
-            Tuple<Dictionary<string, DataViewColumn>, string> resp
-                = new Tuple<Dictionary<string, DataViewColumn>, string>
-                    (new Dictionary<string, DataViewColumn>(2), tableNameEncapsulated);
-
-            resp.Item1.Add("ID", new DataViewColumn(ListProperties[0]));
-            resp.Item1.Add("C1", new DataViewColumn(FirstStringProperty));
-
-            return resp;
+            return new FilterBase(this, DBNumber);
         }
     }
 }

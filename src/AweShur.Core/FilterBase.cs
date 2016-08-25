@@ -44,7 +44,7 @@ namespace AweShur.Core
                         where += " OR ";
                     }
 
-                    where += col.FieldName + " LIKE '%" + FastSearch + "%'";
+                    where += col.Expression + " LIKE '%" + FastSearch + "%'";
                 }
             }
 
@@ -65,16 +65,25 @@ namespace AweShur.Core
             return dataView.Get(where, order, sortDirection, fromRecord, rowCount);
         }
 
+        public DataView GetEmpty()
+        {
+            return new DataView(this);
+        }
+
         public virtual void SetDataView(DataView dataView, string elementName)
         {
-            Tuple<Dictionary<string, DataViewColumn>, string> colsAndFrom;
-             
             dataView.CurrentDB = CurrentDB;
 
-            colsAndFrom = Decorator.GetFilterColumnsAndFromClause(elementName);
+            dataView.Columns = new List<DataViewColumn>(2);
+            dataView.Columns.Add(new DataViewColumn(Decorator.TableNameEncapsulated,
+                Decorator.ListProperties[0]));
+            if (Decorator.FirstStringProperty != null)
+            {
+                dataView.Columns.Add(new DataViewColumn(Decorator.TableNameEncapsulated,
+                    Decorator.FirstStringProperty));
+            }
 
-            dataView.Columns = colsAndFrom.Item1;
-            dataView.FromClause = colsAndFrom.Item2;
+            dataView.FromClause = Decorator.TableNameEncapsulated;
         }
     }
 }

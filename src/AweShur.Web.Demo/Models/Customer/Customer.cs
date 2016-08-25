@@ -27,11 +27,9 @@ namespace AweShur.Web.Demo.Models.Customer
             Properties["memo"].Type = PropertyInputType.textarea;
         }
 
-        public override string GetListSQL(string listName, string parameter)
+        public override FilterBase GetFilter()
         {
-            return @"SELECT Customer.idCustomer AS ID, CustomerType.name AS Type, Customer.name, Customer.address
-FROM Customer INNER JOIN
-CustomerType ON Customer.idCustomerType = CustomerType.idCustomerType";
+            return new CustomerFilter(this);
         }
     }
 

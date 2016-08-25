@@ -1,9 +1,10 @@
 ﻿@{
     bool error = false;
+    bool firstOrder = false;
     string msgError = "";
     AweShur.Web.Demo.Views.Elements.CRUDLocationItem item = null;
     int? idappuser = AppUser.IDAppUser(Context);
-    Dictionary<string, DataViewColumn> columns = null;
+    List<DataViewColumn> columns = null;
 
     try
     {
@@ -20,8 +21,7 @@
 
         columns = BusinessBaseProvider.Instance.GetFilter(
                 AppUser.GetAppUser(Context),
-                item.ObjectName).Decorator.
-                GetFilterColumnsAndFromClause().Item1;
+                item.ObjectName).GetEmpty().VisibleColumns;
     }
     catch (Exception exp)
     {
@@ -30,6 +30,8 @@
     }
 
     Layout = "";
+
+
 }
 <link rel="import" href="~/lib/polymer/polymer.html">
 <link rel="import" href="~/elements/lib/awsl-listeditor/awsl-listeditor-vaadin.html">
@@ -46,7 +48,7 @@
                 edithref='@(item.edithref + "/" + idappuser)' editelement="@item.editelement">
                 <table>
                     <colgroup>
-                        @foreach (DataViewColumn v in columns.Values)
+                        @foreach (DataViewColumn v in columns)
                         {
                             @if (v.Hidden)
                             {
@@ -54,13 +56,21 @@
                             }
                             else
                             {
-                                <col>
+                                @if (!firstOrder)
+                                {
+                                    firstOrder = true;
+                                    <col sortable="" sort-direction="asc">
+                                }
+                                else
+                                {
+                                    <col sortable="">
+                                }
                             }
                         }
                     </colgroup>
                     <thead>
                         <tr>
-                            @foreach (DataViewColumn v in columns.Values)
+                            @foreach (DataViewColumn v in columns)
                             {
                                 <th>@v.Label</th>
                             }

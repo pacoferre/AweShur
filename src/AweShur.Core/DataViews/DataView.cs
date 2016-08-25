@@ -13,7 +13,7 @@ namespace AweShur.Core.DataViews
 
     public class DataView
     {
-        public Dictionary<string, DataViewColumn> Columns { get; set; }
+        public List<DataViewColumn> Columns { get; set; }
         public string ElementName { get; } = "";
         public string FromClause { get; set; } = "";
         public string PreOrderBy { get; set; } = "";
@@ -53,26 +53,37 @@ namespace AweShur.Core.DataViews
         private void InternalSet()
         {
             int order = 0;
+            int index = 0;
 
             visibleColumns = new List<DataViewColumn>(Columns.Count);
 
-            foreach (KeyValuePair<string, DataViewColumn> gc in Columns)
+            foreach (DataViewColumn gc in Columns)
             {
-                if (gc.Value.Visible)
+                if (gc.IsID)
                 {
-                    visibleColumns.Add(gc.Value);
+                    gc.As = "ID";
+                }
+                else
+                {
+                    gc.As = "C" + index;
+                }
+                index++;
+
+                if (gc.Visible)
+                {
+                    visibleColumns.Add(gc);
 
                     if (selectColumns != "")
                     {
                         selectColumns += ",";
                         selectNamedColumns += ",";
                     }
-                    selectColumns += gc.Value.FieldName + " As " + gc.Key;
-                    selectNamedColumns += gc.Key;
+                    selectColumns += gc.Expression + " As " + gc.As;
+                    selectNamedColumns += gc.As;
 
-                    if (firstOrderBy == "" && gc.Value.OrderBy != "")
+                    if (firstOrderBy == "" && gc.OrderBy != "")
                     {
-                        firstOrderBy = gc.Value.OrderBy;
+                        firstOrderBy = gc.OrderBy;
                     }
 
                     order++;
@@ -108,6 +119,11 @@ namespace AweShur.Core.DataViews
             if (visibleColumns[order].OrderBy != "")
             {
                 orderBy = visibleColumns[order].OrderBy;
+
+                if (visibleColumns.Count > order + 1)
+                {
+                    orderBy += "," + visibleColumns[order + 1].OrderBy;
+                }
             }
 
             if (PreOrderBy != "")
