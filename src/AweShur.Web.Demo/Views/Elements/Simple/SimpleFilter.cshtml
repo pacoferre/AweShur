@@ -1,0 +1,24 @@
+﻿@model BusinessBaseDecorator
+@{
+    Layout = "_CRUDLayout";
+
+    string componentName = "aswd-" + Model.TableNameNormal + "filter";
+}
+
+<dom-module id="@(componentName)">
+    <template>
+        @foreach (PropertyDefinition prop in Model.ListProperties)
+        {
+            if (!prop.IsIdentity)
+            {
+                @Html.PolSearch(Model, prop.FieldName)
+            }
+        }
+    </template>
+    <script>
+    Polymer({
+        is: '@(componentName)',
+        behaviors: [AWSLBehaviors.ElementBehavior],
+    });
+    </script>
+</dom-module>

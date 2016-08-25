@@ -1,0 +1,30 @@
+﻿<link rel="import" href="../lib/polymer/polymer.html">
+
+<script>
+    var AWSLBehaviors = AWSLBehaviors || {};
+
+    (function () {
+        AWSLBehaviors.FilterElementBehaviorImpl = {
+            prepareFilter: function () {
+                for (var el, i = 0; el = this.elements[i], i < this.elements.length; i++) {
+                    if (el.refresh !== undefined)
+                    {
+                        el.refresh();
+                    }
+                }
+            },
+            getFilter: function (fromServer) {
+                for (var el, i = 0; el = this.elements[i], i < this.elements.length; i++) {
+                    el.getData(dataItem, undefined);
+                }
+            },
+            setFilter: function (toServer) {
+                for (var el, i = 0; el = this.elements[i], i < this.elements.length; i++) {
+                    el.setData(toServer);
+                }
+            },
+        };
+
+        AWSLBehaviors.FilterElementBehavior = [AWSLBehaviors.ElementBehavior, AWSLBehaviors.FilterElementBehaviorImpl]
+    })();
+</script>

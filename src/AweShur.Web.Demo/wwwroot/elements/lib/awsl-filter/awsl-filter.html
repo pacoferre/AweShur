@@ -1,0 +1,17 @@
+﻿<link rel="import" href="../../../AWSLib/awsl-filter-behavior">
+
+<dom-module id="awsl-filter">
+    <template>
+        <div id="main">
+        </div>
+    </template>
+    <script>
+    Polymer({
+        is: 'awsl-editor',
+        behaviors: [AWSLBehaviors.FilterBehavior],
+        getMain: function () {
+            return this.$.main;
+        },
+    });
+    </script>
+</dom-module>
