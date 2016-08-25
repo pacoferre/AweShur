@@ -2,7 +2,7 @@
     bool error = false;
     bool firstOrder = false;
     string msgError = "";
-    AweShur.Web.Demo.Views.Elements.CRUDLocationItem item = null;
+    AweShur.Web.CRUDLocationItem item = null;
     int? idappuser = AppUser.IDAppUser(Context);
     List<DataViewColumn> columns = null;
 
@@ -16,7 +16,7 @@
         }
         else
         {
-            item = AweShur.Web.Demo.Views.Elements.CRUDLocations.Item(eref);
+            item = AweShur.Web.CRUDLocations.Item(eref);
         }
 
         columns = BusinessBaseProvider.Instance.GetFilter(
@@ -45,7 +45,8 @@
         else
         {
             <awsl-listeditor-vaadin oname="[[oname]]" route="{{route}}" path="[[name]]" title="" id="le"
-                edithref='@(item.edithref + "/" + idappuser)' editelement="@item.editelement">
+                edithref='@(item.edithref + "/" + idappuser)' editelement="@item.editelement"
+                filterhref='@(item.filterhref + "/" + idappuser)' filterelement="@item.filterelement">
                 <table>
                     <colgroup>
                         @foreach (DataViewColumn v in columns)

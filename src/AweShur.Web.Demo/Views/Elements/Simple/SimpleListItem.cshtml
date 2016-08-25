@@ -1,10 +1,12 @@
 ﻿@model BusinessBaseDecorator
 @{
     Layout = "";
+
+    string componentName = AweShur.Web.CRUDLocations.ComponentsPrefix + "-simplelistitem";
 }
 <link rel="import" href="/lib/polymer/polymer.html">
 
-<dom-module id="aswd-simplelistitem">
+<dom-module id="@(componentName)">
     <template>
         <div class="primary">
             [[item.name]]
@@ -12,7 +14,7 @@
     </template>
     <script>
         Polymer({
-            is: 'aswd-simplelistitem',
+            is: '@(componentName)',
             properties: {
                 item: {
                     type: Object,

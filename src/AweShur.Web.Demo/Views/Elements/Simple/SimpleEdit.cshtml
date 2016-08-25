@@ -2,7 +2,7 @@
 @{
     Layout = "_CRUDLayout";
 
-    string componentName = "aswd-" + Model.TableNameNormal + "edit";
+    string componentName = AweShur.Web.CRUDLocations.ComponentsPrefix + "-" + Model.TableNameNormal.ToLower() + "edit";
 }
 
 <dom-module id="@(componentName)">

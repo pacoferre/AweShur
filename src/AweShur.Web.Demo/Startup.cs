@@ -16,7 +16,6 @@ using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Caching;
 using StackExchange.Redis;
-using AweShur.Web.Demo.Views.Elements;
 using System.Data;
 
 namespace AweShur.Web.Demo
@@ -95,7 +94,7 @@ namespace AweShur.Web.Demo
                 app.ApplicationServices.GetRequiredService<IHttpContextAccessor>(),
                 redis, new AweShurDemoProvider(), Configuration);
 
-
+            CRUDLocations.ComponentsPrefix = "aswd";
             CRUDLocations.Locations = new Dictionary<string, CRUDLocationItem>
             {
                 { "Customer", new CRUDLocationItem { Folder = "Customer" } },

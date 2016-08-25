@@ -30,7 +30,7 @@
             },
             _parameterChange: function (newValue, oldValue) {
                 if (this.listName !== undefined && this.objectName !== undefined) {
-                    this.refresh();
+                    this.async(this.refresh);
                 }
             },
             refresh: function (postFunction) {

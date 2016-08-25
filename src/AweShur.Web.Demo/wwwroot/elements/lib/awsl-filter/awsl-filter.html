@@ -1,9 +1,17 @@
 ﻿<link rel="import" href="../../../AWSLib/awsl-filter-behavior">
+<link rel="import" href="../../../lib/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../../lib/paper-dialog-scrollable/paper-dialog-scrollable.html">
 
 <dom-module id="awsl-filter">
     <template>
-        <div id="main">
-        </div>
+        <paper-dialog>
+            <h2>Search</h2>
+            <paper-dialog-scrollable>
+                <div id="main">
+                </div>
+            </paper-dialog-scrollable>
+            <paper-button dialog-confirm>OK</paper-button>
+        </paper-dialog>
     </template>
     <script>
     Polymer({

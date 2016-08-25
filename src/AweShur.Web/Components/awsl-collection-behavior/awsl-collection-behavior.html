@@ -126,7 +126,8 @@
                 element.rootEditor = this.rootEditor;
                 this.elements.push(element);
 
-                if (this.lastFromServer != null && element.dataHost !== undefined)
+                if (this.lastFromServer != null && element.dataHost !== undefined
+                    && element.dataHost.item !== undefined)
                 {
                     this.async(function () {
                         this.rootEditor.commonGetData(element, null, element.dataHost.item);

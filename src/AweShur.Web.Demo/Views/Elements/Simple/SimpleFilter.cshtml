@@ -2,7 +2,7 @@
 @{
     Layout = "_CRUDLayout";
 
-    string componentName = "aswd-" + Model.TableNameNormal + "filter";
+    string componentName = AweShur.Web.CRUDLocations.ComponentsPrefix + "-" + Model.TableNameNormal.ToLower() + "filter";
 }
 
 <dom-module id="@(componentName)">
@@ -18,7 +18,7 @@
     <script>
     Polymer({
         is: '@(componentName)',
-        behaviors: [AWSLBehaviors.ElementBehavior],
+        behaviors: AWSLBehaviors.FilterElementBehavior,
     });
     </script>
 </dom-module>

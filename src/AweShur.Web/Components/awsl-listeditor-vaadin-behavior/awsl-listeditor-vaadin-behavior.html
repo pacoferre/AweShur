@@ -19,6 +19,20 @@
                 editelement: {
                     type: String,
                 },
+                filterhref: {
+                    type: String,
+                },
+                filterelement: {
+                    type: String,
+                },
+                thefilter: {
+                    type: Object,
+                    value: function () { return null; }
+                },
+                filterdialog: {
+                    type: Object,
+                    value: function () { return null; }
+                },
                 ajaxlist: {
                     type: Object
                 },
@@ -54,6 +68,7 @@
             firstResponse: false,
             listeners: {
                 'awsl-refresh': 'refresh',
+                'awsl-openfilter': '_openFilter'
             },
             refresh: function () {
                 if (this.lastTitle !== undefined && this.lastTitle != "")
@@ -109,9 +124,29 @@
                 this.getItemsList().reallythis = this;
                 this.getItemsList().addEventListener('selected-items-changed', this._selectedItemChanged);
                 this.getItemsList().addEventListener('sort-order-changed', this._sortOrderChanged);
+
+                this.async(function () {
+                    this.importHref(this.filterhref, function (e) {
+
+                    }, function (e) {
+                        debugger;
+                    });
+                });
             },
             getItemsList: function () {
                 return null;
+            },
+            _openFilter: function () {
+                this.filterdialog.open();
+                if (!this.filterdialog.initialized)
+                {
+                    this.async(function () {
+                        this.thefilter.prepareFilter();
+                    });
+                }
+            },
+            _filterDialogClosed: function (event) {
+                debugger;
             },
             _sortOrderChanged: function () {
                 // this here is vaadin-grid !!!
