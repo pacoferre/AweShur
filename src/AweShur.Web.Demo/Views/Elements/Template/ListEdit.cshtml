@@ -46,7 +46,8 @@
         {
             <awsl-listeditor-vaadin oname="[[oname]]" route="{{route}}" path="[[name]]" title="" id="le"
                 edithref='@(item.edithref + "/" + idappuser)' editelement="@item.editelement"
-                filterhref='@(item.filterhref + "/" + idappuser)' filterelement="@item.filterelement">
+                filterhref='@(item.filterhref + "/" + idappuser)' filterelement="@item.filterelement"
+                title-search="Search">
                 <table>
                     <colgroup>
                         @foreach (DataViewColumn v in columns)

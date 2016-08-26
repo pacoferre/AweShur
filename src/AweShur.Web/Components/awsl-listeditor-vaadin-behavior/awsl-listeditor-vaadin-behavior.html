@@ -25,14 +25,6 @@
                 filterelement: {
                     type: String,
                 },
-                thefilter: {
-                    type: Object,
-                    value: function () { return null; }
-                },
-                filterdialog: {
-                    type: Object,
-                    value: function () { return null; }
-                },
                 ajaxlist: {
                     type: Object
                 },
@@ -42,6 +34,9 @@
                 route: {
                     type: Object,
                     notify: true
+                },
+                titleSearch: {
+                    type: String
                 },
                 lastTitle: {
                     type: String
@@ -83,6 +78,7 @@
                 this.items = event.detail.response.data;
                 this.lastTitle = event.detail.response.plural;
                 this.fire('awsl-set-title', { title: event.detail.response.plural });
+                this.getFilter().titleDialog = this.titleSearch + " " + event.detail.response.plural;
 
                 if (this.fastsearch != event.detail.response.fastsearch)
                 {
@@ -124,29 +120,15 @@
                 this.getItemsList().reallythis = this;
                 this.getItemsList().addEventListener('selected-items-changed', this._selectedItemChanged);
                 this.getItemsList().addEventListener('sort-order-changed', this._sortOrderChanged);
-
-                this.async(function () {
-                    this.importHref(this.filterhref, function (e) {
-
-                    }, function (e) {
-                        debugger;
-                    });
-                });
             },
             getItemsList: function () {
                 return null;
             },
-            _openFilter: function () {
-                this.filterdialog.open();
-                if (!this.filterdialog.initialized)
-                {
-                    this.async(function () {
-                        this.thefilter.prepareFilter();
-                    });
-                }
+            getFilter: function () {
+                return null;
             },
-            _filterDialogClosed: function (event) {
-                debugger;
+            _openFilter: function () {
+                this.getFilter()._openFilter();
             },
             _sortOrderChanged: function () {
                 // this here is vaadin-grid !!!

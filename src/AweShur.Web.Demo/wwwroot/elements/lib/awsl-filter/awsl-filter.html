@@ -1,24 +1,47 @@
 ﻿<link rel="import" href="../../../AWSLib/awsl-filter-behavior">
 <link rel="import" href="../../../lib/paper-dialog/paper-dialog.html">
 <link rel="import" href="../../../lib/paper-dialog-scrollable/paper-dialog-scrollable.html">
+<link rel="import" href="../../../lib/paper-radio-group/paper-radio-group.html">
+<link rel="import" href="../../../lib/paper-radio-button/paper-radio-button.html">
 
 <dom-module id="awsl-filter">
     <template>
-        <paper-dialog>
-            <h2>Search</h2>
+        <style>
+            paper-dialog {
+                position:fixed;
+                min-width:70%;
+            }
+            label {
+                padding:12px;
+            }
+        </style>
+        <paper-dialog id="search">
+            <h2>[[titleDialog]]</h2>
             <paper-dialog-scrollable>
                 <div id="main">
                 </div>
             </paper-dialog-scrollable>
-            <paper-button dialog-confirm>OK</paper-button>
+            <div class="buttons">
+                <label id="lbl">Limit</label>
+                <paper-radio-group selected="{{topRecords}}" allow-empty-selection aria-labelledby="lbl">
+                    <paper-radio-button name="100">100</paper-radio-button>
+                    <paper-radio-button name="500">500</paper-radio-button>
+                    <paper-radio-button name="1000">1000</paper-radio-button>
+                    <paper-radio-button name="5000">5000</paper-radio-button>
+                </paper-radio-group>
+                <paper-button dialog-confirm raised>OK</paper-button>
+            </div>
         </paper-dialog>
     </template>
     <script>
     Polymer({
-        is: 'awsl-editor',
+        is: 'awsl-filter',
         behaviors: [AWSLBehaviors.FilterBehavior],
         getMain: function () {
             return this.$.main;
+        },
+        getDialog: function () {
+            return this.$.search;
         },
     });
     </script>
