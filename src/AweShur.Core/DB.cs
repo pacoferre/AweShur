@@ -277,20 +277,33 @@ namespace AweShur.Core
                     obj[def.PrimaryKeys[0]] = GenerateComb();
                 }
 
-                var result = conn.QuerySingle(def.InsertQuery, def.GetInsertParameters(obj), trans);
+                if (def.primaryKeyIsOneInt || def.primaryKeyIsOneLong)
+                {
+                    var result = conn.QuerySingle(def.InsertQuery, def.GetInsertParameters(obj), trans);
 
-                if (result == null)
-                {
-                    throw new Exception("Error insering new " + obj.Description);
-                }
+                    if (result == null)
+                    {
+                        throw new Exception("Error insering new " + obj.Description);
+                    }
 
-                if (def.primaryKeyIsOneInt)
-                {
-                    obj[def.PrimaryKeys[0]] = Convert.ToInt32(result.id);
+                    obj.IsNew = false;
+
+                    if (def.primaryKeyIsOneInt)
+                    {
+                        obj[def.PrimaryKeys[0]] = Convert.ToInt32(result.id);
+                    }
+                    else
+                    {
+                        obj[def.PrimaryKeys[0]] = Convert.ToInt64(result.id);
+                    }
                 }
-                if (def.primaryKeyIsOneLong)
+                else
                 {
-                    obj[def.PrimaryKeys[0]] = Convert.ToInt64(result.id);
+                    if (conn.Execute(def.InsertQuery, def.GetInsertParameters(obj), trans) != 1)
+                    {
+                        throw new Exception("Error insering new " + obj.Description);
+                    }
+                    obj.IsNew = false;
                 }
             }
             else if (obj.IsDeleting)

@@ -64,14 +64,7 @@ namespace AweShur.Core
         {
             lock (key)
             {
-                key = "";
-
-                foreach (int index in owner.Decorator.PrimaryKeys)
-                {
-                    key += values[index].NoNullString() + "_";
-                }
-
-                key = key.TrimEnd('_');
+                key = owner.GenerateKey(values);
             }
         }
 
@@ -189,19 +182,6 @@ namespace AweShur.Core
             }
 
             keyIsDirty = true;
-        }
-
-        public bool Validate(ref string lastErrorMessage, ref string lastErrorProperty)
-        {
-            foreach(PropertyDefinition prop in owner.Decorator.ListProperties)
-            {
-                if (!prop.Validate(values[prop.Index], ref lastErrorMessage, ref lastErrorProperty))
-                {
-                    return false;
-                }
-            }
-
-            return true;
         }
     }
 }

@@ -26,7 +26,7 @@ namespace AweShur.Core.REST
         public bool isNew { get; set; }
         public bool isDeleting { get; set; }
 
-        public bool ClientRefreshPending { get; set; }
+        //public bool ClientRefreshPending { get; set; }
 
         public Dictionary<string, string> data { get; set; }
         public Dictionary<string, string> props { get; set; }
@@ -46,7 +46,7 @@ namespace AweShur.Core.REST
 
         public int filterPosition { get; set; }
         public bool refreshFilterTable { get; set; }
-        public bool refreshFields { get; set; }
+        public bool refreshAll { get; set; } = false;
         public bool refreshAllLists { get; set; }
 
         public BusinessObjectPermisson permisson = new BusinessObjectPermisson();

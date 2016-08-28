@@ -47,6 +47,19 @@ namespace AweShur.Core
             }
         }
 
+        public virtual bool ValidateDataItem(DataItem dataItem, ref string lastErrorMessage, ref string lastErrorProperty)
+        {
+            foreach (PropertyDefinition prop in Decorator.ListProperties)
+            {
+                if (!prop.Validate(dataItem[prop.Index], ref lastErrorMessage, ref lastErrorProperty))
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
         public virtual bool Validate()
         {
             bool valid;
@@ -54,7 +67,7 @@ namespace AweShur.Core
             LastErrorProperty = "";
             LastErrorMessage = "";
 
-            valid = dataItem.Validate(ref lastErrorMessage, ref LastErrorProperty);
+            valid = ValidateDataItem(dataItem, ref lastErrorMessage, ref LastErrorProperty);
 
             if (valid)
             {

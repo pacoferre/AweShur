@@ -223,7 +223,7 @@
             getData: function (fromServer, lastChanged) {
                 for (var el, i = 0; el = this.elements[i], i < this.elements.length; i++) {
                     if (el.isChildren !== undefined) {
-                        el.getChildData(fromServer, lastChanged);
+                        el.getChildData(fromServer, lastChanged, this.rootEditor.lastFromServer.refreshAll);
                     }
                     else {
                         this.rootEditor.commonGetData(el, lastChanged, fromServer);

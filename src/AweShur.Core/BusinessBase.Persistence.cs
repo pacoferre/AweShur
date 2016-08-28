@@ -7,7 +7,7 @@ namespace AweShur.Core
 {
     public partial class BusinessBase
     {
-        public void SetNew(bool preserve = false, bool withoutCollections = false)
+        public virtual void SetNew(bool preserve = false, bool withoutCollections = false)
         {
             if (!preserve)
             {

@@ -11,11 +11,14 @@ namespace AweShur.Core.Specialized
 
         protected override void SetCustomProperties()
         {
-            PropertyDefinition external = new PropertyDefinition(externalFieldNameM, externalFieldNameM, BasicType.Number);
-            PropertyDefinition active = new PropertyDefinition("Active", "Active", BasicType.Bit, PropertyInputType.checkbox);
+            PropertyDefinition external = new PropertyDefinition(externalFieldNameM, externalFieldNameM, typeof(Int32));
+            PropertyDefinition active = new PropertyDefinition("Active", "Active", typeof(bool), PropertyInputType.checkbox);
 
-            this.Properties.Add(externalFieldNameM, external);
-            this.Properties.Add("Active", active);
+            Properties.Add(externalFieldNameM, external);
+            Properties.Add("Active", active);
+
+            Properties.Values.ElementAt(0).NoChecking = true;
+            Properties.Values.ElementAt(1).NoChecking = true;
 
             base.SetCustomProperties();
         }
@@ -23,9 +26,7 @@ namespace AweShur.Core.Specialized
 
     public class N2M : BusinessBase
     {
-        protected string ownFieldNameN = "";
         protected string externalFieldNameM = "";
-        protected string ownFieldNameM = "";
 
         protected string[] opcCampoOtros;
 
@@ -33,24 +34,9 @@ namespace AweShur.Core.Specialized
         {
         }
 
-        public override string Key
+        public override string GenerateKey(object[] dataItemValues)
         {
-            get
-            {
-                //if (this[ownFieldNameM] is DBNull)
-                //{
-                //    return fila.ClaveNuevo;
-                //}
-
-                if (Parent.Contains(this))
-                {
-                    return this[externalFieldNameM].ToString();
-                }
-                else
-                {
-                    return dataItem.Key;
-                }
-            }
+            return this[externalFieldNameM].ToString();
         }
 
         public string ExternalFieldNameM
@@ -63,31 +49,36 @@ namespace AweShur.Core.Specialized
 
         public override void StoreToDB()
         {
-            int externalID = (int)base[externalFieldNameM] != 0 ? (int)base[externalFieldNameM] : (int)base[ownFieldNameM];
+            string ownFieldNameN = Decorator.ListProperties[0].FieldName;
+            string ownFieldNameM = Decorator.ListProperties[1].FieldName;
+            int externalID = (int)base[externalFieldNameM] != 0 ? (int)base[externalFieldNameM]
+                : (int)base[ownFieldNameM];
             bool active = (bool)this["Active"];
+            string sqlExists = "Select count(*) From " + Decorator.TableNameEncapsulated
+                + " WHERE " + Decorator.ListProperties[0].FieldName + " = " + Parent.Parent.Key
+                + " AND " + Decorator.ListProperties[1].FieldName + " = " + externalID;
+            bool exists = DB.Instance.QueryFirstOrDefault<int>(sqlExists) != 0;
 
-            if (IsDeleting || !active)
+            if (Parent.Parent.IsDeleting || !active)
             {
-                base[ownFieldNameN] = Parent.Parent.Key.NoNullInt();
-                base[ownFieldNameM] = externalID;
-
-                if (!IsDeleting)
+                if (exists)
                 {
-                    IsDeleting = true;
-                }
+                    base[ownFieldNameN] = Parent.Parent.Key.NoNullInt();
+                    base[ownFieldNameM] = externalID;
 
-                base.StoreToDB();
+                    if (!IsDeleting)
+                    {
+                        IsDeleting = true;
+                    }
+
+                    base.StoreToDB();
+                }
             }
             else
             {
-                string sql;
-
-                sql = "Select count(*) From " + Decorator.TableNameEncapsulated
-                    + " WHERE " + ownFieldNameN + " = " + Parent.Parent.Key
-                    + " AND " + ownFieldNameM + " = " + externalID;
-                if (DB.Instance.QueryFirstOrDefault<int>(sql) == 0)
+                if (!exists && !IsNew)
                 {
-                    this.SetNew();
+                    SetNew();
                 }
 
                 base[ownFieldNameN] = Parent.Parent.Key.NoNullInt();
@@ -95,6 +86,11 @@ namespace AweShur.Core.Specialized
 
                 base.StoreToDB();
             }
+        }
+
+        public override void SetNew(bool preserve = false, bool withoutCollections = false)
+        {
+            base.SetNew(true, true);
         }
 
         public override bool MatchFilter(string filterName)
@@ -102,30 +98,14 @@ namespace AweShur.Core.Specialized
             return ((bool)this["Active"]);
         }
 
-        public override object this[string campo]
+        public override bool ValidateDataItem(DataItem dataItem, ref string lastErrorMessage, ref string lastErrorProperty)
         {
-            get
+            if ((bool)this["Active"])
             {
-                if (campo.ToLower() == "active")
-                {
-                    return (int)base[campo] == 1;
-                }
-                else
-                {
-                    return base[campo];
-                }
+                return base.ValidateDataItem(dataItem, ref lastErrorMessage, ref lastErrorProperty);
             }
-            set
-            {
-                if (campo.ToLower() == "active")
-                {
-                    base[campo] = (bool)value ? 1 : 0;
-                }
-                else
-                {
-                    base[campo] = value;
-                }
-            }
+
+            return true;
         }
     }
 }

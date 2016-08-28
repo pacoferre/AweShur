@@ -26,42 +26,42 @@ namespace AweShur.Core.Security
             //deactivated bit Unchecked
             PropertyDefinition temp =
                 (Properties["idAppUser"]
-                    = new PropertyDefinition("idAppUser", "ID", BasicType.Number, 
+                    = new PropertyDefinition("idAppUser", "ID", typeof(Int32), 
                         PropertyInputType.number, true));
             temp.DataType = typeof(int);
             temp.DefaultValue = 1;
 
             temp = (Properties["email"]
-                    = new PropertyDefinition("email", "Email", BasicType.Text, PropertyInputType.text));
+                    = new PropertyDefinition("email", "Email", typeof(string), PropertyInputType.text));
             temp.MaxLength = 200;
             temp.DataType = typeof(string);
             temp.DefaultValue = "";
 
             temp = (Properties["password"]
-                    = new PropertyDefinition("password", "Password", BasicType.Text, PropertyInputType.password));
+                    = new PropertyDefinition("password", "Password", typeof(string), PropertyInputType.password));
             temp.MaxLength = 100;
             temp.DataType = typeof(string);
             temp.DefaultValue = "";
 
             temp = (Properties["name"]
-                    = new PropertyDefinition("name", "Name", BasicType.Text, PropertyInputType.text));
+                    = new PropertyDefinition("name", "Name", typeof(string), PropertyInputType.text));
             temp.MaxLength = 50;
             temp.DataType = typeof(string);
             temp.DefaultValue = "";
 
             temp = (Properties["surname"]
-                    = new PropertyDefinition("surname", "Surname", BasicType.Text, PropertyInputType.text));
+                    = new PropertyDefinition("surname", "Surname", typeof(string), PropertyInputType.text));
             temp.MaxLength = 50;
             temp.DataType = typeof(string);
             temp.DefaultValue = "";
 
             temp = (Properties["su"]
-                    = new PropertyDefinition("su", "SU", BasicType.Bit, PropertyInputType.checkbox));
+                    = new PropertyDefinition("su", "SU", typeof(bool), PropertyInputType.checkbox));
             temp.DataType = typeof(bool);
             temp.DefaultValue = false;
 
             temp = (Properties["deactivated"]
-                    = new PropertyDefinition("deactivated", "Deactivated", BasicType.Bit, PropertyInputType.checkbox));
+                    = new PropertyDefinition("deactivated", "Deactivated", typeof(bool), PropertyInputType.checkbox));
             temp.DataType = typeof(bool);
             temp.DefaultValue = false;
 

@@ -135,27 +135,24 @@
                 }
             },
 
-            getChildData: function (fromServer, lastChanged) {
-                var reloadItems = false;
+            getChildData: function (fromServer, lastChanged, mustreload) {
+                var reloadItems = mustreload;
                 var newItems = fromServer.collections[this.path];
 
-                if (this.items == null || this.items === undefined)
-                {
-                    reloadItems = true;
-                }
-                else
-                {
-                    if (this.items.length != newItems.length)
-                    {
+                if (!reloadItems) {
+                    if (this.items == null || this.items === undefined) {
                         reloadItems = true;
                     }
-                    else
-                    {
-                        for (var index in this.items) {
-                            if (this.items[index].keyObject != newItems[index].keyObject)
-                            {
-                                reloadItems = true;
-                                break;
+                    else {
+                        if (this.items.length != newItems.length) {
+                            reloadItems = true;
+                        }
+                        else {
+                            for (var index in this.items) {
+                                if (this.items[index].keyObject != newItems[index].keyObject) {
+                                    reloadItems = true;
+                                    break;
+                                }
                             }
                         }
                     }

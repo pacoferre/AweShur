@@ -21,6 +21,7 @@ namespace AweShur.Core
             if (fromClient.action == "load")
             {
                 ReadFromDB();
+                model.refreshAll = true;
             }
             else if (fromClient.action == "new")
             {
@@ -43,6 +44,7 @@ namespace AweShur.Core
 
                 if (fromClient.action == "ok")
                 {
+                    model.refreshAll = true;
                     try
                     {
                         string messageAction = IsDeleting ? "deleted" : (IsNew ? "created" : "saved");
@@ -79,6 +81,8 @@ namespace AweShur.Core
 
                     ReadFromDB();
                 }
+
+                model.refreshAll = true;
             }
 
             // Send object data.
@@ -101,7 +105,10 @@ namespace AweShur.Core
             model.isModified = IsModified;
             model.isDeleting = IsDeleting;
 
-            model.ClientRefreshPending = ClientRefreshPending;
+            if (ClientRefreshPending && !model.refreshAll)
+            {
+                model.refreshAll = true;
+            }
 
             model.title = Title;
 
@@ -126,7 +133,7 @@ namespace AweShur.Core
                     {
                         clientElement = null;
 
-                        if (clientCol.elements != null)
+                        if (clientCol.elements != null && !model.refreshAll)
                         {
                             clientElement = clientCol.elements.Find(element => obj.Key == element.key);
                         }
@@ -143,6 +150,10 @@ namespace AweShur.Core
         {
             if (fromClient.root.children != null && fromClient.root.children.Count > 0)
             {
+                if (model.refreshAll)
+                {
+                    model.collections = null;
+                }
                 if (model.collections == null)
                 {
                     ProcessCollectionsFromClient(context, fromClient, model);
@@ -213,7 +224,10 @@ namespace AweShur.Core
             model.isModified = IsModified;
             model.isDeleting = IsDeleting;
 
-            model.ClientRefreshPending = ClientRefreshPending;
+            if (clientRefreshPending && !model.refreshAll)
+            {
+                model.refreshAll = true;
+            }
 
             model.title = Title;
 

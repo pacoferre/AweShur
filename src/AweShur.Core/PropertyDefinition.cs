@@ -130,12 +130,14 @@ namespace AweShur.Core
             }
         }
 
-        public PropertyDefinition(string propertyName, string label, BasicType basicType = BasicType.Text, 
+        public PropertyDefinition(string propertyName, string label, System.Type dataType, 
             PropertyInputType type = PropertyInputType.text, bool isPrimaryKey = false)
         {
             FieldName = propertyName;
             Label = label;
-            BasicType = basicType;
+
+            DataType = dataType;
+            BasicType = DBDialect.GetBasicType(DataType);
 
             if (Label == "")
             {

@@ -43,6 +43,7 @@ namespace AweShur.Core
                     BusinessBase item = CreateNewChild();
 
                     item.FromJObject((JObject)obj["i" + index]);
+                    item.Parent = this;
 
                     list.Add(item);
                 }

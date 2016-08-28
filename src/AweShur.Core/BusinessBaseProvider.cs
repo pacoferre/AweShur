@@ -189,9 +189,10 @@ namespace AweShur.Core
                         obj.Deserialize(data);
                         readFromDB = false;
                     }
-                    catch
+                    catch (Exception exp)
                     {
                         // Sometimes Redis returns bad data.
+                        int t = 2;
                     }
                 }
                 if (readFromDB)

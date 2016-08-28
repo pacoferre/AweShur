@@ -51,7 +51,19 @@ namespace AweShur.Core
             }
         }
 
-        public virtual string Key
+        public virtual string GenerateKey(object[] dataItemValues)
+        {
+            string key = "";
+
+            foreach (int index in Decorator.PrimaryKeys)
+            {
+                key += dataItemValues[index].NoNullString() + "_";
+            }
+
+            return key.TrimEnd('_');
+        }
+
+        public string Key
         {
             get
             {

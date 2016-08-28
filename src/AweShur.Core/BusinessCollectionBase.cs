@@ -679,14 +679,14 @@ namespace AweShur.Core
                         {
                             if (Parent.Decorator.primaryKeyIsOneInt)
                             {
-                                if ((int)Parent[parentRelationFieldName] > 0)
+                                if (Parent[parentRelationFieldName].NoNullInt() > 0)
                                 {
                                     active[childRelationFieldName] = Parent[parentRelationFieldName];
                                 }
                             }
                             else if (Parent.Decorator.primaryKeyIsOneLong)
                             {
-                                if ((long)Parent[parentRelationFieldName] > 0)
+                                if (Parent[parentRelationFieldName].NoNullLong() > 0)
                                 {
                                     active[childRelationFieldName] = Parent[parentRelationFieldName];
                                 }
@@ -703,14 +703,14 @@ namespace AweShur.Core
                         {
                             if (Parent.Decorator.primaryKeyIsOneInt)
                             {
-                                if ((int)active[childRelationFieldName] != (int)Parent[parentRelationFieldName])
+                                if (active[childRelationFieldName].NoNullInt() != Parent[parentRelationFieldName].NoNullInt())
                                 {
                                     active[childRelationFieldName] = Parent[parentRelationFieldName];
                                 }
                             }
                             else if (Parent.Decorator.primaryKeyIsOneLong)
                             {
-                                if ((long)active[childRelationFieldName] != (long)Parent[parentRelationFieldName])
+                                if (active[childRelationFieldName].NoNullLong() != Parent[parentRelationFieldName].NoNullLong())
                                 {
                                     active[childRelationFieldName] = Parent[parentRelationFieldName];
                                 }
