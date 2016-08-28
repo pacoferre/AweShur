@@ -27,11 +27,17 @@ namespace AweShur.Core
 
         public virtual bool ReadFromDB(string key)
         {
+            if (key.StartsWith("-"))
+            {
+                throw new Exception("Invalid key (" + key + ") for object " + ObjectName
+                    + ". Minus char is for new object");
+            }
+
             string[] keys = DataItem.SplitKey(key);
 
-            if (key.Length != Decorator.PrimaryKeys.Count)
+            if (keys.Length != Decorator.PrimaryKeys.Count)
             {
-                throw new Exception("Invalid key (" + key + ") for object " + Description);
+                throw new Exception("Invalid key (" + key + ") for object " + ObjectName);
             }
 
             foreach (int index in Decorator.PrimaryKeys)

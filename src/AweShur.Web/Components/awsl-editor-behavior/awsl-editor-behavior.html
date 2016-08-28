@@ -9,7 +9,6 @@
             properties: {
                 key: {
                     type: String,
-                    notify: true
                 },
                 edithref: {
                     type: String,
@@ -241,6 +240,18 @@
                         this.title = fromServer.title;
 
                         this.fire('awsl-set-title', { title: fromServer.title });
+
+                        if (this.key != fromServer.keyObject)
+                        {
+                            if (fromServer.keyObject.charAt(0) == '-')
+                            {
+                                this.fire('awsl-set-route-key', { key: '0' });
+                            }
+                            else
+                            {
+                                this.fire('awsl-set-route-key', { key: fromServer.keyObject });
+                            }
+                        }
 
                         this.key = fromServer.keyObject;
                         this.toserver.root.key = fromServer.keyObject;

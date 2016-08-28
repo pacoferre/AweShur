@@ -93,6 +93,11 @@ namespace AweShur.Web.Controllers
                     || fromClient.action == "ok" || fromClient.action == "clear"
                     || fromClient.action == "new" || fromClient.action == "delete")
                 {
+                    if (fromClient.action == "new")
+                    {
+                        fromClient.root.key = "0";
+                    }
+
                     return new JsonResult(BusinessBaseProvider.RetreiveObject(HttpContext, fromClient.oname, 
                         fromClient.root.key).PerformActionAndCreateResponse(HttpContext, fromClient));
                 }

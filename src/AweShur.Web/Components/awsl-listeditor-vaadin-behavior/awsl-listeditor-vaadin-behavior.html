@@ -61,9 +61,11 @@
             },
             wasAttached: false,
             firstResponse: false,
+            settingRouteKey: false,
             listeners: {
                 'awsl-refresh': 'refresh',
-                'awsl-openfilter': '_openFilter'
+                'awsl-openfilter': '_openFilter',
+                'awsl-set-route-key': '_setRouteKey'
             },
             refresh: function () {
                 if (this.lastTitle !== undefined && this.lastTitle != "")
@@ -152,6 +154,17 @@
 
                     reallythis.key = reallythis.items[index][0];
                     reallythis.set('route.path', '/' + reallythis.key);
+                }
+            },
+            _setRouteKey: function(event) {
+                if (this.key != event.detail.key)
+                {
+                    this.settingRouteKey = true;
+
+                    this.key = event.detail.key;
+                    this.set('route.path', '/' + this.key);
+
+                    this.settingRouteKey = false;
                 }
             },
             _onSaved: function () {

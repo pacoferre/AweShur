@@ -25,7 +25,11 @@ namespace AweShur.Core
             }
             else if (fromClient.action == "new")
             {
-                SetNew();
+                if (!IsNew)
+                {
+                    // Almost innecesary, done by BusinessBaseProvider.RetreiveObject in CRUDController.
+                    SetNew();
+                }
             }
             else if (fromClient.action == "delete")
             {

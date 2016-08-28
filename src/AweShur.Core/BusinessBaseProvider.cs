@@ -197,7 +197,7 @@ namespace AweShur.Core
                 }
                 if (readFromDB)
                 {
-                    if (key != "0")
+                    if (key != "0" && key[0] != '-')
                     {
                         obj.ReadFromDB(key);
                     }
@@ -206,6 +206,7 @@ namespace AweShur.Core
                         if (!obj.IsNew)
                         {
                             obj.SetNew();
+                            objectKey = obj.Key;
                         }
                     }
 
