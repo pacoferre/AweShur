@@ -9,6 +9,7 @@
     "gold-elements": "PolymerElements/gold-elements#^1.0.1",
     "app-elements": "PolymerElements/app-elements#^0.9.0",
     "app-layout": "PolymerElements/app-layout#^0.9.0",
+    "platinum-sw": "PolymerElements/platinum-sw#^1.3.0",
     "jv-datepicker": "^2.7.3",
     "vaadin-grid": "^1.1.1",
     "vaadin-upload": "^1.0.1",

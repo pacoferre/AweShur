@@ -38,6 +38,7 @@
 
 <dom-module id="@item.componentName">
     <template>
+        <style include="shared-styles"></style>
         @if (error)
         {
             <div>@msgError</div>
@@ -47,7 +48,7 @@
             <awsl-listeditor-vaadin oname="[[oname]]" route="{{route}}" path="[[name]]" title="" id="le"
                 edithref='@(item.edithref + "/" + idappuser)' editelement="@item.editelement"
                 filterhref='@(item.filterhref + "/" + idappuser)' filterelement="@item.filterelement"
-                title-search="Search">
+                title-search="Filter">
                 <table>
                     <colgroup>
                         @foreach (DataViewColumn v in columns)

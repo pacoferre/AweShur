@@ -7,14 +7,17 @@
 
 <dom-module id="@(componentName)">
     <template>
-        @foreach (PropertyDefinition prop in Model.ListProperties)
-        {
-            if (!prop.IsIdentity)
+        <style include="shared-styles"></style>
+        <div class="searchinputs">
+            @foreach (PropertyDefinition prop in Model.ListProperties)
             {
-                @Html.PolSearch(Model, prop.FieldName)
+                if (!prop.IsIdentity)
+                {
+                    @Html.PolSearch(Model, prop.FieldName)
+                }
             }
-        }
-    </template>
+        </div>
+        </template>
     <script>
     Polymer({
         is: '@(componentName)',

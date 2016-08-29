@@ -126,7 +126,10 @@ namespace AweShur.Core
             ListProperties.AddRange(Properties.Values.ToList());
             fieldNameLookup = new Dictionary<string, int>(Properties.Count, StringComparer.Ordinal);
 
-            firstStringProperty = ListProperties.Find(prop => prop.BasicType == BasicType.Text && !prop.IsIdentity);
+            if (firstStringProperty == null)
+            {
+                firstStringProperty = ListProperties.Find(prop => prop.BasicType == BasicType.Text && !prop.IsIdentity);
+            }
 
             names = Properties.Keys.ToArray();
             for (int i = 0; i < Properties.Count; i++)

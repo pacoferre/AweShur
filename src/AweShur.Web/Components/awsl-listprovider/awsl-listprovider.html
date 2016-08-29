@@ -1,5 +1,6 @@
 ﻿<link rel="import" href="../lib/polymer/polymer.html">
 <link rel="import" href="../lib/iron-ajax/iron-ajax.html">
+<link rel="import" href="../lib/iron-localstorage/iron-localstorage.html">
 
 <dom-module id="awsl-listprovider">
     <template>
@@ -17,22 +18,13 @@
                 var item = {};
 
                 item.ready = false;
-                item.targets = [ ];
-                item.request = document.createElement('iron-ajax');
-                item.request.addEventListener('response', this._handleResponse.bind(this));
-                item.request.addEventListener('error', this._handleError.bind(this));
-                item.request.keygetlist = key;
+                item.targets = [];
 
-                item.request.url = "/CRUD/GetList";
-                item.request.method = "POST";
-                item.request.contentType = "application/json";
-                item.request.body = {
-                    objectName: target.detail.objectName,
-                    listName: target.detail.listName,
-                    parameter: target.detail.parameter
-                };
-
-                item.request.generateRequest();
+                item.storage = document.createElement("iron-localstorage");
+                item.storage.name = "lp_" + key;
+                item.storage.keygetlist = key;
+                item.storage.addEventListener('iron-localstorage-load-empty', this._storageLoadEmpty.bind(this));
+                item.storage.addEventListener('iron-localstorage-load', this._storageLoad.bind(this));
 
                 this.readers[key] = item;
             }
@@ -49,19 +41,53 @@
                 item.targets.push(target);
             }
         },
+        _storageLoad: function (event)
+        {
+            var item = this.readers[event.currentTarget.keygetlist];
+
+            if (Date.now() - item.storage.value.dt > 1000 * 60 * 5) // Five minutes.
+            {
+                this._storageLoadEmpty(event);
+            }
+            else
+            {
+                item.ready = true;
+
+                while ((target = item.targets.pop()) != null) {
+                    this._refreshTarget(target, item);
+                }
+            }
+        },
+        _storageLoadEmpty: function (event)
+        {
+            var item = this.readers[event.currentTarget.keygetlist];
+
+            item.request = document.createElement('iron-ajax');
+            item.request.addEventListener('response', this._handleResponse.bind(this));
+            item.request.addEventListener('error', this._handleError.bind(this));
+            item.request.keygetlist = event.currentTarget.keygetlist;
+
+            item.request.url = "/CRUD/GetList";
+            item.request.method = "POST";
+            item.request.contentType = "application/json";
+            item.request.body = {
+                objectName: item.targets[0].detail.objectName,
+                listName: item.targets[0].detail.listName,
+                parameter: item.targets[0].detail.parameter
+            };
+
+            item.request.generateRequest();
+        },
         _handleResponse: function (event) {
             var item = this.readers[event.currentTarget.keygetlist];
             var target;
 
-            item.ready = true;
+            item.storage.value = { dt: Date.now(), list: item.request.lastResponse };
 
-            while((target = item.targets.pop()) != null)
-            {
-                this._refreshTarget(target, item);
-            }
+            this._storageLoad(event);
         },
         _refreshTarget: function (target, item) {
-            target.target.listItems = item.request.lastResponse;
+            target.target.listItems = item.storage.value.list;
             if (target.detail.postFunction != null && target.detail.postFunction !== undefined)
             {
                 this.async(target.detail.postFunction);

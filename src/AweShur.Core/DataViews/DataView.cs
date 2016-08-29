@@ -17,6 +17,7 @@ namespace AweShur.Core.DataViews
         public string ElementName { get; } = "";
         public string FromClause { get; set; } = "";
         public string PreOrderBy { get; set; } = "";
+        public string PostOrderBy { get; set; } = "";
 
         private DB currentDB = null;
 
@@ -129,6 +130,11 @@ namespace AweShur.Core.DataViews
             if (PreOrderBy != "")
             {
                 orderBy = PreOrderBy + (orderBy == "" ? "" : ", " + orderBy);
+            }
+
+            if (PostOrderBy != "" && !orderBy.Contains(PostOrderBy))
+            {
+                orderBy += (orderBy == "" ? "" : ", " + PostOrderBy);
             }
 
             if (sortDirection == SortDirection.Descending)

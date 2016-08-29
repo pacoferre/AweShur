@@ -5,11 +5,14 @@
 
 <dom-module id="aswd-useredit">
     <template>
-        @Html.PolEditor(Model, "deactivated")
-        @Html.PolEditor(Model, "email")
-        @Html.PolEditor(Model, "password")
-        @Html.PolEditor(Model, "name")
-        @Html.PolEditor(Model, "surname")
+        <style include="shared-styles"></style>
+        <div class="inputs">
+            @Html.PolEditor(Model, "deactivated")
+            @Html.PolEditor(Model, "email")
+            @Html.PolEditor(Model, "password")
+            @Html.PolEditor(Model, "name")
+            @Html.PolEditor(Model, "surname")
+        </div>
     </template>
     <script>
     Polymer({

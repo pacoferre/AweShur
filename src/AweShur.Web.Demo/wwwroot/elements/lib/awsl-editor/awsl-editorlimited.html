@@ -3,27 +3,17 @@
 
 <dom-module id="awsl-editorlimited">
     <template>
+        <style include="shared-styles"></style>
         <style>
-            :host {
-                @apply(--layout-vertical);
-            }
-
             #main {
-                padding: 0px 28px;
                 overflow-y: auto;
-            }
-
-            #toastError {
-                --paper-toast-background-color: red;
-                --paper-toast-color: white;
+                height: calc(100vh - 112px);
             }
         </style>
 
         <awsl-toolbarlimited id="toollimited"></awsl-toolbarlimited>
         <div id="main">
         </div>
-        <paper-toast id="toastOk" text=""></paper-toast>
-        <paper-toast id="toastError" text=""></paper-toast>
     </template>
     <script>
     Polymer({
@@ -35,16 +25,6 @@
         setToolBar: function (fromServer) {
             this.$.toollimited.setToolBar(fromServer);
         },
-        showMessage: function (msg) {
-            this.$.toastOk.text = msg;
-            this.$.toastOk.fitInto = this.getMain();
-            this.$.toastOk.open();
-        },
-        showError: function (msg) {
-            this.$.toastError.text = msg;
-            this.$.toastError.fitInto = this.getMain();
-            this.$.toastError.open();
-        }
     });
     </script>
 </dom-module>

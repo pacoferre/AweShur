@@ -3,13 +3,14 @@
 <link rel="import" href="../../../lib/paper-dialog-scrollable/paper-dialog-scrollable.html">
 <link rel="import" href="../../../lib/paper-radio-group/paper-radio-group.html">
 <link rel="import" href="../../../lib/paper-radio-button/paper-radio-button.html">
+<link rel="import" href="../../../lib/paper-button/paper-button.html">
 
 <dom-module id="awsl-filter">
     <template>
         <style>
             paper-dialog {
                 position:fixed;
-                min-width:70%;
+                min-width:60%;
             }
             label {
                 padding:12px;
@@ -18,10 +19,6 @@
         <paper-dialog id="search">
             <h2>[[titleDialog]]</h2>
             <paper-dialog-scrollable>
-                <div id="main">
-                </div>
-            </paper-dialog-scrollable>
-            <div class="buttons">
                 <label id="lbl">Limit</label>
                 <paper-radio-group selected="{{topRecords}}" allow-empty-selection aria-labelledby="lbl">
                     <paper-radio-button name="100">100</paper-radio-button>
@@ -29,7 +26,12 @@
                     <paper-radio-button name="1000">1000</paper-radio-button>
                     <paper-radio-button name="5000">5000</paper-radio-button>
                 </paper-radio-group>
-                <paper-button dialog-confirm raised>OK</paper-button>
+                <div id="main">
+                </div>
+            </paper-dialog-scrollable>
+            <div class="buttons">
+                <paper-button on-tap="_doClear">Clear</paper-button>
+                <paper-button dialog-confirm>Filter</paper-button>
             </div>
         </paper-dialog>
     </template>

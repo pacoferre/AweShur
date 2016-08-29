@@ -7,13 +7,16 @@
 
 <dom-module id="@(componentName)">
     <template>
-        @foreach (PropertyDefinition prop in Model.ListProperties)
-        {
-            if (!prop.IsIdentity)
+        <style include="shared-styles"></style>
+        <div class="inputs">
+            @foreach (PropertyDefinition prop in Model.ListProperties)
             {
-                @Html.PolEditor(Model, prop.FieldName)
+                if (!prop.IsIdentity)
+                {
+                    @Html.PolEditor(Model, prop.FieldName)
+                }
             }
-        }
+        </div>
     </template>
     <script>
     Polymer({

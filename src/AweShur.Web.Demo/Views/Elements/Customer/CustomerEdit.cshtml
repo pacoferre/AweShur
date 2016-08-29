@@ -10,17 +10,20 @@
 
 <dom-module id="aswd-customeredit">
     <template>
-        @Html.PolEditor(Model, "idCustomerType")
-        @Html.PolEditor(Model, "idCustomerRanking")
-        @Html.PolEditor(Model, "name")
-        @Html.PolEditor(Model, "creationDate")
-        @Html.PolEditor(Model, "memo")
-        @Html.PolEditor(Model, "nextCall")
-        @Html.PolEditor(Model, "address")
+        <style include="shared-styles"></style>
+        <div class="inputs">
+            @Html.PolEditor(Model, "idCustomerType")
+            @Html.PolEditor(Model, "idCustomerRanking")
+            @Html.PolEditor(Model, "name")
+            @Html.PolEditor(Model, "creationDate")
+            @Html.PolEditor(Model, "memo")
+            @Html.PolEditor(Model, "nextCall")
+            @Html.PolEditor(Model, "address")
 
-        <h2>Contacts</h2>
-        <awsl-collection path="ColContact" childelement="aswd-customercontactedit">
-        </awsl-collection>
+            <h2>Contacts</h2>
+            <awsl-collection path="ColContact" childelement="aswd-customercontactedit">
+            </awsl-collection>
+        </div>
     </template>
     <script>
     Polymer({

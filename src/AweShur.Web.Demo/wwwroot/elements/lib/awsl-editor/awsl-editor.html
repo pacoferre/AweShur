@@ -3,19 +3,13 @@
 
 <dom-module id="awsl-editor">
     <template>
+        <style include="shared-styles"></style>
         <style>
             #main {
-                padding: 0px 28px;
                 overflow-y: auto;
                 height: calc(100vh - 112px);
             }
-
-            #toastError {
-                --paper-toast-background-color: red;
-                --paper-toast-color: white;
-            }
         </style>
-
         <awsl-toolbar id="tool"></awsl-toolbar>
         <div id="main">
         </div>
