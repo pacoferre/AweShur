@@ -1,0 +1,125 @@
+﻿<link rel="import" href="../../../lib/polymer/polymer.html">
+<link rel="import" href="../../../lib/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../../lib/neon-animation/neon-animated-pages.html">
+<link rel="import" href="../../../lib/neon-animation/neon-animatable.html">
+<link rel="import" href="../../../lib/neon-animation/neon-animations.html">
+<link rel="import" href="../../../lib/iron-ajax/iron-ajax.html">
+<link rel="import" href="../../../lib/vaadin-grid/vaadin-grid.html">
+<link rel="import" href="../../../lib/paper-fab/paper-fab.html">
+<link rel="import" href="../../../lib/app-route/app-route.html">
+<link rel="import" href="../../../lib/iron-resizable-behavior/iron-resizable-behavior.html">
+
+<link rel="import" href="../../../AWSLib/awsl-listeditor-vaadin-behavior">
+<link rel="import" href="../awsl-list-toolbar/awsl-list-toolbar.html">
+<link rel="import" href="../awsl-editor/awsl-editor.html">
+<link rel="import" href="../awsl-filter/awsl-filter.html">
+
+<dom-module id="awsl-listeditor-vaadin">
+    <template>
+        <style>
+            :host {
+                @apply(--layout-vertical);
+            }
+
+            #listContent {
+                overflow: hidden;
+            }
+
+            vaadin-grid {
+                height: calc(100vh - 112px);
+            }
+        </style>
+
+        <app-route route="{{route}}"
+                   pattern="/:key"
+                   data="{{routeData}}"
+                   id="routeManager">
+        </app-route>
+
+        <awsl-filter id="filter"
+                     filterhref="[[filterhref]]" filterelement="[[filterelement]]">
+        </awsl-filter>
+
+        <neon-animated-pages id="pages" class="flex" entry-animation="slide-from-right-animation" exit-animation="slide-left-animation">
+            <neon-animatable>
+                <div id="listContent">
+                    <awsl-list-toolbar on-awsl-new="_onNew" fastsearch="{{fastsearch}}"></awsl-list-toolbar>
+                    <vaadin-grid id="itemsList" items="[[items]]">
+                        <content></content>
+                    </vaadin-grid>
+                </div>
+            </neon-animatable>
+            <neon-animatable>
+                <div>
+                    <awsl-editor id="editor" on-saved="_onSaved" on-close="_onClose" oname="{{oname}}"
+                                 on-awsl-set-title="_editorSetTitle"
+                                 edithref="[[edithref]]" editelement="[[editelement]]">
+                    </awsl-editor>
+                </div>
+            </neon-animatable>
+        </neon-animated-pages>
+    </template>
+    <script>
+        Polymer({
+            is: 'awsl-listeditor-vaadin',
+            behaviors: [AWSLBehaviors.ListEditorVaadinBehavior],
+            observers: [
+              '_routeChanged(route)',
+              '_viewChanged(routeData.key)',
+              '_fastsearchChanged(fastsearch)'
+            ],
+            _routeChanged: function (newRoute) {
+                if (newRoute.path == "")
+                {
+                    this.set('routeData.key', '');
+                    if (this.key !== undefined && this.key != "") {
+                        this._viewChanged('');
+                    }
+                }
+            },
+            _viewChanged: function (key) {
+                if (key === undefined || key == "") {
+                    this.reset();
+                }
+                else
+                {
+                    if (this.route.prefix == "/" + this.path && !this.settingRouteKey) {
+                        this.key = key;
+                        this.$.pages.entryAnimation = "slide-from-right-animation";
+                        this.$.pages.exitAnimation = "slide-left-animation";
+                        this.$.pages.selected = 1;
+                        this.$.editor.load(this.key);
+                    }
+                }
+            },
+            getItemsList: function () {
+                return this.$.itemsList;
+            },
+            getFilter: function () {
+                return this.$.filter;
+            },
+            reset: function () {
+                if (this.$.pages.selected != 0) {
+                    this._onClose();
+                    this.refresh();
+                }
+            },
+            _onNew: function () {
+                this.key = "0";
+                this.set('route.path', '/' + this.key);
+            },
+            _onClose: function () {
+                this.$.pages.entryAnimation = "slide-from-left-animation";
+                this.$.pages.exitAnimation = "slide-right-animation";
+                this.set('route.path', '');
+                this.set('routeData.key', '');
+                this.$.pages.selected = 0;
+            },
+            _editorSetTitle: function (event) {
+                if (this.$.pages.selected == 0) {
+                    event.stopPropagation();
+                }
+            }
+        });
+    </script>
+</dom-module>
