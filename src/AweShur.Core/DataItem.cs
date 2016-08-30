@@ -129,13 +129,16 @@ namespace AweShur.Core
                 object value = values[index];
 
                 obj["n" + prop.Index] = JToken.FromObject(value == null ? "1" : "");
-                if (prop.BasicType == BasicType.Bit)
+                if (value != null)
                 {
-                    obj["v" + prop.Index] = JToken.FromObject(value.NoNullBool() ? "1" : "");
-                }
-                else
-                {
-                    obj["v" + prop.Index] = JToken.FromObject(value ?? "");
+                    if (prop.BasicType == BasicType.Bit)
+                    {
+                        obj["v" + prop.Index] = JToken.FromObject(value.NoNullBool() ? "1" : "");
+                    }
+                    else
+                    {
+                        obj["v" + prop.Index] = JToken.FromObject(value ?? "");
+                    }
                 }
             }
 

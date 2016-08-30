@@ -63,6 +63,7 @@ namespace AweShur.Core
             { "char", typeof(string) },
             { "money", typeof(Decimal) },
             { "decimal", typeof(Decimal) },
+            { "numeric", typeof(Decimal) },
             { "timestamp", typeof(Byte[]) },
             { "binary", typeof(Byte[]) },
             { "uniqueidentifier", typeof(Guid) },
@@ -86,6 +87,13 @@ namespace AweShur.Core
         public static Type GetColumnType(string dbDataType)
         {
             return typesDict[dbDataType];
+
+            //if (typesDict.ContainsKey(dbDataType))
+            //{
+            //    return typesDict[dbDataType];
+            //}
+
+            //return typeof(int);
         }
 
         public static BasicType GetBasicType(Type type)

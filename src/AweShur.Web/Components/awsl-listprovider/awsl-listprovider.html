@@ -87,7 +87,7 @@
             this._storageLoad(event);
         },
         _refreshTarget: function (target, item) {
-            target.target.listItems = item.storage.value.list;
+            target.target.setItems(item.storage.value.list);
             if (target.detail.postFunction != null && target.detail.postFunction !== undefined)
             {
                 this.async(target.detail.postFunction);

@@ -22,6 +22,7 @@ namespace AweShur.Core
 
         public string Singular { get; set; } = "";
         public string Plural { get; set; } = "";
+        public string AllListDescription { get; set; } = "All";
 
         private Dictionary<string, int> fieldNameLookup;
         protected DBDialect dialect = null;
@@ -313,10 +314,20 @@ namespace AweShur.Core
             return sql;
         }
 
+        public virtual Dictionary<string, object> GetParameter(string parameter)
+        {
+            if (parameter == "" || parameter == "0")
+            {
+                return null;
+            }
+
+            return new Dictionary<string, object>() { { "id", parameter } };
+        }
+
         public virtual ListTable GetList(string listName, string parameter, int dbNumber)
         {
             string sql = GetListSQL(listName, parameter);
-            ListTable list = new ListTable(listName, sql, dbNumber);
+            ListTable list = new ListTable(listName, sql, GetParameter(parameter), dbNumber, AllListDescription);
 
             return list;
         }

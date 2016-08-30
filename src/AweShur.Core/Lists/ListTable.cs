@@ -10,6 +10,7 @@ namespace AweShur.Core.Lists
     public class ListTable
     {
         private string sqlList = "";
+        private Dictionary<string, object> parameters = null;
         private int dbNumber = 0;
         public string[] Names { get; private set; } = new string[0];
         public string ListName { get; private set; } = "";
@@ -17,6 +18,7 @@ namespace AweShur.Core.Lists
         public object[] ZeroItem { get; private set; }
         private Lazy<List<ListItemRest>> generator;
         private object pending = true;
+        private DateTime lastReaded = DateTime.Now;
 
         public ListTable(string listName, byte[] data)
         {
@@ -27,11 +29,12 @@ namespace AweShur.Core.Lists
             CreateGenerator();
         }
 
-        public ListTable(string listName, string sql, int dbNumber, string allDescription = "All")
+        public ListTable(string listName, string sql, dynamic parameters, int dbNumber, string allDescription)
         {
             ZeroItem = new object[] { "0", allDescription };
 
             sqlList = sql;
+            this.parameters = parameters;
             this.dbNumber = dbNumber;
 
             Items = new List<object[]>(40);
@@ -43,7 +46,7 @@ namespace AweShur.Core.Lists
         {
             generator = new Lazy<List<ListItemRest>>(() =>
             {
-                List<ListItemRest> list = new List<ListItemRest>(Items.Count);
+                List<ListItemRest> list = new List<ListItemRest>(Items.Count + 1);
 
                 list.Add(new ListItemRest(ZeroItem[0].ToString(), ZeroItem[1].ToString()));
 
@@ -78,7 +81,7 @@ namespace AweShur.Core.Lists
                 {
                     if ((bool)pending)
                     {
-                        IEnumerable<dynamic> dbItems = DB.InstanceNumber(dbNumber).Query(sqlList);
+                        IEnumerable<dynamic> dbItems = DB.InstanceNumber(dbNumber).Query(sqlList, parameters);
 
                         Items.Clear();
 
@@ -93,6 +96,7 @@ namespace AweShur.Core.Lists
                         }
 
                         pending = false;
+                        lastReaded = DateTime.Now;
                     }
                 }
             }
@@ -125,12 +129,24 @@ namespace AweShur.Core.Lists
         {
             JObject obj = new JObject();
 
-            obj.Add("sqlList", JToken.FromObject(sqlList));
-            obj.Add("dbNumber", JToken.FromObject(dbNumber));
-            obj.Add("Names", JToken.FromObject(Names));
-            obj.Add("ZeroItem", JToken.FromObject(ZeroItem));
-            obj.Add("Items", JToken.FromObject(Items));
-            obj.Add("pending", JToken.FromObject((bool)pending ? "1" : ""));
+            obj.Add("sql", JToken.FromObject(sqlList));
+
+            obj["np"] = JToken.FromObject(parameters == null ? "1" : "");
+            if (parameters != null)
+            {
+                obj.Add("pars", JToken.FromObject(parameters));
+            }
+            obj.Add("dbN", JToken.FromObject(dbNumber));
+            obj.Add("Nam", JToken.FromObject(Names));
+            obj.Add("ZI", JToken.FromObject(ZeroItem));
+            obj.Add("It", JToken.FromObject(Items));
+            obj.Add("pe", JToken.FromObject((bool)pending ? "1" : ""));
+            obj.Add("lR", JToken.FromObject(lastReaded));
+
+            if (lastReaded < DateTime.Now.AddMinutes(-5))
+            {
+                pending = true;
+            }
 
             return obj;
         }
@@ -147,12 +163,21 @@ namespace AweShur.Core.Lists
             string json = Encoding.Unicode.GetString(data);
             JObject obj = JObject.Parse(json);
 
-            sqlList = obj["sqlList"].ToObject(typeof(string)).ToString();
-            dbNumber = (int)obj["dbNumber"].ToObject(typeof(int));
-            Names = (string[])obj["Names"].ToObject(typeof(string[]));
-            ZeroItem = (object[]) obj["ZeroItem"].ToObject(typeof(object[]));
-            Items = (List<object[]>)obj["Items"].ToObject(typeof(List<object[]>));
-            pending = obj["pending"].ToObject(typeof(string)).ToString() == "1";
+            sqlList = obj["sql"].ToObject(typeof(string)).ToString();
+            if (obj["np"].ToObject(typeof(string)).ToString() == "1")
+            {
+                parameters = null;
+            }
+            else
+            {
+                parameters = obj["pars"].ToObject<Dictionary<string, object>>();
+            }
+            dbNumber = (int)obj["dbNr"].ToObject(typeof(int));
+            Names = (string[])obj["Nam"].ToObject(typeof(string[]));
+            ZeroItem = (object[]) obj["ZI"].ToObject(typeof(object[]));
+            Items = (List<object[]>)obj["It"].ToObject(typeof(List<object[]>));
+            pending = obj["pe"].ToObject(typeof(string)).ToString() == "1";
+            lastReaded = (DateTime)obj["lR"].ToObject(typeof(DateTime));
         }
     }
 

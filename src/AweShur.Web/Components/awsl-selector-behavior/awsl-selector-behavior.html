@@ -26,6 +26,10 @@
                     type: Number,
                     value: 0,
                     observer: '_parameterChange'
+                },
+                isSearch: {
+                    type: Boolean,
+                    value: false
                 }
             },
             _parameterChange: function (newValue, oldValue) {
@@ -40,6 +44,21 @@
                     parameter: this.parameter,
                     postFunction: postFunction
                 });
+            },
+            setItems: function (newItems) {
+                if (this.isSearch) {
+                    this.listItems = newItems;
+
+                    // First element is Id.
+                    for (var prop in newItems[0])
+                    {
+                        this.value = newItems[0][prop];
+                        break;
+                    }
+                }
+                else {
+                    this.listItems = newItems.slice(1);
+                }
             },
             getData : function (fromServer) {
                 var name = this.dataField;

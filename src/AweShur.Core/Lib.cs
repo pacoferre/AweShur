@@ -96,6 +96,11 @@ namespace AweShur.Core
         {
             int res = 0;
 
+            if (number is string && (number.ToString() == "" || number.ToString() == "0"))
+            {
+                return 0;
+            }
+
             if (number != null)
             {
                 if (number is int)

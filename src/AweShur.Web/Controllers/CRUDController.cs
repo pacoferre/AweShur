@@ -71,7 +71,7 @@ namespace AweShur.Web.Controllers
             ListTable table = BusinessBaseProvider.ListProvider.GetList(request.objectName, 
                 request.listName, request.parameter);
 
-            return table.ToClient.Where(item => item.i != "0").ToList();
+            return table.ToClient;
         }
 
         [HttpPost]
