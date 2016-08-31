@@ -42,6 +42,10 @@ namespace AweShur.Core
 
     public class PropertyDefinition
     {
+        public static string EmptyErrorMessage = "{0} empty";
+        public static string EmptySelectionErrorMessage = "{0} selection missing";
+        public static string EmptyValueErrorMessage = "{0} value missing";
+
         public BasicType BasicType { get; } = BasicType.Text;
         private PropertyInputType inputType = PropertyInputType.text;
 
@@ -299,9 +303,20 @@ namespace AweShur.Core
             {
                 value = value.NoNullString().Trim();
 
-                if (obj[FieldName].NoNullString() != value)
+                if (IsNullable && (value == "" || (value == "0" && Type == PropertyInputType.select)))
                 {
-                    obj[FieldName] = value;
+                    // strings as IDs !!! :)
+                    if (!(obj[FieldName] == null))
+                    {
+                        obj[FieldName] = null;
+                    }
+                }
+                else
+                {
+                    if (obj[FieldName].NoNullString() != value)
+                    {
+                        obj[FieldName] = value;
+                    }
                 }
             }
 
@@ -494,7 +509,7 @@ namespace AweShur.Core
                 {
                     if ((BasicType == BasicType.Text || BasicType == BasicType.TextLong) && value.NoNullString() == "")
                     {
-                        lastErrorMessage = Label + " empty";
+                        lastErrorMessage = String.Format(EmptyErrorMessage, Label);
                         lastErrorProperty = FieldName;
 
                         return false;
@@ -503,11 +518,11 @@ namespace AweShur.Core
                     {
                         if (ListObjectName != "")
                         {
-                            lastErrorMessage = Label + " selection missing";
+                            lastErrorMessage = String.Format(EmptySelectionErrorMessage, Label);
                         }
                         else
                         {
-                            lastErrorMessage = Label + " value missing";
+                            lastErrorMessage = String.Format(EmptyValueErrorMessage, Label);
                         }
                         lastErrorProperty = FieldName;
 

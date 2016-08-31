@@ -110,9 +110,23 @@ namespace AweShur.Core.Lists
             }
         }
 
-        public string GetValue(int id)
+        public bool Exists(object id)
         {
-            return Items.Find(item => item[0].NoNullInt() == id)[1].NoNullString();
+            return Items.Find(item => ((IComparable)item[0]).CompareTo(id) == 0) != null;
+        }
+
+        public string GetValue(object id)
+        {
+            EnsureList();
+
+            object[] element = Items.Find(item =>((IComparable)item[0]).CompareTo(id) == 0);
+
+            if (element != null)
+            {
+                return element[1].NoNullString();
+            }
+
+            return "";
         }
 
         public object[] First
@@ -172,7 +186,7 @@ namespace AweShur.Core.Lists
             {
                 parameters = obj["pars"].ToObject<Dictionary<string, object>>();
             }
-            dbNumber = (int)obj["dbNr"].ToObject(typeof(int));
+            dbNumber = (int)obj["dbN"].ToObject(typeof(int));
             Names = (string[])obj["Nam"].ToObject(typeof(string[]));
             ZeroItem = (object[]) obj["ZI"].ToObject(typeof(object[]));
             Items = (List<object[]>)obj["It"].ToObject(typeof(List<object[]>));

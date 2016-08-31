@@ -134,6 +134,10 @@
                 this.fire('close');
             },
             _onChanged: function (elementChanged) {
+                if (this.key === undefined || this.key == "")
+                {
+                    return;
+                }
                 var elementWithDataFieldName = this._searchElementWithDataFieldName(elementChanged.target, 0);
 
                 if (elementWithDataFieldName != null)

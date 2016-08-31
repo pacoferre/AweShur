@@ -232,9 +232,9 @@
             },
             afterGetData: function (fromServer) {
                 for (var el, i = 0; el = this.elements[i], i < this.elements.length; i++) {
-                    if (el.afterSetData !== undefined)
+                    if (el.afterGetData !== undefined)
                     {
-                        el.afterSetData(fromServer);
+                        el.afterGetData(fromServer);
                     }
                 }
             },
