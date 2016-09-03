@@ -8,7 +8,7 @@
     (function () {
         AWSLBehaviors.MainBehavior = {
             properties: {
-                MainTitle: {
+                mainTitle: {
                     type: String
                 }
             },
@@ -35,7 +35,7 @@
                 'awsl-getlist': '_getlist'
             },
             _onSetTitle: function (newTitle) {
-                this.MainTitle = newTitle.detail.title;
+                this.mainTitle = newTitle.detail.title;
             },
             _onShowMessage: function (msg) {
                 this.$.toastOk.text = msg.detail;

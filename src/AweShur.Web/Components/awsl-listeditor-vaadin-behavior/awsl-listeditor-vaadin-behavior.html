@@ -57,6 +57,10 @@
                 },
                 fastsearch: {
                     type: String
+                },
+                itemsCount: {
+                    type: Number,
+                    value: 0
                 }
             },
             wasAttached: false,
@@ -78,6 +82,7 @@
             },
             _handleFormResponse: function (event) {
                 this.items = event.detail.response.data;
+                this.itemsCount = this.items.length;
                 this.lastTitle = event.detail.response.plural;
                 this.fire('awsl-set-title', { title: event.detail.response.plural });
                 this.getFilter().titleDialog = this.titleSearch + " " + event.detail.response.plural;

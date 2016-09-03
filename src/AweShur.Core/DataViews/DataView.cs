@@ -121,10 +121,10 @@ namespace AweShur.Core.DataViews
             {
                 orderBy = visibleColumns[order].OrderBy;
 
-                if (visibleColumns.Count > order + 1)
-                {
-                    orderBy += "," + visibleColumns[order + 1].OrderBy;
-                }
+                //if (visibleColumns.Count > order + 1)
+                //{
+                //    orderBy += "," + visibleColumns[order + 1].OrderBy;
+                //}
             }
 
             if (PreOrderBy != "")

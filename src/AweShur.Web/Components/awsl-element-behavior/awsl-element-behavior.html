@@ -261,6 +261,10 @@
                     if (el.setRootEditor !== undefined) {
                         el.setRootEditor();
                     }
+
+                    if (el.dataNames !== undefined) {
+                        this._merge(el.dataNames);
+                    }
                 }
             },
 

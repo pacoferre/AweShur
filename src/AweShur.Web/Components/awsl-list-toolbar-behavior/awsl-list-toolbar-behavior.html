@@ -6,12 +6,16 @@
     (function () {
         AWSLBehaviors.ListToolBarBehavior = {
             properties: {
-                title: {
+                listTitle: {
                     type: String,
                 },
                 fastsearch: {
                     type: String,
                     notify: true
+                },
+                itemsCount: {
+                    type: Number,
+                    value: 0
                 }
             },
             _onRefresh: function()

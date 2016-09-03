@@ -24,6 +24,7 @@ namespace AweShur.Core
         public string Plural { get; set; } = "";
         public string AllListDescription { get; set; } = "All";
 
+        public bool[] setModified;
         private Dictionary<string, int> fieldNameLookup;
         protected DBDialect dialect = null;
         protected int dbNumber;
@@ -127,6 +128,8 @@ namespace AweShur.Core
             ListProperties.AddRange(Properties.Values.ToList());
             fieldNameLookup = new Dictionary<string, int>(Properties.Count, StringComparer.Ordinal);
 
+            setModified = new bool[ListProperties.Count];
+
             if (firstStringProperty == null)
             {
                 firstStringProperty = ListProperties.Find(prop => prop.BasicType == BasicType.Text && !prop.IsIdentity);
@@ -138,6 +141,7 @@ namespace AweShur.Core
                 PropertyDefinition prop = Properties.ElementAt(i).Value;
 
                 fieldNameLookup[names[i]] = i;
+                setModified[i] = prop.SetModified;
 
                 if (prop.IsPrimaryKey)
                 {

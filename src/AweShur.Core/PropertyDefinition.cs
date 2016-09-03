@@ -58,6 +58,7 @@ namespace AweShur.Core
         public bool IsPrimaryKey { get; } = false;
         public bool IsReadOnly { get; set; } = false;
         public bool IsOnlyOnNew { get; set; } = false;
+        public bool SetModified { get; set; } = true;
         public string DBDataType { get; } = "";
         public string FieldName { get; } = "";
         public Type DataType { get; set; }

@@ -60,7 +60,10 @@
                     this.listItems = newItems.slice(1);
                 }
             },
-            getData : function (fromServer) {
+            clearSearch: function () {
+                this.value = "";
+            },
+            getData: function (fromServer) {
                 var name = this.dataField;
 
                 if (name != null) {

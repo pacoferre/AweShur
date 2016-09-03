@@ -40,14 +40,14 @@ namespace AweShur.Core
                     {
                         if (((IComparable)values[index]).CompareTo(value) != 0)
                         {
-                            IsModified = true;
+                            IsModified = owner.Decorator.setModified[index];
                         }
                     }
                     else
                     {
                         if (!(value == null && values[index] == null))
                         {
-                            IsModified = true;
+                            IsModified = owner.Decorator.setModified[index];
                         }
                     }
                 }

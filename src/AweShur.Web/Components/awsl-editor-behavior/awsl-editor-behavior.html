@@ -147,7 +147,7 @@
                     // Must be better.
                     var posibleCollection = elementWithDataFieldName.containerElement.containerElement;
 
-                    if (posibleCollection == null)
+                    if (posibleCollection == null || posibleCollection.isChildren === undefined)
                     {
                         elementWithDataFieldName.setData(this.toserver.root);
                     }
@@ -202,10 +202,10 @@
                         this.theelement.setLoadChildren(this.toserver.root.children);
                     }
                     else if (action == "init") {
-                        this.toserver.dataNames = this.theelement.dataNames;
-                        this.toserver.listNames = this.theelement.listNames;
                         this.theelement.setRootEditor();
                         this.theelement.setInitChildren(this.toserver.root.children);
+                        this.toserver.dataNames = this.theelement.dataNames;
+                        this.toserver.listNames = this.theelement.listNames;
                     }
                     else if (action == "changed") {
                         //this.toserver.root.data = {};
@@ -241,8 +241,6 @@
                         this.fire('elementready');
                     }
                     else {
-                        this.title = fromServer.title;
-
                         this.fire('awsl-set-title', { title: fromServer.title });
 
                         if (this.key != fromServer.keyObject)

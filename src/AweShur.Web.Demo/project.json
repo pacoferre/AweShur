@@ -33,18 +33,18 @@
   },
 
   "frameworks": {
-    "net46": {},
-    "netcoreapp1.0": {
-      "imports": [
-        "dnxcore50"
-      ],
-      "buildOptions": {
-        "define": [ "COREFX" ]
-      },
-      "dependencies": {
-        "Microsoft.NETCore.App": "1.0.1"
-      }
-    }
+    "net46": {}
+    //"netcoreapp1.0": {
+    //  "imports": [
+    //    "dnxcore50"
+    //  ],
+    //  "buildOptions": {
+    //    "define": [ "COREFX" ]
+    //  },
+    //  "dependencies": {
+    //    "Microsoft.NETCore.App": "1.0.1"
+    //  }
+    //}
   },
 
   "buildOptions": {

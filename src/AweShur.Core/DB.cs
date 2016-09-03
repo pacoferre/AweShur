@@ -16,7 +16,7 @@ namespace AweShur.Core
 
         public DBDialect Dialect { get; }
         public int DBNumber { get; }
-        private string connectionString;
+        public readonly string connectionString;
         private Lazy<IDbConnection> lazyConnection;
         private IDbConnection conn = null;
         private IDbTransaction trans = null;
