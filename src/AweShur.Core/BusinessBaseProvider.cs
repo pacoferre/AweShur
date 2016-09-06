@@ -156,14 +156,23 @@ namespace AweShur.Core
             return filter;
         }
 
-        private static string ObjectKey(string objectName, int dbNumber, string key)
+        public static void StoreFilter(HttpContext context, FilterBase filter, string objectName)
         {
-            return "O_" + objectName + "_" + dbNumber + "_" + key;
+            AppUser user = AppUser.GetAppUser(context);
+            int dbNumber = filter.Decorator.DBNumber;
+            string filterKey = FilterKey(user, objectName, filter.Decorator.DBNumber);
+
+            StoreData(filterKey, filter.Serialize());
         }
 
         private static string FilterKey(AppUser user, string objectName, int dbNumber)
         {
             return "F_" + objectName + "_" + dbNumber + "_" + user.Key;
+        }
+
+        private static string ObjectKey(string objectName, int dbNumber, string key)
+        {
+            return "O_" + objectName + "_" + dbNumber + "_" + key;
         }
 
         public static void StoreObject(BusinessBase obj, string objectName)

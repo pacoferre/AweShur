@@ -46,11 +46,6 @@
                         newElement.id = "theelement";
 
                         this.thefilter = Polymer.dom(this.getMain()).appendChild(newElement);
-
-                        //this.async(function () {
-                        //    this.getDialog().prepareFilter();
-                        //});
-
                     }, function (e) {
                         debugger;
                     });
@@ -68,6 +63,10 @@
             _filterDialogClosed: function (event) {
                 this.fire('awsl-closefilter', { ok: !event.detail.canceled });
             },
+            _doClear: function () {
+                this.topRecords = "100";
+                this.thefilter.clearFilter();
+            }
         };
     })();
 </script>

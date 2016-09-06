@@ -188,6 +188,28 @@
                                     }
                                 }
                             };
+                            element.clearData = function () {
+                                var name = this.dataField;
+
+                                if (name !== undefined && name != null) {
+
+                                    if (name.indexOf(',') > 0) {
+                                        name = name.split(',')[0];
+                                    }
+
+                                    if (this.type == 'checkbox' ||
+                                        this.type == 'radio' ||
+                                        this.getAttribute('role') == 'checkbox' ||
+                                        this.getAttribute('role') == 'radio' ||
+                                        this['_hasIronCheckedElementBehavior']) {
+
+                                        this.checked = false;
+                                    }
+                                    else {
+                                        this.value = "";
+                                    }
+                                }
+                            };
                             element.setData = function (toServer) {
                                 var name = this.dataField;
 
@@ -251,6 +273,13 @@
                     }
                 }
 
+            },
+            clearData: function() {
+                for (var el, i = 0; el = this.elements[i], i < this.elements.length; i++) {
+                    if (el.clearData !== undefined) {
+                        el.clearData();
+                    }
+                }
             },
 
             setRootEditor: function ()

@@ -13,5 +13,7 @@ namespace AweShur.Core.REST
         public bool dofastsearch { get; set; } = false;
         public string fastsearch { get; set; } = "";
         public Dictionary<string, string> data { get; set; } = new Dictionary<string, string>();
+        public int topRecords { get; set; } = 100;
+        public bool first = true;
     }
 }

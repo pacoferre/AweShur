@@ -60,9 +60,6 @@
                     this.listItems = newItems.slice(1);
                 }
             },
-            clearSearch: function () {
-                this.value = "";
-            },
             getData: function (fromServer) {
                 var name = this.dataField;
 
@@ -88,6 +85,22 @@
                         {
                             this.value = value;
                         }
+                    }
+                }
+            },
+            clearData: function () {
+                var name = this.dataField;
+
+                if (name !== undefined && name != null) {
+                    if (this.listItems.length == 0) {
+                        var that = this;
+
+                        this.refresh(function () {
+                            that.clearData();
+                        });
+                    }
+                    else {
+                        this.value = "0";
                     }
                 }
             },

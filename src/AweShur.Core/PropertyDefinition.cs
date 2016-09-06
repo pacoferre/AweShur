@@ -119,6 +119,7 @@ namespace AweShur.Core
             if (BasicType == BasicType.Bit && !IsNullable)
             {
                 DefaultValue = false;
+                DefaultSearch = "0";
             }
 
             if (BasicType == BasicType.Bit)

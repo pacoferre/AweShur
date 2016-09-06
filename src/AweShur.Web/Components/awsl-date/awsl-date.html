@@ -106,10 +106,7 @@
 
                 if (value === undefined || value == null || value == "")
                 {
-                    this.currentDate = "";
-                    this.$.datePicker.$.datePicker.inputDate = "";
-                    this.$.datePicker.$.datePicker._setDate("");
-                    this._setInputDate();
+                    this.clearData();
                 }
                 else {
                     if (!this.currentDate || this.currentDate != value) {
@@ -126,6 +123,13 @@
             if (name != null) {
                 toServer.data[name] = this.currentDate;
             }
+        },
+        clearData: function ()
+        {
+            this.currentDate = "";
+            this.$.datePicker.$.datePicker.inputDate = "";
+            this.$.datePicker.$.datePicker._setDate("");
+            this._setInputDate();
         },
         _focus: function()
         {

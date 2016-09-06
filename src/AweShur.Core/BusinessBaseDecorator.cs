@@ -149,6 +149,11 @@ namespace AweShur.Core
                 }
 
                 prop.Index = i;
+
+                if (prop.Type == PropertyInputType.select)
+                {
+                    prop.DefaultSearch = "0";
+                }
             }
 
             primaryKeyIsOneInt = PrimaryKeys.Count == 1 && 

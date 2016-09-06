@@ -14,5 +14,6 @@ namespace AweShur.Core.REST
         public int sortIndex { get; set; } = 1;
         public string sortDir { get; set; } = "a";
         public Dictionary<string, string> data { get; set; } = null;
+        public int topRecords { get; set; } = 100;
     }
 }

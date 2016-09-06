@@ -40,7 +40,17 @@ namespace AweShur.Web.Controllers
 
             filter.FastSearchActivated = request.dofastsearch;
             filter.FastSearch = request.fastsearch;
-            filter.Filter = request.data;
+            if (!request.first)
+            {
+                filter.Filter = request.data;
+                filter.topRecords = request.topRecords;
+            }
+
+            if (filter.Filter == null)
+            {
+                filter.Filter = request.data;
+                filter.Clear();
+            }
 
             if (request.sortIndex == 0)
             {
@@ -55,10 +65,13 @@ namespace AweShur.Web.Controllers
             resp.data = filter.Filter;
             resp.result = Dapper.SqlMapper.ToList(filter.Get(request.sortIndex, 
                 (request.sortDir == "asc" ? SortDirection.Ascending : SortDirection.Descending),
-                0, 1000));
+                0, 0));
             resp.fastsearch = filter.FastSearch;
             resp.sortIndex = request.sortIndex;
             resp.sortDir = request.sortDir;
+            resp.topRecords = filter.topRecords;
+
+            BusinessBaseProvider.StoreFilter(HttpContext, filter, request.oname);
 
             return resp;
         }
