@@ -33,6 +33,8 @@
     <!-- For shared styles, shared-styles.html import in elements.html -->
     <style is="custom-style" include="shared-styles"></style>
 
+    <script src="~/lib/moment/min/moment.min.js"></script>
+    <script src="~/lib/moment/locale/es.js"></script>
     <environment names="Development">
         <link rel="stylesheet" href="~/css/main.css" />
         <script src="~/lib/webcomponentsjs/webcomponents-lite.js" asp-append-version="true"></script>
@@ -54,5 +56,10 @@
     </environment>*@
 
     @RenderSection("scripts", required: false)
+    <script>
+        HTMLImports.whenReady(function () {
+            moment.locale('es');
+        });
+    </script>
 </body>
 </html>

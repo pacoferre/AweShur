@@ -1,5 +1,6 @@
 ﻿using AweShur.Core.Lists;
 using AweShur.Core.Security;
+using Dapper;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -183,13 +184,13 @@ namespace AweShur.Core
 
                 if (value == PropertyInputType.date)
                 {
-                    this.Format = "{0:dd-MM-yyyy}";
+                    this.Format = "{0:dd/MM/yyyy}";
                     this.MaxLength = 10;
                     this.Pattern = "day_month_year";
                 }
                 else if (value == PropertyInputType.datetimeHHmm)
                 {
-                    this.Format = "{0:dd-MM-yyyy HH:mm}";
+                    this.Format = "{0:dd/MM/yyyy HH:mm}";
                     this.MaxLength = 16;
                     this.Pattern = "day_month_year hour_minute";
                     this.Required = false;
@@ -197,7 +198,7 @@ namespace AweShur.Core
                 }
                 if (value == PropertyInputType.datetimeHHmmss)
                 {
-                    this.Format = "{0:dd-MM-yyyy HH:mm:ss}";
+                    this.Format = "{0:dd/MM/yyyy HH:mm:ss}";
                     this.MaxLength = 19;
                     this.Pattern = "day_month_year hour_minute_second";
                     this.Required = false;
@@ -220,7 +221,7 @@ namespace AweShur.Core
                     }
                     else
                     {
-                        value = ((DateTime)obj[FieldName]).ToString("yyyy-MM-dd");
+                        value = ((DateTime)obj[FieldName]).ToString("yyyy/MM/dd");
                     }
                 }
             }
@@ -234,7 +235,7 @@ namespace AweShur.Core
                     }
                     else
                     {
-                        value = ((DateTime)obj[FieldName]).ToString("yyyy-MM-dd HH:mm");
+                        value = ((DateTime)obj[FieldName]).ToString("yyyy/MM/dd HH:mm");
                     }
                 }
             }
@@ -248,7 +249,7 @@ namespace AweShur.Core
                     }
                     else
                     {
-                        value = ((DateTime)obj[FieldName]).ToString("yyyy-MM-dd HH:mm:ss");
+                        value = ((DateTime)obj[FieldName]).ToString("yyyy/MM/dd HH:mm:ss");
                     }
                 }
             }
@@ -448,6 +449,15 @@ namespace AweShur.Core
                                 obj[FieldName] = tmp;
                             }
                         }
+                        if (DataType == typeof(System.Int64))
+                        {
+                            long tmp = Int32.Parse(value);
+
+                            if ((long)obj[FieldName] != tmp)
+                            {
+                                obj[FieldName] = tmp;
+                            }
+                        }
                         else if (DataType == typeof(System.Int16))
                         {
                             short tmp = Int16.Parse(value);
@@ -533,6 +543,135 @@ namespace AweShur.Core
             }
 
             return true;
+        }
+
+        public void Where(ref string where, ref DynamicParameters param, string value, string operation)
+        {
+            value = value.NoNullString().Trim();
+
+            if (value != "")
+            {
+                object obj = null;
+
+                if (BasicType == BasicType.Text || BasicType == BasicType.TextLong)
+                {
+                    obj = value;
+                    if (operation == "")
+                    {
+                        operation = "LIKE";
+                    }
+                }
+                else if (Type == PropertyInputType.checkbox || BasicType == BasicType.Bit)
+                {
+                    obj = (value == "1");
+                }
+                else if (Type == PropertyInputType.datetimeHHmm || Type == PropertyInputType.datetimeHHmmss || Type == PropertyInputType.date)
+                {
+                    try
+                    {
+                        if (value != "")
+                        {
+                            DateTime d;
+                            string _format = "yyyy/MM/dd";
+
+                            if (Type == PropertyInputType.datetimeHHmm)
+                            {
+                                _format += " HH:mm";
+                            }
+                            else if (Type == PropertyInputType.datetimeHHmmss)
+                            {
+                                _format += " HH:mm:ss";
+                            }
+
+                            try
+                            {
+                                d = DateTime.ParseExact(value, _format, null);
+                            }
+                            catch
+                            {
+                                d = DateTime.Parse(value);
+                            }
+
+                            obj = d;
+                        }
+                    }
+                    catch
+                    {
+                    }
+                }
+                else if (Type == PropertyInputType.select && value != "0")
+                {
+                    if (operation == "")
+                    {
+                        operation = "IN";
+                    }
+                    string[] parts = value.Split(',');
+                    List<int> numbers = new List<int>(parts.Length);
+
+                    foreach(string part in parts)
+                    {
+                        int number = 0;
+
+                        try
+                        {
+                            number = Int32.Parse(part);
+                        }
+                        catch
+                        { }
+
+                        if (number != 0)
+                        {
+                            numbers.Add(number);
+                        }
+                    }
+
+                    if (numbers.Count > 0)
+                    {
+                        obj = numbers;
+                    }
+                }
+                else if (BasicType == BasicType.Number && Type != PropertyInputType.select)
+                {
+                    try
+                    {
+                        Lib.Numerize(ref value);
+
+                        if (DataType == typeof(System.Int32))
+                        {
+                            obj = Int32.Parse(value);
+                        }
+                        else if (DataType == typeof(System.Int16))
+                        {
+                            obj = Int16.Parse(value);
+                        }
+                        if (DataType == typeof(System.Single))
+                        {
+                            obj = Single.Parse(value);
+                        }
+                        if (DataType == typeof(System.Double))
+                        {
+                            obj = Double.Parse(value);
+                        }
+                        if (DataType == typeof(System.Decimal))
+                        {
+                            obj = Decimal.Parse(value);
+                        }
+                    }
+                    catch
+                    {
+                    }
+                }
+
+                if (obj != null)
+                {
+                    if (where != "")
+                    {
+                        where += " AND ";
+                    }
+                    where += "[TABLENAME]." + FieldName + " " + operation + " @" + FieldName;
+                    param.Add(FieldName, obj);
+                }
+            }
         }
     }
 }

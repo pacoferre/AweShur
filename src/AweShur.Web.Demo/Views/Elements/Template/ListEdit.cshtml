@@ -19,8 +19,7 @@
             item = AweShur.Web.CRUDLocations.Item(eref);
         }
 
-        columns = BusinessBaseProvider.Instance.GetFilter(
-                AppUser.GetAppUser(Context),
+        columns = BusinessBaseProvider.Instance.GetFilter(Context,
                 item.ObjectName).GetEmpty().VisibleColumns;
     }
     catch (Exception exp)

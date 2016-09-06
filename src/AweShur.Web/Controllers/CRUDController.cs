@@ -36,14 +36,11 @@ namespace AweShur.Web.Controllers
         public ListModelToClient List([FromBody]ListModelFromClient request)
         {
             ListModelToClient resp = new ListModelToClient();
-            FilterBase filter = BusinessBaseProvider.Instance.GetFilter(
-                AppUser.GetAppUser(this.HttpContext), request.oname);
+            FilterBase filter = BusinessBaseProvider.Instance.GetFilter(HttpContext, request.oname);
 
-            if (request.dofastsearch)
-            {
-                filter.FastSearchActivated = true;
-                filter.FastSearch = request.fastsearch;
-            }
+            filter.FastSearchActivated = request.dofastsearch;
+            filter.FastSearch = request.fastsearch;
+            filter.Filter = request.data;
 
             if (request.sortIndex == 0)
             {
@@ -55,7 +52,8 @@ namespace AweShur.Web.Controllers
             }
 
             resp.plural = filter.Decorator.Plural;
-            resp.data = Dapper.SqlMapper.ToList(filter.Get(request.sortIndex, 
+            resp.data = filter.Filter;
+            resp.result = Dapper.SqlMapper.ToList(filter.Get(request.sortIndex, 
                 (request.sortDir == "asc" ? SortDirection.Ascending : SortDirection.Descending),
                 0, 1000));
             resp.fastsearch = filter.FastSearch;

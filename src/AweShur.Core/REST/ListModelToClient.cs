@@ -9,9 +9,10 @@ namespace AweShur.Core.REST
     {
         public string plural { get; set; }
         public BusinessObjectPermisson permisson = new BusinessObjectPermisson();
-        public List<object[]> data { get; set; }
+        public List<object[]> result { get; set; }
         public string fastsearch { get; set; } = "";
         public int sortIndex { get; set; } = 1;
         public string sortDir { get; set; } = "a";
+        public Dictionary<string, string> data { get; set; } = null;
     }
 }

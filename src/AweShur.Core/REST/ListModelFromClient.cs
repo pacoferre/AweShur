@@ -12,5 +12,6 @@ namespace AweShur.Core.REST
         public string sortDir { get; set; } = "";
         public bool dofastsearch { get; set; } = false;
         public string fastsearch { get; set; } = "";
+        public Dictionary<string, string> data { get; set; } = new Dictionary<string, string>();
     }
 }

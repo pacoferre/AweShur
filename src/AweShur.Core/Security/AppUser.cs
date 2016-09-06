@@ -102,7 +102,7 @@ namespace AweShur.Core.Security
         {
             get
             {
-                return "dd-MM-yyyy"; // Pending translation.
+                return "dd/MM/yyyy"; // Pending translation.
             }
         }
 

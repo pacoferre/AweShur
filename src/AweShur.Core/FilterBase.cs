@@ -1,7 +1,10 @@
 ﻿using AweShur.Core.DataViews;
+using Dapper;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace AweShur.Core
@@ -13,6 +16,7 @@ namespace AweShur.Core
         public bool EmptyWhereReturnsEmpty { get; set; } = false;
         public string FastSearch { get; set; } = "";
         public bool FastSearchActivated { get; set; } = true;
+        public Dictionary<string, string> Filter { get; set; } = null;
 
         public BusinessBaseDecorator Decorator { get; }
 
@@ -31,9 +35,10 @@ namespace AweShur.Core
             }
         }
 
-        protected string Where(DataView dataView)
+        protected Tuple<string, DynamicParameters> Where(DataView dataView)
         {
             string where = "";
+            DynamicParameters param = new DynamicParameters();
 
             if (FastSearchActivated && FastSearch != "")
             {
@@ -44,25 +49,53 @@ namespace AweShur.Core
                         where += " OR ";
                     }
 
-                    where += col.Expression + " LIKE '%" + FastSearch + "%'";
+                    where += col.Expression + " LIKE @" + col.As;
+                    param.Add(col.As, "%" + FastSearch + "%");
                 }
             }
+            else
+            {
+                foreach(KeyValuePair<string, string> item in Filter)
+                {
+                    PropertyDefinition prop;
+                    string fieldName = item.Key;
+                    string operation = "";
 
-            return where;
+                    if (fieldName.Contains('|'))
+                    {
+                        string[] parts = fieldName.Split('|');
+
+                        fieldName = parts[0];
+                        operation = parts[1];
+                    }
+                    
+                    if (Decorator.Properties.TryGetValue(fieldName, out prop))
+                    {
+                        prop.Where(ref where, ref param, item.Value, operation);
+                    }
+                }
+
+                where = where.Replace("[TABLENAME]", Decorator.TableNameEncapsulated);
+            }
+
+            return new Tuple<string, DynamicParameters>(where, param);
         }
+
+        public static Tuple<string, DynamicParameters> emptyWhere 
+            = new Tuple<string, DynamicParameters>("1 = 0", null);
 
         public virtual IEnumerable<dynamic> Get(int order, SortDirection sortDirection,
             int fromRecord, int rowCount)
         {
             DataView dataView = new DataView(this);
-            string where = Where(dataView);
+            Tuple<string, DynamicParameters> where = Where(dataView);
 
-            if (where == "" && EmptyWhereReturnsEmpty)
+            if (where.Item1 == "" && EmptyWhereReturnsEmpty)
             {
-                where = "1 = 0";
+                where = emptyWhere;
             }
 
-            return dataView.Get(where, order, sortDirection, fromRecord, rowCount);
+            return dataView.Get(where.Item1, where.Item2, order, sortDirection, fromRecord, rowCount);
         }
 
         public DataView GetEmpty()
@@ -84,6 +117,35 @@ namespace AweShur.Core
             }
 
             dataView.FromClause = Decorator.TableNameEncapsulated;
+        }
+
+        public virtual byte[] Serialize()
+        {
+            JObject obj = ToJObject();
+
+            return Encoding.Unicode.GetBytes(obj.ToString(Newtonsoft.Json.Formatting.None));
+        }
+
+        public JObject ToJObject()
+        {
+            JObject obj = new JObject();
+
+            obj.Add("f", JToken.FromObject(Filter));
+
+            return obj;
+        }
+
+        public virtual void Deserialize(byte[] data)
+        {
+            string json = Encoding.Unicode.GetString(data);
+            JObject obj = JObject.Parse(json);
+
+            FromJObject(obj);
+        }
+
+        public void FromJObject(JObject obj)
+        {
+            Filter = obj["f"].ToObject<Dictionary<string, string>>();
         }
     }
 }

@@ -44,7 +44,7 @@
         <neon-animated-pages id="pages" class="flex" entry-animation="slide-from-right-animation" exit-animation="slide-left-animation">
             <neon-animatable>
                 <div id="listContent">
-                    <awsl-list-toolbar on-awsl-new="_onNew" fastsearch="{{fastsearch}}"></awsl-list-toolbar>
+                    <awsl-list-toolbar on-awsl-new="_onNew" fastsearch="{{fastsearch}}" items-count="[[itemsCount]]"></awsl-list-toolbar>
                     <vaadin-grid id="itemsList" items="[[items]]">
                         <content></content>
                     </vaadin-grid>

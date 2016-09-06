@@ -49,7 +49,8 @@
                             sortIndex: 0,
                             sortDir: "asc",
                             dofastsearch: true,
-                            fastsearch: ""
+                            fastsearch: "",
+                            data: {}
                         };
 
                         return obj;
@@ -69,6 +70,7 @@
             listeners: {
                 'awsl-refresh': 'refresh',
                 'awsl-openfilter': '_openFilter',
+                'awsl-closefilter': '_closeFilter',
                 'awsl-set-route-key': '_setRouteKey'
             },
             refresh: function () {
@@ -80,12 +82,17 @@
                     this._doRequest();
                 }
             },
-            _handleFormResponse: function (event) {
-                this.items = event.detail.response.data;
+            _handleResponse: function (event) {
+                this.items = event.detail.response.result;
                 this.itemsCount = this.items.length;
                 this.lastTitle = event.detail.response.plural;
                 this.fire('awsl-set-title', { title: event.detail.response.plural });
-                this.getFilter().titleDialog = this.titleSearch + " " + event.detail.response.plural;
+
+                if (this.getFilter() != null)
+                {
+                    this.getFilter().titleDialog = this.titleSearch + " " + event.detail.response.plural;
+                    this.getFilter().thefilter.getFilter(event.detail.response);
+                }
 
                 if (this.fastsearch != event.detail.response.fastsearch)
                 {
@@ -104,7 +111,7 @@
 
                 this.firstResponse = true;
             },
-            _handleFormError: function (event) {
+            _handleError: function (event) {
                 debugger;
             },
             attached: function () {
@@ -118,8 +125,8 @@
                 this.ajaxlist.method = 'POST';
                 this.ajaxlist.contentType = 'application/json';
 
-                this.ajaxlist.addEventListener('response', this._handleFormResponse.bind(this));
-                this.ajaxlist.addEventListener('error', this._handleFormError.bind(this));
+                this.ajaxlist.addEventListener('response', this._handleResponse.bind(this));
+                this.ajaxlist.addEventListener('error', this._handleError.bind(this));
 
                 this.ajaxlist.url = "/CRUD/List";
                 this.toserver.oname = this.oname;
@@ -136,6 +143,17 @@
             },
             _openFilter: function () {
                 this.getFilter()._openFilter();
+            },
+            _closeFilter: function (event) {
+
+                if (event.detail.ok)
+                {
+                    this.refresh();
+                }
+                else
+                {
+                    this.getFilter().thefilter.getFilter(this.ajaxlist.lastResponse);
+                }
             },
             _sortOrderChanged: function () {
                 // this here is vaadin-grid !!!
@@ -185,6 +203,14 @@
                 }
             },
             _doRequest: function () {
+                this.toserver.data = {};
+
+                if (this.getFilter() != null)
+                {
+                    this.getFilter().thefilter.setFilter(this.toserver);
+                    this.toserver.topRecords = this.getFilter().topRecords;
+                }
+
                 this.ajaxlist.body = this.toserver;
                 this.ajaxlist.generateRequest();
             }

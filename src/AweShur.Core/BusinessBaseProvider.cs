@@ -121,14 +121,49 @@ namespace AweShur.Core
             return decorator;
         }
 
-        public FilterBase GetFilter(AppUser user, string objectName)
+        public FilterBase GetFilter(HttpContext context, string objectName)
         {
-            return GetDecorator(objectName, 0).GetFilter();
+            AppUser user = AppUser.GetAppUser(context);
+            FilterBase filter = GetDecorator(objectName, 0).GetFilter();
+            int dbNumber = filter.Decorator.DBNumber;
+            string filterKey = FilterKey(user, objectName, filter.Decorator.DBNumber);
+            object objTemp;
+            byte[] data;
+
+            if (context.Items.TryGetValue(filterKey, out objTemp))
+            {
+                filter = (FilterBase)objTemp;
+            }
+            else
+            {
+                data = GetData(filterKey);
+
+                if (data != null)
+                {
+                    try
+                    {
+                        filter.Deserialize(data);
+                    }
+                    catch (Exception exp)
+                    {
+                        // Sometimes Redis returns bad data.
+                        int t = 2;
+                    }
+                }
+                context.Items[filterKey] = filter;
+            }
+
+            return filter;
         }
 
         private static string ObjectKey(string objectName, int dbNumber, string key)
         {
             return "O_" + objectName + "_" + dbNumber + "_" + key;
+        }
+
+        private static string FilterKey(AppUser user, string objectName, int dbNumber)
+        {
+            return "F_" + objectName + "_" + dbNumber + "_" + user.Key;
         }
 
         public static void StoreObject(BusinessBase obj, string objectName)

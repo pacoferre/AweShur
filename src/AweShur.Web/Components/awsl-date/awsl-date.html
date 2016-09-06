@@ -21,13 +21,13 @@
                 --app-datepicker-button-color: #4285f4;
             }
         </style>
-        <paper-input label="[[label]]" always-float-label="[[alwaysFloatLabel]]" id="inputDate" readonly>
+        <paper-input label="[[label]]" always-float-label="[[alwaysFloatLabel]]" id="inputDate" readonly on-tap="_openCalendar">
             <paper-icon-button suffix hidden="[[noedit]]" on-tap="_openCalendar" icon="icons:today" alt="calendar" title="calendar">
             </paper-icon-button>
             <paper-icon-button suffix hidden="[[_hideClear(noedit,noclear)]]" on-tap="_clear" icon="clear" alt="clear" title="clear">
             </paper-icon-button>        
         </paper-input>
-        <app-datepicker-dialog id="datePicker" format="yyyy/mm/dd" date="{{currentDate}}" no-animation
+        <app-datepicker-dialog id="datePicker" locale="[[locale]]" no-animation date="{{_readOnlyDate}}"
                                auto-update-date></app-datepicker-dialog>
     </template>
     <script>
@@ -35,10 +35,6 @@
         is: "awsl-date",
         behaviors: [AWSLBehaviors.ControlBehavior],
         properties: {
-            emptyDate: {
-                type: String,
-                value: !0
-            },
             currentDate: {
                 type: String,
             },
@@ -49,59 +45,78 @@
             noclear: {
                 type: Boolean,
                 value: !1
-            }
+            },
+            locale: {
+                type: String,
+                value: function () {
+                    return moment.locale();
+                }
+            },
+            format: {
+                type: String,
+                value: 'L'
+            },
+            _readOnlyDate: String,
         },
+        observers: [
+          '_updateReadOnlyDate(_readOnlyDate)',
+        ],
         ready: function () {
             this.$.datePicker.disableDays = [];
         },
         _hideClear: function (noedit, noclear) {
             return noedit || noclear;
         },
-        listeners: {
-            'iron-overlay-closed': '_onClose'
-        },
-        _openCalendar: function() {
+        _openCalendar: function(event) {
+            event.stopPropagation();
             this.$.datePicker.open();
         },
-        _onClose: function (event) {
-            this.async(function () {
-                if (event.detail.confirmed) {
-                    if (this.$.inputDate.value != this.$.datePicker.$.datePicker.date) {
-                        this.$.inputDate.value = this.$.datePicker.$.datePicker.date;
-                        this.$.value = this.$.datePicker.$.datePicker.date;
-                        this.fire('change');
-                    }
-                }
-            });
+        _updateReadOnlyDate: function (event) {
+            if (this.currentDate !== undefined && this.currentDate != this.$.datePicker.$.datePicker.date) {
+                this.currentDate = this.$.datePicker.$.datePicker.date;
+                this._setInputDate();
+                this.fire('change');
+            }
         },
-        _clear: function ()
-        {
-            if (this.$.inputDate.value != "")
+        _setInputDate: function () {
+            if (this.currentDate == "")
             {
                 this.$.inputDate.value = "";
+            }
+            else
+            {
+                this.$.inputDate.value = moment(this.currentDate, "YYYY/MM/DD").format(this.format);
+            }
+        },
+        _clear: function (event)
+        {
+            event.stopPropagation();
+            if (this.currentDate !== undefined && this.currentDate != "")
+            {
+                this.currentDate = "";
+                this._setInputDate();
                 this.fire('change');
             }
         },
         getData: function (fromServer) {
             var name = this.dataField;
 
-            if (name != null) {
+            if (name !== undefined && name != null) {
                 var value = fromServer.data[name];
 
-                if (value == null || value == "")
+                if (value === undefined || value == null || value == "")
                 {
-                    if (this.$.inputDate.value.toString().trim() != "")
-                    {
-                        this.$.inputDate.value = "";
-                    }
-                    this.emptyDate = true;
+                    this.currentDate = "";
+                    this.$.datePicker.$.datePicker.inputDate = "";
+                    this.$.datePicker.$.datePicker._setDate("");
+                    this._setInputDate();
                 }
                 else {
-                    if (!this.$.inputDate.value || this.$.inputDate.value.toString().trim() != value) {
-                        this.$.inputDate.value = value;
-                        this.$.datePicker.date = value;
+                    if (!this.currentDate || this.currentDate != value) {
+                        this.currentDate = value;
+                        this.$.datePicker.$.datePicker.inputDate = value;
+                        this._setInputDate();
                     }
-                    this.emptyDate = false;
                 }
             }
         },
@@ -109,8 +124,12 @@
             var name = this.dataField;
 
             if (name != null) {
-                toServer.data[name] = this.$.inputDate.value;
+                toServer.data[name] = this.currentDate;
             }
+        },
+        _focus: function()
+        {
+            this.$.datePicker.open();
         }
     });
     </script>

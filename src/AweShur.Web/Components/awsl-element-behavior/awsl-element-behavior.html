@@ -142,7 +142,7 @@
                     {
                         var name = element.getAttribute('data-field');
 
-                        if (name !== null && name != "") {
+                        if (name !== undefined && name != null && name != "") {
                             element.dataField = name;
                         }
                     }
@@ -154,7 +154,7 @@
                             element.getData = function (fromServer) {
                                 var name = this.dataField;
 
-                                if (name != null) {
+                                if (name !== undefined && name != null) {
 
                                     if (name.indexOf(',') > 0) {
                                         name = name.split(',')[0];

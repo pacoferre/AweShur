@@ -66,8 +66,13 @@
             getData: function (fromServer) {
                 var name = this.dataField;
 
-                if (name != null) {
+                if (name !== undefined && name != null) {
                     var value = fromServer.data[name];
+
+                    if (value === undefined)
+                    {
+                        value = "0";
+                    }
 
                     if (!this.value || this.value.toString().trim() != value) {
 

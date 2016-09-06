@@ -110,7 +110,7 @@ namespace AweShur.Core.DataViews
                 .Replace("{FromClause}", FromClause);
         }
 
-        public IEnumerable<dynamic> Get(string whereClause, int order, SortDirection sortDirection, 
+        public IEnumerable<dynamic> Get(string whereClause, object param, int order, SortDirection sortDirection, 
             int fromRecord, int rowCount)
         {
             // {SelectColumns} {FromClause} {WhereClause} {OrderBy} {FromRecord} {RowCount}
@@ -151,7 +151,7 @@ namespace AweShur.Core.DataViews
                 .Replace("{FromRecord}", fromRecord.ToString())
                 .Replace("{RowCount}", rowCount.ToString());
 
-            return currentDB.Query(sql);
+            return currentDB.Query(sql, param);
         }
     }
 }

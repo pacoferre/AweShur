@@ -13,6 +13,8 @@
     "jv-datepicker": "^2.7.3",
     "vaadin-grid": "^1.1.1",
     "vaadin-upload": "^1.0.1",
-    "vaadin-combo-box": "^1.1.3"
+    "vaadin-combo-box": "^1.1.3",
+    "vaadin-date-picker": "^1.1.3",
+    "moment": "^2.14.1"
   }
 }

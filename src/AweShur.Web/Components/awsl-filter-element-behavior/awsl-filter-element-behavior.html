@@ -15,7 +15,7 @@
             },
             getFilter: function (fromServer) {
                 for (var el, i = 0; el = this.elements[i], i < this.elements.length; i++) {
-                    el.getData(dataItem, undefined);
+                    el.getData(fromServer, undefined);
                 }
             },
             setFilter: function (toServer) {
