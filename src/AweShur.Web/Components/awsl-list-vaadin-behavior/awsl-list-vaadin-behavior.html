@@ -1,0 +1,176 @@
+﻿<link rel="import" href="../lib/polymer/polymer.html">
+<link rel="import" href="../lib/iron-ajax/iron-ajax.html">
+
+<script>
+    var AWSLBehaviors = AWSLBehaviors || {};
+
+    (function () {
+        AWSLBehaviors.ListVaadinBehavior = {
+            properties: {
+                oname: {
+                    type: String,
+                },
+                ajaxlist: {
+                    type: Object
+                },
+                items: {
+                    type: Array,
+                },
+                titleSearch: {
+                    type: String
+                },
+                lastTitle: {
+                    type: String
+                },
+                toserver: {
+                    type: Object,
+                    value: function () {
+                        var obj = {
+                            oname: "",
+                            sortIndex: 0,
+                            sortDir: "asc",
+                            dofastsearch: true,
+                            fastsearch: "",
+                            data: {},
+                            topRecords: 100,
+                            first: true
+                        };
+
+                        return obj;
+                    }
+                },
+                fastsearch: {
+                    type: String
+                },
+                itemsCount: {
+                    type: Number,
+                    value: 0
+                }
+            },
+            wasAttached: false,
+            firstResponse: false,
+            listeners: {
+                'awsl-refresh': 'refresh',
+                'awsl-openfilter': '_openFilter',
+                'awsl-closefilter': '_closeFilter',
+            },
+            refresh: function () {
+                if (this.lastTitle !== undefined && this.lastTitle != "")
+                {
+                    this.fire('awsl-set-title', { title: this.lastTitle });
+                }
+                if (this.wasAttached) {
+                    this._doRequest();
+                }
+            },
+            _handleResponse: function (event) {
+
+                this.toserver.first = false;
+
+                this.items = event.detail.response.result;
+                this.itemsCount = this.items.length;
+                this.lastTitle = event.detail.response.plural;
+                this.fire('awsl-set-title', { title: event.detail.response.plural });
+
+                if (this.getFilter() != null)
+                {
+                    this.getFilter().titleDialog = this.titleSearch + " " + event.detail.response.plural;
+                    this.getFilter().thefilter.getFilter(event.detail.response);
+                    this.getFilter().topRecords = event.detail.response.topRecords;
+                }
+
+                if (this.fastsearch != event.detail.response.fastsearch)
+                {
+                    this.fastsearch = event.detail.response.fastsearch;
+                }
+
+                var sorOrder = this.getItemsList().sortOrder[0];
+
+                if (sorOrder.column != event.detail.response.sortIndex)
+                {
+                    sorOrder.column = event.detail.response.sortIndex;
+                }
+                if (sorOrder.direction != event.detail.response.sortDir) {
+                    sorOrder.direction != event.detail.response.sortDir;
+                }
+
+                this.firstResponse = true;
+            },
+            _handleError: function (event) {
+                debugger;
+            },
+            attached: function () {
+                if (this.wasAttached) {
+                    return;
+                }
+                this.wasAttached = true;
+
+                this.ajaxlist = document.createElement('iron-ajax');
+
+                this.ajaxlist.method = 'POST';
+                this.ajaxlist.contentType = 'application/json';
+
+                this.ajaxlist.addEventListener('response', this._handleResponse.bind(this));
+                this.ajaxlist.addEventListener('error', this._handleError.bind(this));
+
+                this.ajaxlist.url = "/CRUD/List";
+                this.toserver.oname = this.oname;
+
+                this.getItemsList().reallythis = this;
+                this.getItemsList().addEventListener('sort-order-changed', this._sortOrderChanged);
+            },
+            getItemsList: function () {
+                return null;
+            },
+            getFilter: function () {
+                return null;
+            },
+            _openFilter: function () {
+                this.getFilter()._openFilter();
+            },
+            _closeFilter: function (event) {
+
+                if (event.detail.ok)
+                {
+                    this.refresh();
+                }
+                else
+                {
+                    this.getFilter().thefilter.getFilter(this.ajaxlist.lastResponse);
+                }
+            },
+            _sortOrderChanged: function () {
+                // this here is vaadin-grid !!!
+                var reallythis = this.reallythis;
+
+                if (reallythis.firstResponse) {
+                    reallythis.toserver.sortIndex = this.sortOrder[0].column;
+                    reallythis.toserver.sortDir = this.sortOrder[0].direction != 'desc' ? "asc" : "desc";
+
+                    reallythis._doRequest();
+                }
+            },
+            _fastsearchChanged: function (fastsearch) {
+                if (this.firstResponse) {
+                    this.toserver.dofastsearch = true;
+                    this.toserver.fastsearch = fastsearch;
+                    this.debounce('click', function () {
+                        this._doRequest();
+                    }, 100);
+                }
+            },
+            _doRequest: function () {
+                this.toserver.data = {};
+
+                if (this.getFilter() != null)
+                {
+                    this.getFilter().thefilter.setFilter(this.toserver);
+                    this.toserver.topRecords = this.getFilter().topRecords;
+                }
+
+                this.ajaxlist.body = this.toserver;
+                this.ajaxlist.generateRequest();
+            }
+        };
+    })();
+</script>
