@@ -8,15 +8,16 @@ namespace AweShur.Core.DataViews
 {
     public interface IDataViewSetter
     {
-        void SetDataView(DataView dataView, string elementName);
+        void SetDataView(DataView dataView);
     }
 
     public class DataView
     {
         public List<DataViewColumn> Columns { get; set; }
-        public string ElementName { get; } = "";
         public string FromClause { get; set; } = "";
+        public string GroupByClause { get; set; } = "";
         public string PreOrderBy { get; set; } = "";
+        public string PreWhere { get; set; } = "";
         public string PostOrderBy { get; set; } = "";
 
         private DB currentDB = null;
@@ -27,10 +28,9 @@ namespace AweShur.Core.DataViews
         private string query = "";
         private string firstOrderBy = "";
 
-        public DataView(IDataViewSetter setter, string elementName = "")
+        public DataView(IDataViewSetter setter)
         {
-            ElementName = elementName;
-            setter.SetDataView(this, elementName);
+            setter.SetDataView(this);
 
             InternalSet();
         }
@@ -107,6 +107,7 @@ namespace AweShur.Core.DataViews
             // {SelectColumns} {FromClause} {WhereClause} {OrderBy} {FromRecord} {RowCount}
             query = currentDB.Dialect.GetFromToListSql.Replace("{SelectColumns}", selectColumns)
                 .Replace("{SelectNamedColumns}", selectNamedColumns)
+                .Replace("{GroupByClause}", (GroupByClause == "" ? "" : "GROUP BY " + GroupByClause))
                 .Replace("{FromClause}", FromClause);
         }
 
@@ -116,6 +117,7 @@ namespace AweShur.Core.DataViews
             // {SelectColumns} {FromClause} {WhereClause} {OrderBy} {FromRecord} {RowCount}
             string sql = query;
             string orderBy = firstOrderBy;
+            string where = PreWhere;
 
             if (visibleColumns[order].OrderBy != "")
             {
@@ -146,8 +148,17 @@ namespace AweShur.Core.DataViews
                 }
             }
 
+            if (where == "")
+            {
+                where = whereClause;
+            }
+            else
+            {
+                where = "(" + where + ")" + (whereClause == "" ? "" : " AND " + whereClause);
+            }
+
             sql = sql.Replace("{OrderBy}", orderBy)
-                .Replace("{WhereClause}", (whereClause == "" ? "" : " WHERE " + whereClause))
+                .Replace("{WhereClause}", (where == "" ? "" : "WHERE " + where))
                 .Replace("{FromRecord}", fromRecord.ToString())
                 .Replace("{RowCount}", rowCount.ToString());
 

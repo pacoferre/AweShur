@@ -274,7 +274,7 @@ namespace AweShur.Core
                     // First element
                     ListTable dt = BusinessBaseProvider.ListProvider.GetList(ListObjectName, ListName);
 
-                    if (dt.Items.Count > 0)
+                    if (dt.ToClient.Count > 0)
                     {
                         value = dt.First[0].ToString();
                     }
@@ -554,7 +554,8 @@ namespace AweShur.Core
             {
                 object obj = null;
 
-                if (BasicType == BasicType.Text || BasicType == BasicType.TextLong)
+                if (Type != PropertyInputType.select &&
+                    (BasicType == BasicType.Text || BasicType == BasicType.TextLong))
                 {
                     obj = value;
                     if (operation == "")
@@ -607,28 +608,49 @@ namespace AweShur.Core
                         operation = "IN";
                     }
                     string[] parts = value.Split(',');
-                    List<int> numbers = new List<int>(parts.Length);
 
-                    foreach(string part in parts)
+                    if (this.BasicType == BasicType.Text)
                     {
-                        int number = 0;
+                        List<string> items = new List<string>(parts.Length);
 
-                        try
+                        foreach (string part in parts)
                         {
-                            number = Int32.Parse(part);
+                            if (part != "")
+                            {
+                                items.Add(part);
+                            }
                         }
-                        catch
-                        { }
 
-                        if (number != 0)
+                        if (items.Count > 0)
                         {
-                            numbers.Add(number);
+                            obj = items;
                         }
                     }
-
-                    if (numbers.Count > 0)
+                    else
                     {
-                        obj = numbers;
+                        List<int> numbers = new List<int>(parts.Length);
+
+                        foreach (string part in parts)
+                        {
+                            int number = 0;
+
+                            try
+                            {
+                                number = Int32.Parse(part);
+                            }
+                            catch
+                            { }
+
+                            if (number != 0)
+                            {
+                                numbers.Add(number);
+                            }
+                        }
+
+                        if (numbers.Count > 0)
+                        {
+                            obj = numbers;
+                        }
                     }
                 }
                 else if (BasicType == BasicType.Number && Type != PropertyInputType.select)

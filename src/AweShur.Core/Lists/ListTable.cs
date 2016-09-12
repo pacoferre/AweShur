@@ -14,7 +14,7 @@ namespace AweShur.Core.Lists
         private int dbNumber = 0;
         public string[] Names { get; private set; } = new string[0];
         public string ListName { get; private set; } = "";
-        public List<object[]> Items { get; private set; }
+        private List<object[]> Items { get; set; }
         public object[] ZeroItem { get; private set; }
         private Lazy<List<ListItemRest>> generator;
         private object pending = true;

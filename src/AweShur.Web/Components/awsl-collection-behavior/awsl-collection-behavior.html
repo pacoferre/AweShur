@@ -12,7 +12,7 @@
                     type: Boolean,
                     value: true
                 },
-                isChildren: {
+                isCollection: {
                     type: Boolean,
                     value: true
                 },
@@ -66,13 +66,16 @@
                 if (this.wasInitialized) {
                     return;
                 }
+                this.wasInitialized = true;
 
-                var newElement = document.createElement(this.childelement);
-                newElement.id = "theelement";
+                if (this.childelement !== undefined) {
+                    var newElement = document.createElement(this.childelement);
+                    newElement.id = "theelement";
 
-                this.dummyElement = Polymer.dom(this.getDummy()).appendChild(newElement);
+                    this.dummyElement = Polymer.dom(this.getDummy()).appendChild(newElement);
 
-                Polymer.dom(this.getItemsList()).appendChild(this.getListTemplate());
+                    Polymer.dom(this.getItemsList()).appendChild(this.getListTemplate());
+                }
 
                 this.fire('awsl-element-register');
             },

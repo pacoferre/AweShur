@@ -48,37 +48,7 @@
                 edithref='@(item.edithref + "/" + idappuser)' editelement="@item.editelement"
                 filterhref='@(item.filterhref + "/" + idappuser)' filterelement="@item.filterelement"
                 title-search="Filter">
-                <table>
-                    <colgroup>
-                        @foreach (DataViewColumn v in columns)
-                        {
-                            @if (v.Hidden)
-                            {
-                                <col hidden="">
-                            }
-                            else
-                            {
-                                @if (!firstOrder)
-                                {
-                                    firstOrder = true;
-                                    <col sortable="" sort-direction="asc">
-                                }
-                                else
-                                {
-                                    <col sortable="">
-                                }
-                            }
-                        }
-                    </colgroup>
-                    <thead>
-                        <tr>
-                            @foreach (DataViewColumn v in columns)
-                            {
-                                <th>@v.Label</th>
-                            }
-                        </tr>
-                    </thead>
-                </table>
+				@Html.Partial("~/Views/Elements/Template/PartialColumns.cshtml", columns)
             </awsl-listeditor-vaadin>
         }
     </template>

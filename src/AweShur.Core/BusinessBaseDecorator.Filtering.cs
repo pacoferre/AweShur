@@ -8,7 +8,7 @@ namespace AweShur.Core
 {
     public partial class BusinessBaseDecorator
     {
-        public virtual FilterBase GetFilter()
+        public virtual FilterBase GetFilter(string filterName)
         {
             return new FilterBase(this, DBNumber);
         }

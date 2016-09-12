@@ -74,7 +74,7 @@
                         this.elements.splice(index, 1);
                     }
 
-                    if (target.isChildren !== undefined)
+                    if (target.isCollection !== undefined)
                     {
                         index = this.childrenArray.indexOf(target);
                         if (index > -1) {
@@ -117,10 +117,8 @@
                         this._merge(element.dataNames);
                     }
                 }
-                if (element.isCustomControl !== undefined) {
-                    if (element.isChildren !== undefined) {
-                        this.childrenArray.push(element);
-                    }
+                if (element.isCustomControl !== undefined && element.isCollection !== undefined) {
+                    this.childrenArray.push(element);
                 }
             },
             _registerIronFormElement: function (e) {
@@ -244,7 +242,7 @@
 
             getData: function (fromServer, lastChanged) {
                 for (var el, i = 0; el = this.elements[i], i < this.elements.length; i++) {
-                    if (el.isChildren !== undefined) {
+                    if (el.isCollection !== undefined) {
                         el.getChildData(fromServer, lastChanged, this.rootEditor.lastFromServer.refreshAll);
                     }
                     else {
@@ -263,7 +261,7 @@
             setData: function (toServer) {
                 for (var el, i = 0; el = this.elements[i], i < this.elements.length; i++) {
 
-                    if (el.isChildren !== undefined)
+                    if (el.isCollection !== undefined)
                     {
                         el.setChildData(toServer);
                     }

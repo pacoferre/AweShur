@@ -32,6 +32,7 @@
                     value: false
                 }
             },
+            listItemsLoaded: false,
             _parameterChange: function (newValue, oldValue) {
                 if (this.listName !== undefined && this.objectName !== undefined) {
                     this.async(this.refresh);
@@ -46,6 +47,8 @@
                 });
             },
             setItems: function (newItems) {
+                this.listItemsLoaded = true;
+
                 if (this.isSearch) {
                     this.listItems = newItems;
 
@@ -66,14 +69,14 @@
                 if (name !== undefined && name != null) {
                     var value = fromServer.data[name];
 
-                    if (value === undefined)
+                    if (value === undefined || (value == "" && this.isSearch))
                     {
                         value = "0";
                     }
 
                     if (!this.value || this.value.toString().trim() != value) {
 
-                        if (this.listItems.length == 0)
+                        if (!this.listItemsLoaded)
                         {
                             var that = this;
 

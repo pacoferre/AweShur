@@ -58,7 +58,7 @@ namespace AweShur.Core
             }
         }
 
-        protected Tuple<string, DynamicParameters> Where(DataView dataView)
+        protected virtual Tuple<string, DynamicParameters> Where(DataView dataView)
         {
             string where = "";
             DynamicParameters param = new DynamicParameters();
@@ -126,7 +126,7 @@ namespace AweShur.Core
             return new DataView(this);
         }
 
-        public virtual void SetDataView(DataView dataView, string elementName)
+        public virtual void SetDataView(DataView dataView)
         {
             dataView.CurrentDB = CurrentDB;
 

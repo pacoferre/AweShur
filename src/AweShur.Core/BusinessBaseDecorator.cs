@@ -316,11 +316,9 @@ namespace AweShur.Core
 
         public virtual string GetListSQL(string listName, string parameter)
         {
-            string sql = "Select " + dialect.Encapsulate(names[PrimaryKeys[0]]) + " As ID, "
+            return "Select " + dialect.Encapsulate(names[PrimaryKeys[0]]) + " As ID, "
                 + dialect.Encapsulate(firstStringProperty.FieldName) + " From " + tableNameEncapsulated
                 + " Order By " + dialect.Encapsulate(firstStringProperty.FieldName);
-
-            return sql;
         }
 
         public virtual Dictionary<string, object> GetParameter(string parameter)
@@ -333,10 +331,10 @@ namespace AweShur.Core
             return new Dictionary<string, object>() { { "id", parameter } };
         }
 
-        public virtual ListTable GetList(string listName, string parameter, int dbNumber)
+        public virtual ListTable GetList(string listName = "", string parameter = "")
         {
             string sql = GetListSQL(listName, parameter);
-            ListTable list = new ListTable(listName, sql, GetParameter(parameter), dbNumber, AllListDescription);
+            ListTable list = new ListTable(listName, sql, GetParameter(parameter), this.DBNumber, AllListDescription);
 
             return list;
         }

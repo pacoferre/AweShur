@@ -13,6 +13,10 @@
                 oname: {
                     type: String,
                 },
+                filterName: {
+                    type: String,
+                    value: ""
+                },
                 edithref: {
                     type: String,
                 },
@@ -46,6 +50,7 @@
                     value: function () {
                         var obj = {
                             oname: "",
+                            filterName: "",
                             sortIndex: 0,
                             sortDir: "asc",
                             dofastsearch: true,
@@ -69,6 +74,7 @@
             wasAttached: false,
             firstResponse: false,
             settingRouteKey: false,
+            refreshPending: false,
             listeners: {
                 'awsl-refresh': 'refresh',
                 'awsl-openfilter': '_openFilter',
@@ -83,8 +89,16 @@
                 if (this.wasAttached) {
                     this._doRequest();
                 }
+                else
+                {
+                    this.refreshPending = true;
+                }
             },
             _handleResponse: function (event) {
+                if (this.getItemsList().awslcustomized === undefined) {
+                    this.getItemsList().awslcustomized === true;
+                    this.customizeItemsList();
+                }
 
                 this.toserver.first = false;
 
@@ -140,12 +154,19 @@
                 this.getItemsList().reallythis = this;
                 this.getItemsList().addEventListener('selected-items-changed', this._selectedItemChanged);
                 this.getItemsList().addEventListener('sort-order-changed', this._sortOrderChanged);
+
+                if (this.refreshPending)
+                {
+                    this.refresh();
+                }
             },
             getItemsList: function () {
                 return null;
             },
             getFilter: function () {
                 return null;
+            },
+            customizeItemsList: function () {
             },
             _openFilter: function () {
                 this.getFilter()._openFilter();
@@ -210,11 +231,22 @@
             },
             _doRequest: function () {
                 this.toserver.data = {};
+                this.toserver.filterName = this.filterName;
 
                 if (this.getFilter() != null)
                 {
-                    this.getFilter().thefilter.setFilter(this.toserver);
-                    this.toserver.topRecords = this.getFilter().topRecords;
+                    var thefilter = this.getFilter().thefilter;
+
+                    if (thefilter == null || thefilter == undefined)
+                    {
+                        this.async(this._doRequest, 10);
+                        return;
+                    }
+                    else
+                    {
+                        this.getFilter().thefilter.setFilter(this.toserver);
+                        this.toserver.topRecords = this.getFilter().topRecords;
+                    }
                 }
 
                 this.ajaxlist.body = this.toserver;

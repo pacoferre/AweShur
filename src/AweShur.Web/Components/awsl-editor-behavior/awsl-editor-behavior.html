@@ -62,6 +62,7 @@
             wasInitialized: false,
             waitingResponse: false,
             pendingLoad: false,
+            gettingDataFromServer: false,
             listeners: {
                 'awsl-refresh': 'refresh',
                 'awsl-new': '_onNew',
@@ -138,6 +139,10 @@
                 {
                     return;
                 }
+                if (this.gettingDataFromServer)
+                {
+                    return;
+                }
                 var elementWithDataFieldName = this._searchElementWithDataFieldName(elementChanged.target, 0);
 
                 if (elementWithDataFieldName != null)
@@ -147,7 +152,7 @@
                     // Must be better.
                     var posibleCollection = elementWithDataFieldName.containerElement.containerElement;
 
-                    if (posibleCollection == null || posibleCollection.isChildren === undefined)
+                    if (posibleCollection == null || posibleCollection.isCollection === undefined)
                     {
                         elementWithDataFieldName.setData(this.toserver.root);
                     }
@@ -262,8 +267,10 @@
                             this.lastChangedElement = null;
                         }
 
+                        this.gettingDataFromServer = true;
                         this.theelement.getData(fromServer, this.lastChangedElement);
                         this.theelement.afterGetData(fromServer);
+                        this.gettingDataFromServer = false;
 
                         this.lastChangedElement = null;
 

@@ -36,7 +36,7 @@ namespace AweShur.Web.Controllers
         public ListModelToClient List([FromBody]ListModelFromClient request)
         {
             ListModelToClient resp = new ListModelToClient();
-            FilterBase filter = BusinessBaseProvider.Instance.GetFilter(HttpContext, request.oname);
+            FilterBase filter = BusinessBaseProvider.Instance.GetFilter(HttpContext, request.oname, request.filterName);
 
             filter.FastSearchActivated = request.dofastsearch;
             filter.FastSearch = request.fastsearch;
@@ -71,7 +71,7 @@ namespace AweShur.Web.Controllers
             resp.sortDir = request.sortDir;
             resp.topRecords = filter.topRecords;
 
-            BusinessBaseProvider.StoreFilter(HttpContext, filter, request.oname);
+            BusinessBaseProvider.StoreFilter(HttpContext, filter, request.oname, request.filterName);
 
             return resp;
         }

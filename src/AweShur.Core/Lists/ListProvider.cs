@@ -63,7 +63,7 @@ namespace AweShur.Core.Lists
             {
                 BusinessBaseDecorator def = BusinessBaseProvider.Instance.GetDecorator(objectName);
 
-                list = def.GetList(listName, parameter, def.DBNumber);
+                list = def.GetList(listName, parameter);
 
                 BusinessBaseProvider.StoreData(key, list.Serialize());
             }

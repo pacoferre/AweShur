@@ -121,12 +121,12 @@ namespace AweShur.Core
             return decorator;
         }
 
-        public FilterBase GetFilter(HttpContext context, string objectName)
+        public FilterBase GetFilter(HttpContext context, string objectName, string filterName = "")
         {
             AppUser user = AppUser.GetAppUser(context);
-            FilterBase filter = GetDecorator(objectName, 0).GetFilter();
+            FilterBase filter = GetDecorator(objectName, 0).GetFilter(filterName);
             int dbNumber = filter.Decorator.DBNumber;
-            string filterKey = FilterKey(user, objectName, filter.Decorator.DBNumber);
+            string filterKey = FilterKey(user, objectName, filterName, filter.Decorator.DBNumber);
             object objTemp;
             byte[] data;
 
@@ -156,18 +156,18 @@ namespace AweShur.Core
             return filter;
         }
 
-        public static void StoreFilter(HttpContext context, FilterBase filter, string objectName)
+        public static void StoreFilter(HttpContext context, FilterBase filter, string objectName, string filterName)
         {
             AppUser user = AppUser.GetAppUser(context);
             int dbNumber = filter.Decorator.DBNumber;
-            string filterKey = FilterKey(user, objectName, filter.Decorator.DBNumber);
+            string filterKey = FilterKey(user, objectName, filterName, filter.Decorator.DBNumber);
 
             StoreData(filterKey, filter.Serialize());
         }
 
-        private static string FilterKey(AppUser user, string objectName, int dbNumber)
+        private static string FilterKey(AppUser user, string objectName, string filterName, int dbNumber)
         {
-            return "F_" + objectName + "_" + dbNumber + "_" + user.Key;
+            return "F_" + objectName + "_" + filterName + "_" + dbNumber + "_" + user.Key;
         }
 
         private static string ObjectKey(string objectName, int dbNumber, string key)
