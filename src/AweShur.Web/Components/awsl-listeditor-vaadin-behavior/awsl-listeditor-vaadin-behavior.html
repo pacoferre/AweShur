@@ -77,9 +77,13 @@
             refreshPending: false,
             listeners: {
                 'awsl-refresh': 'refresh',
+                'awsl-filterready': '_filterReady',
                 'awsl-openfilter': '_openFilter',
                 'awsl-closefilter': '_closeFilter',
                 'awsl-set-route-key': '_setRouteKey'
+            },
+            _filterReady: function() {
+                this.refresh();
             },
             refresh: function () {
                 if (this.lastTitle !== undefined && this.lastTitle != "")
@@ -155,7 +159,7 @@
                 this.getItemsList().addEventListener('selected-items-changed', this._selectedItemChanged);
                 this.getItemsList().addEventListener('sort-order-changed', this._sortOrderChanged);
 
-                if (this.refreshPending)
+                if (this.refreshPending && this.getFilter() == null)
                 {
                     this.refresh();
                 }
@@ -182,7 +186,7 @@
                     this.getFilter().thefilter.getFilter(this.ajaxlist.lastResponse);
                 }
             },
-            _sortOrderChanged: function () {
+            _sortOrderChanged: function (event) {
                 // this here is vaadin-grid !!!
                 var reallythis = this.reallythis;
 
@@ -192,8 +196,10 @@
 
                     reallythis._doRequest();
                 }
+
+                event.stopPropagation();
             },
-            _selectedItemChanged: function () {
+            _selectedItemChanged: function (event) {
                 // this here is vaadin-grid !!!
                 var select = this.selection.selected();
 
@@ -205,6 +211,8 @@
                     reallythis.key = reallythis.items[index][0];
                     reallythis.set('route.path', '/' + reallythis.key);
                 }
+
+                event.stopPropagation();
             },
             _setRouteKey: function(event) {
                 if (this.key != event.detail.key)
@@ -233,24 +241,24 @@
                 this.toserver.data = {};
                 this.toserver.filterName = this.filterName;
 
-                if (this.getFilter() != null)
-                {
+                this._setToServerFilter();
+
+                this.ajaxlist.body = this.toserver;
+                this.ajaxlist.generateRequest();
+            },
+            _setToServerFilter: function () {
+                if (this.getFilter() != null) {
                     var thefilter = this.getFilter().thefilter;
 
-                    if (thefilter == null || thefilter == undefined)
-                    {
+                    if (thefilter == null || thefilter == undefined) {
                         this.async(this._doRequest, 10);
                         return;
                     }
-                    else
-                    {
+                    else {
                         this.getFilter().thefilter.setFilter(this.toserver);
                         this.toserver.topRecords = this.getFilter().topRecords;
                     }
                 }
-
-                this.ajaxlist.body = this.toserver;
-                this.ajaxlist.generateRequest();
             }
         };
     })();

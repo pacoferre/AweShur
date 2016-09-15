@@ -334,9 +334,8 @@ namespace AweShur.Core
         public virtual ListTable GetList(string listName = "", string parameter = "")
         {
             string sql = GetListSQL(listName, parameter);
-            ListTable list = new ListTable(listName, sql, GetParameter(parameter), this.DBNumber, AllListDescription);
 
-            return list;
+            return new ListTable(listName, sql, GetParameter(parameter), DBNumber, AllListDescription);
         }
     }
 }

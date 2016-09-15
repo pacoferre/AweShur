@@ -38,16 +38,18 @@
                 }
                 this.wasAttached = true;
 
-                this.async(function () {
-                    this.importHref(this.filterhref, function (e) {
+                this.importHref(this.filterhref, function (e) {
 
-                        var newElement = document.createElement(this.filterelement);
-                        newElement.id = "theelement";
+                    var newElement = document.createElement(this.filterelement);
+                    newElement.id = "theelement";
 
-                        this.thefilter = Polymer.dom(this.getMain()).appendChild(newElement);
-                    }, function (e) {
-                        debugger;
-                    });
+                    this.thefilter = Polymer.dom(this.getMain()).appendChild(newElement);
+
+                    this.async(function () {
+                        this.fire('awsl-filterready');
+                    })
+                }, function (e) {
+                    debugger;
                 });
             },
             getMain: function () {

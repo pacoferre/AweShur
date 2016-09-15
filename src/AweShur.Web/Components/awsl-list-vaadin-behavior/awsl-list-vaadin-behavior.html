@@ -57,8 +57,12 @@
             refreshPending: false,
             listeners: {
                 'awsl-refresh': 'refresh',
+                'awsl-filterready': '_filterReady',
                 'awsl-openfilter': '_openFilter',
                 'awsl-closefilter': '_closeFilter',
+            },
+            _filterReady: function () {
+                this.refresh();
             },
             refresh: function () {
                 if (this.lastTitle !== undefined && this.lastTitle != "")
@@ -131,11 +135,26 @@
                 this.toserver.oname = this.oname;
 
                 this.getItemsList().reallythis = this;
+                this.getItemsList().addEventListener('selected-items-changed', this._selectedItemChanged);
                 this.getItemsList().addEventListener('sort-order-changed', this._sortOrderChanged);
 
-                if (this.refreshPending) {
+                if (this.refreshPending && this.getFilter() == null) {
                     this.refresh();
                 }
+            },
+            _selectedItemChanged: function (event) {
+                // this here is vaadin-grid !!!
+                var select = this.selection.selected();
+
+                var reallythis = this.reallythis;
+
+                if (select.length > 0) {
+                    var index = select[0];
+
+                    reallythis.fire('awsl-select-item', { key: reallythis.items[index][0] })
+                }
+
+                event.stopPropagation();
             },
             getItemsList: function () {
                 return null;
@@ -159,7 +178,7 @@
                     this.getFilter().thefilter.getFilter(this.ajaxlist.lastResponse);
                 }
             },
-            _sortOrderChanged: function () {
+            _sortOrderChanged: function (event) {
                 // this here is vaadin-grid !!!
                 var reallythis = this.reallythis;
 
@@ -169,6 +188,8 @@
 
                     reallythis._doRequest();
                 }
+
+                event.stopPropagation();
             },
             _fastsearchChanged: function (fastsearch) {
                 if (this.firstResponse) {
@@ -183,6 +204,12 @@
                 this.toserver.data = {};
                 this.toserver.filterName = this.filterName;
 
+                this._setToServerFilter();
+
+                this.ajaxlist.body = this.toserver;
+                this.ajaxlist.generateRequest();
+            },
+            _setToServerFilter: function () {
                 if (this.getFilter() != null) {
                     var thefilter = this.getFilter().thefilter;
 
@@ -195,9 +222,6 @@
                         this.toserver.topRecords = this.getFilter().topRecords;
                     }
                 }
-
-                this.ajaxlist.body = this.toserver;
-                this.ajaxlist.generateRequest();
             }
         };
     })();

@@ -115,11 +115,23 @@ namespace AweShur.Core.Lists
             return Items.Find(item => ((IComparable)item[0]).CompareTo(id) == 0) != null;
         }
 
-        public string GetValue(object id)
+        public List<object[]> GetItems()
         {
             EnsureList();
 
-            object[] element = Items.Find(item =>((IComparable)item[0]).CompareTo(id) == 0);
+            return Items;
+        }
+
+        public object[] GetItem(object id)
+        {
+            EnsureList();
+
+            return Items.Find(item => ((IComparable)item[0]).CompareTo(id) == 0);
+        }
+
+        public string GetValue(object id)
+        {
+            object[] element = GetItem(id);
 
             if (element != null)
             {
