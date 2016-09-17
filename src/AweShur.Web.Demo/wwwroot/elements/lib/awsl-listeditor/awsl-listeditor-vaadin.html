@@ -63,7 +63,7 @@
     <script>
         Polymer({
             is: 'awsl-listeditor-vaadin',
-            behaviors: [AWSLBehaviors.ListEditorVaadinBehavior],
+            behaviors: AWSLBehaviors.ListEditorVaadinBehavior,
             observers: [
               '_routeChanged(route)',
               '_viewChanged(routeData.key)',

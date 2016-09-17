@@ -11,7 +11,7 @@
     "app-layout": "PolymerElements/app-layout#^0.9.0",
     "platinum-sw": "PolymerElements/platinum-sw#^1.3.0",
     "jv-datepicker": "^2.7.3",
-    "vaadin-grid": "^1.1.1",
+    "vaadin-grid": "https://github.com/vaadin/vaadin-grid.git#master",
     "vaadin-upload": "^1.0.1",
     "vaadin-combo-box": "^1.1.3",
     "vaadin-date-picker": "^1.1.3",

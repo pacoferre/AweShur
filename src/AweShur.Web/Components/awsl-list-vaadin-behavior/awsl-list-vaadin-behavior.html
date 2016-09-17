@@ -34,7 +34,7 @@
                             filterName: "",
                             sortIndex: 0,
                             sortDir: "asc",
-                            dofastsearch: true,
+                            dofastsearch: false,
                             fastsearch: "",
                             data: {},
                             topRecords: 100,
@@ -71,6 +71,11 @@
                 }
                 if (this.wasAttached) {
                     this._doRequest();
+                    if (this.items !== undefined) {
+                        this.async(function () {
+                            this.items = [];
+                        });
+                    }
                 }
                 else {
                     this.refreshPending = true;
@@ -113,6 +118,8 @@
                 }
 
                 this.firstResponse = true;
+
+                this.fire('awsl-list-ready')
             },
             _handleError: function (event) {
                 debugger;
@@ -136,7 +143,7 @@
 
                 this.getItemsList().reallythis = this;
                 this.getItemsList().addEventListener('selected-items-changed', this._selectedItemChanged);
-                this.getItemsList().addEventListener('sort-order-changed', this._sortOrderChanged);
+                //this.getItemsList().addEventListener('sort-order-changed', this._sortOrderChanged);
 
                 if (this.refreshPending && this.getFilter() == null) {
                     this.refresh();
@@ -151,10 +158,19 @@
                 if (select.length > 0) {
                     var index = select[0];
 
-                    reallythis.fire('awsl-select-item', { key: reallythis.items[index][0] })
+                    reallythis._selectedItemChangedNotify(reallythis.items[index][0], select);
+
+                    reallythis.fire('awsl-select-item', {
+                        key: reallythis.items[index][0],
+                        item: reallythis.items[index],
+                        select: select,
+                        items: reallythis.items
+                    })
                 }
 
                 event.stopPropagation();
+            },
+            _selectedItemChangedNotify: function(key, select) {
             },
             getItemsList: function () {
                 return null;

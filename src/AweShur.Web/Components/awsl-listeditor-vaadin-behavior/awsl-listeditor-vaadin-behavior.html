@@ -1,21 +1,15 @@
 ﻿<link rel="import" href="../lib/polymer/polymer.html">
 <link rel="import" href="../lib/iron-ajax/iron-ajax.html">
+<link rel="import" href="/AWSLib/awsl-list-vaadin-behavior">
 
 <script>
     var AWSLBehaviors = AWSLBehaviors || {};
 
     (function () {
-        AWSLBehaviors.ListEditorVaadinBehavior = {
+        AWSLBehaviors.ListEditorVaadinBehaviorImpl = {
             properties: {
                 key: {
                     type: String,
-                },
-                oname: {
-                    type: String,
-                },
-                filterName: {
-                    type: String,
-                    value: ""
                 },
                 edithref: {
                     type: String,
@@ -29,192 +23,20 @@
                 filterelement: {
                     type: String,
                 },
-                ajaxlist: {
-                    type: Object
-                },
-                items: {
-                    type: Array,
-                },
                 route: {
                     type: Object,
                     notify: true
                 },
-                titleSearch: {
-                    type: String
-                },
-                lastTitle: {
-                    type: String
-                },
-                toserver: {
-                    type: Object,
-                    value: function () {
-                        var obj = {
-                            oname: "",
-                            filterName: "",
-                            sortIndex: 0,
-                            sortDir: "asc",
-                            dofastsearch: true,
-                            fastsearch: "",
-                            data: {},
-                            topRecords: 100,
-                            first: true
-                        };
-
-                        return obj;
-                    }
-                },
-                fastsearch: {
-                    type: String
-                },
-                itemsCount: {
-                    type: Number,
-                    value: 0
-                }
             },
-            wasAttached: false,
-            firstResponse: false,
             settingRouteKey: false,
-            refreshPending: false,
             listeners: {
-                'awsl-refresh': 'refresh',
-                'awsl-filterready': '_filterReady',
-                'awsl-openfilter': '_openFilter',
-                'awsl-closefilter': '_closeFilter',
                 'awsl-set-route-key': '_setRouteKey'
             },
-            _filterReady: function() {
-                this.refresh();
+            _selectedItemChangedNotify: function (key) {
+                this.key = key;
+                this.set('route.path', '/' + this.key);
             },
-            refresh: function () {
-                if (this.lastTitle !== undefined && this.lastTitle != "")
-                {
-                    this.fire('awsl-set-title', { title: this.lastTitle });
-                }
-                if (this.wasAttached) {
-                    this._doRequest();
-                }
-                else
-                {
-                    this.refreshPending = true;
-                }
-            },
-            _handleResponse: function (event) {
-                if (this.getItemsList().awslcustomized === undefined) {
-                    this.getItemsList().awslcustomized === true;
-                    this.customizeItemsList();
-                }
-
-                this.toserver.first = false;
-
-                this.items = event.detail.response.result;
-                this.itemsCount = this.items.length;
-                this.lastTitle = event.detail.response.plural;
-                this.fire('awsl-set-title', { title: event.detail.response.plural });
-
-                if (this.getFilter() != null)
-                {
-                    this.getFilter().titleDialog = this.titleSearch + " " + event.detail.response.plural;
-                    this.getFilter().thefilter.getFilter(event.detail.response);
-                    this.getFilter().topRecords = event.detail.response.topRecords;
-                }
-
-                if (this.fastsearch != event.detail.response.fastsearch)
-                {
-                    this.fastsearch = event.detail.response.fastsearch;
-                }
-
-                var sorOrder = this.getItemsList().sortOrder[0];
-
-                if (sorOrder.column != event.detail.response.sortIndex)
-                {
-                    sorOrder.column = event.detail.response.sortIndex;
-                }
-                if (sorOrder.direction != event.detail.response.sortDir) {
-                    sorOrder.direction != event.detail.response.sortDir;
-                }
-
-                this.firstResponse = true;
-            },
-            _handleError: function (event) {
-                debugger;
-            },
-            attached: function () {
-                if (this.wasAttached) {
-                    return;
-                }
-                this.wasAttached = true;
-
-                this.ajaxlist = document.createElement('iron-ajax');
-
-                this.ajaxlist.method = 'POST';
-                this.ajaxlist.contentType = 'application/json';
-
-                this.ajaxlist.addEventListener('response', this._handleResponse.bind(this));
-                this.ajaxlist.addEventListener('error', this._handleError.bind(this));
-
-                this.ajaxlist.url = "/CRUD/List";
-                this.toserver.oname = this.oname;
-
-                this.getItemsList().reallythis = this;
-                this.getItemsList().addEventListener('selected-items-changed', this._selectedItemChanged);
-                this.getItemsList().addEventListener('sort-order-changed', this._sortOrderChanged);
-
-                if (this.refreshPending && this.getFilter() == null)
-                {
-                    this.refresh();
-                }
-            },
-            getItemsList: function () {
-                return null;
-            },
-            getFilter: function () {
-                return null;
-            },
-            customizeItemsList: function () {
-            },
-            _openFilter: function () {
-                this.getFilter()._openFilter();
-            },
-            _closeFilter: function (event) {
-
-                if (event.detail.ok)
-                {
-                    this.refresh();
-                }
-                else
-                {
-                    this.getFilter().thefilter.getFilter(this.ajaxlist.lastResponse);
-                }
-            },
-            _sortOrderChanged: function (event) {
-                // this here is vaadin-grid !!!
-                var reallythis = this.reallythis;
-
-                if (reallythis.firstResponse) {
-                    reallythis.toserver.sortIndex = this.sortOrder[0].column;
-                    reallythis.toserver.sortDir = this.sortOrder[0].direction != 'desc' ? "asc" : "desc";
-
-                    reallythis._doRequest();
-                }
-
-                event.stopPropagation();
-            },
-            _selectedItemChanged: function (event) {
-                // this here is vaadin-grid !!!
-                var select = this.selection.selected();
-
-                var reallythis = this.reallythis;
-
-                if (select.length > 0) {
-                    var index = select[0];
-
-                    reallythis.key = reallythis.items[index][0];
-                    reallythis.set('route.path', '/' + reallythis.key);
-                }
-
-                event.stopPropagation();
-            },
-            _setRouteKey: function(event) {
+            _setRouteKey: function (event) {
                 if (this.key != event.detail.key)
                 {
                     this.settingRouteKey = true;
@@ -228,38 +50,8 @@
             _onSaved: function () {
                 this.refresh();
             },
-            _fastsearchChanged: function (fastsearch) {
-                if (this.firstResponse) {
-                    this.toserver.dofastsearch = true;
-                    this.toserver.fastsearch = fastsearch;
-                    this.debounce('click', function () {
-                        this._doRequest();
-                    }, 100);
-                }
-            },
-            _doRequest: function () {
-                this.toserver.data = {};
-                this.toserver.filterName = this.filterName;
-
-                this._setToServerFilter();
-
-                this.ajaxlist.body = this.toserver;
-                this.ajaxlist.generateRequest();
-            },
-            _setToServerFilter: function () {
-                if (this.getFilter() != null) {
-                    var thefilter = this.getFilter().thefilter;
-
-                    if (thefilter == null || thefilter == undefined) {
-                        this.async(this._doRequest, 10);
-                        return;
-                    }
-                    else {
-                        this.getFilter().thefilter.setFilter(this.toserver);
-                        this.toserver.topRecords = this.getFilter().topRecords;
-                    }
-                }
-            }
         };
+
+        AWSLBehaviors.ListEditorVaadinBehavior = [AWSLBehaviors.ListVaadinBehavior, AWSLBehaviors.ListEditorVaadinBehaviorImpl]
     })();
 </script>

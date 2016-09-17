@@ -27,7 +27,7 @@ namespace AweShur.Web.Demo.Models.Customer
             Properties["memo"].Type = PropertyInputType.textarea;
         }
 
-        public override FilterBase GetFilter()
+        public override FilterBase GetFilter(string filterName)
         {
             return new CustomerFilter(this);
         }

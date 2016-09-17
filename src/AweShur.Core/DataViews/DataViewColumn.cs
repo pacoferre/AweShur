@@ -18,6 +18,7 @@ namespace AweShur.Core.DataViews
         // Used only in Select clause, for pre-ordering or something else
         public bool Visible { get; set; } = true;
         public bool Hidden { get; set; } = false;
+        public bool Hideable { get; set; } = false;
         public bool FastSearchColumn { get; set; } = false;
 
         public DataViewColumn(string tableNameEncapsulated, PropertyDefinition property)

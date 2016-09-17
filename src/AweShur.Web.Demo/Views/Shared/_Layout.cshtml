@@ -35,14 +35,23 @@
 
     <script src="~/lib/moment/min/moment.min.js"></script>
     <script src="~/lib/moment/locale/es.js"></script>
-    <environment names="Development">
-        <link rel="stylesheet" href="~/css/main.css" />
-        <script src="~/lib/webcomponentsjs/webcomponents-lite.js" asp-append-version="true"></script>
-    </environment>
-    <environment names="Staging,Production">
-        <link rel="stylesheet" href="~/css/site.min.css" asp-append-version="true" />
-        <script src="~/lib/webcomponentsjs/webcomponents-lite.js" asp-append-version="true"></script>
-    </environment>
+    <link rel="stylesheet" href="~/css/main.css" />
+
+    <script>
+        (function () {
+            if ('registerElement' in document
+                && 'import' in document.createElement('link')
+                && 'content' in document.createElement('template')) {
+                // platform is good!
+            } else {
+                // polyfill the platform!
+                var e = document.createElement('script');
+                e.src = '/lib/webcomponentsjs/webcomponents-lite.min.js';
+                document.body.appendChild(e);
+            }
+            moment.locale('es');
+        })();
+    </script>
 </head>
 <body unresolved class="fullbleed layout vertical">
 
@@ -56,10 +65,5 @@
     </environment>*@
 
     @RenderSection("scripts", required: false)
-    <script>
-        HTMLImports.whenReady(function () {
-            moment.locale('es');
-        });
-    </script>
 </body>
 </html>

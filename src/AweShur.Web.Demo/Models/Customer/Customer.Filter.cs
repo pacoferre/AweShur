@@ -14,9 +14,9 @@ namespace AweShur.Web.Demo.Models.Customer
 
         }
 
-        public override void SetDataView(DataView dataView, string elementName)
+        public override void SetDataView(DataView dataView)
         {
-            base.SetDataView(dataView, elementName);
+            base.SetDataView(dataView);
 
             dataView.FromClause = @"Customer INNER JOIN
 CustomerType ON Customer.idCustomerType = CustomerType.idCustomerType";
