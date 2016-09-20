@@ -81,20 +81,20 @@ namespace AweShur.Core
                 foreach(KeyValuePair<string, string> item in Filter)
                 {
                     PropertyDefinition prop;
-                    string fieldName = item.Key;
-                    string operation = "";
+                    string whereFieldName = item.Key;
+                    string whereOperation = "";
 
-                    if (fieldName.Contains('|'))
+                    if (whereFieldName.Contains('|'))
                     {
-                        string[] parts = fieldName.Split('|');
+                        string[] parts = whereFieldName.Split('|');
 
-                        fieldName = parts[0];
-                        operation = parts[1];
+                        whereFieldName = parts[0];
+                        whereOperation = parts[1];
                     }
                     
-                    if (Decorator.Properties.TryGetValue(fieldName, out prop))
+                    if (Decorator.Properties.TryGetValue(whereFieldName, out prop))
                     {
-                        prop.Where(ref where, ref param, item.Value, operation);
+                        prop.Where(ref where, ref param, item.Value, whereOperation);
                     }
                 }
 

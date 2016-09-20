@@ -121,7 +121,7 @@
             var name = this.dataField;
 
             if (name != null) {
-                toServer.data[name] = this.currentDate;
+                toServer.data[name] = this.currentDate === undefined ? "" : this.currentDate;
             }
         },
         clearData: function ()

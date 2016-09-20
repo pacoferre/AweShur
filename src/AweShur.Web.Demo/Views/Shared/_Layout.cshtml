@@ -50,6 +50,11 @@
                 document.body.appendChild(e);
             }
             moment.locale('es');
+            moment.Util = {
+                dateFormat: new Intl.DateTimeFormat("es-ES"),
+                numberFormat: new Intl.NumberFormat("es-ES"),
+                moneyFormat: new Intl.NumberFormat("es-ES", { style: "currency", currency: "EUR" })
+            };
         })();
     </script>
 </head>

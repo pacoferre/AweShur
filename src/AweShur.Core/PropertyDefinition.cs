@@ -62,6 +62,8 @@ namespace AweShur.Core
         public bool SetModified { get; set; } = true;
         public string DBDataType { get; } = "";
         public string FieldName { get; } = "";
+        public string WhereExpression { get; set; } = "";
+        public string WhereOperation { get; set; } = "";
         public Type DataType { get; set; }
 
         public string Label { get; set; } = "";
@@ -691,7 +693,8 @@ namespace AweShur.Core
                     {
                         where += " AND ";
                     }
-                    where += "[TABLENAME]." + FieldName + " " + operation + " @" + FieldName;
+                    where += "[TABLENAME]." + (WhereExpression != "" ? WhereExpression : FieldName)
+                        + " " + (WhereOperation != "" ? WhereOperation : operation) + " @" + FieldName;
                     param.Add(FieldName, obj);
                 }
             }

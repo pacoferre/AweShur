@@ -50,6 +50,10 @@
                 itemsCount: {
                     type: Number,
                     value: 0
+                },
+                serverSideSorting: {
+                    type: Boolean,
+                    value: false
                 }
             },
             wasAttached: false,
@@ -82,12 +86,6 @@
                 }
             },
             _handleResponse: function (event) {
-                if (this.getItemsList().awslcustomized === undefined)
-                {
-                    this.getItemsList().awslcustomized === true;
-                    this.customizeItemsList();
-                }
-
                 this.toserver.first = false;
 
                 this.items = event.detail.response.result;
@@ -109,8 +107,7 @@
 
                 var sorOrder = this.getItemsList().sortOrder[0];
 
-                if (sorOrder.column != event.detail.response.sortIndex)
-                {
+                if (sorOrder.column != event.detail.response.sortIndex) {
                     sorOrder.column = event.detail.response.sortIndex;
                 }
                 if (sorOrder.direction != event.detail.response.sortDir) {
@@ -143,7 +140,12 @@
 
                 this.getItemsList().reallythis = this;
                 this.getItemsList().addEventListener('selected-items-changed', this._selectedItemChanged);
-                //this.getItemsList().addEventListener('sort-order-changed', this._sortOrderChanged);
+                this.getItemsList().addEventListener('sort-order-changed', this._sortOrderChanged);
+
+                if (this.getItemsList().awslcustomized === undefined) {
+                    this.getItemsList().awslcustomized = true;
+                    this.customizeItemsList();
+                }
 
                 if (this.refreshPending && this.getFilter() == null) {
                     this.refresh();
@@ -194,18 +196,46 @@
                     this.getFilter().thefilter.getFilter(this.ajaxlist.lastResponse);
                 }
             },
-            _sortOrderChanged: function (event) {
+            _sortOrderChanged: function (evt) {
                 // this here is vaadin-grid !!!
-                var reallythis = this.reallythis;
+                if (!this.serverSideSorting) {
+                    if (this.items !== undefined && this.items.length > 0) {
+                        var sortOrder = evt.detail.value;
 
-                if (reallythis.firstResponse) {
-                    reallythis.toserver.sortIndex = this.sortOrder[0].column;
-                    reallythis.toserver.sortDir = this.sortOrder[0].direction != 'desc' ? "asc" : "desc";
+                        function _compare(a, b) {
+                            return (a < b ? -1 : a > b ? 1 : 0);
+                        }
+                        
+                        this.items.sort(function (a, b) {
+                            return sortOrder.map(function (sort) {
+                                var col = this.columns[sort.column];
+                                var prop = sort.column; // col.name ||  in original vaadin_grid, not here.
+                                return (sort.direction === 'asc' ? 1 : -1) * _compare(a[prop], b[prop]);
+                            }.bind(this)).reduce(function firstNonZeroValue(p, n) {
+                                return p ? p : n;
+                            }, 0);
+                        }.bind(this));
 
-                    reallythis._doRequest();
+                        this.items = [];
+                        this.reallythis.async(function()
+                        {
+                            this.getItemsList().items = this.items;
+                        })
+                    }
+                }
+                else {
+                    var reallythis = this.reallythis;
+
+                    if (reallythis.firstResponse) {
+                        reallythis.toserver.sortIndex = this.sortOrder[0].column;
+                        reallythis.toserver.sortDir = this.sortOrder[0].direction != 'desc' ? "asc" : "desc";
+
+                        reallythis._doRequest();
+                    }
                 }
 
-                event.stopPropagation();
+                evt.stopPropagation();
+                evt.defaultPrevented = true;
             },
             _fastsearchChanged: function (fastsearch) {
                 if (this.firstResponse) {

@@ -52,10 +52,6 @@ namespace AweShur.Web.Controllers
                 filter.Clear();
             }
 
-            if (request.sortIndex == 0)
-            {
-                request.sortIndex = 1;
-            }
             if (request.sortDir != "asc" && request.sortDir != "desc")
             {
                 request.sortDir = "asc";

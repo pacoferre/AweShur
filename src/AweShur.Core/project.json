@@ -1,9 +1,7 @@
 {
   "version": "1.0.6",
   "dependencies": {
-    "StackExchange.Redis": "1.1.604-alpha",
     "Microsoft.AspNetCore.Cryptography.KeyDerivation": "1.0.0",
-    "Microsoft.AspNetCore.Mvc": "1.0.0",
     "NETStandard.Library": "1.6.0",
     "Newtonsoft.Json": "9.0.1",
     "System.Collections.NonGeneric": "4.0.1",
@@ -12,7 +10,9 @@
     "System.Reflection.Emit.Lightweight": "4.0.1",
     "System.Reflection.TypeExtensions": "4.1.0",
     "System.Xml.XmlDocument": "4.0.1",
-    "System.Data.Common": "4.1.0"
+    "System.Data.Common": "4.1.0",
+    "Microsoft.AspNetCore.Mvc": "1.0.1",
+    "StackExchange.Redis": "1.1.605"
   },
   "frameworks": {
     "net46": {
