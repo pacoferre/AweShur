@@ -62,7 +62,11 @@
                 this.getDialog().open();
             },
             _filterDialogClosed: function (event) {
-                this.fire('awsl-closefilter', { ok: !event.detail.canceled });
+                if (event.target === this.getDialog()) {
+                    this.fire('awsl-closefilter', { ok: event.detail.confirmed });
+                }
+
+                event.stopPropagation();
             },
             _doClear: function () {
                 this.topRecords = "100";

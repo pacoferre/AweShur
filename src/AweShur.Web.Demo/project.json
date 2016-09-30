@@ -1,7 +1,8 @@
 {
   "version": "1.0.0",
   "dependencies": {
-    "AweShur.Core": "1.0.6",
+    "AweShur.Core": "1.0.10",
+    "AweShur.Web": "1.0.10",
     "Newtonsoft.Json": "9.0.1",
     "Microsoft.AspNetCore.Diagnostics": "1.0.0",
     "Microsoft.AspNetCore.Razor.Tools": {
@@ -20,7 +21,6 @@
     "System.Threading.Tasks.Extensions": "4.0.0",
     "Microsoft.AspNetCore.Server.IISIntegration": "1.0.0",
     "System.Data.SqlClient": "4.1.0",
-    "AweShur.Web": "1.0.6",
     "BundlerMinifier.Core": "2.2.281",
     "Microsoft.AspNetCore.Server.Kestrel": "1.0.1",
     "Microsoft.NETCore.App": {
