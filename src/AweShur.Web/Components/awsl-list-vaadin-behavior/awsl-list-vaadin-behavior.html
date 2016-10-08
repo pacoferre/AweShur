@@ -169,6 +169,12 @@
                         items: reallythis.items
                     })
                 }
+                else
+                {
+                    reallythis.fire('awsl-deselect-all', {
+                        items: reallythis.items
+                    })
+                }
 
                 event.stopPropagation();
             },

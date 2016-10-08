@@ -82,7 +82,7 @@ namespace AweShur.Core.DataViews
                     selectColumns += gc.Expression + " As " + gc.As;
                     selectNamedColumns += gc.As;
 
-                    if (firstOrderBy == "" && gc.OrderBy != "")
+                    if (!gc.IsID && !gc.Hidden && firstOrderBy == "" && gc.OrderBy != "")
                     {
                         firstOrderBy = gc.OrderBy;
                     }
@@ -119,7 +119,7 @@ namespace AweShur.Core.DataViews
             string orderBy = firstOrderBy;
             string where = PreWhere;
 
-            if (visibleColumns[order].OrderBy != "")
+            if (visibleColumns[order].OrderBy != "" && !visibleColumns[order].Hidden)
             {
                 orderBy = visibleColumns[order].OrderBy;
 
