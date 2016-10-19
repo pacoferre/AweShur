@@ -113,7 +113,7 @@ namespace AweShur.Core.Security
             return req.Session.GetInt32(CurrentUserIDSessionKey);
         }
 
-        protected static void SetAppUser(AppUser user, HttpContext context)
+        public static void SetAppUser(AppUser user, HttpContext context)
         {
             // New user logon.
             context.Session.Clear();

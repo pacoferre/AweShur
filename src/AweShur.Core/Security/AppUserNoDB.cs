@@ -83,7 +83,7 @@ namespace AweShur.Core.Security
             //base.StoreToDB();
         }
 
-        public static void LoginWindows(HttpContext context)
+        public static void LoginWindows(HttpContext context, int idAppUser = 1)
         {
             AppUser usu = null;
 
@@ -93,7 +93,7 @@ namespace AweShur.Core.Security
 
             usu.SetNew();
 
-            usu["idAppUser"] = 1;
+            usu["idAppUser"] = idAppUser;
 
             usu["name"] = "User";
             usu["surname"] = context.User.Identity.Name;

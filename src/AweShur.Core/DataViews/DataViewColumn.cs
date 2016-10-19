@@ -25,6 +25,8 @@ namespace AweShur.Core.DataViews
         public int MaxWidth { get; set; } = 0;
         public int Width { get; set; } = 0;
         public int Flex { get; set; } = 0;
+        public string CustomRenderer { get; set; } = "";
+
         public DataViewColumn(string tableNameEncapsulated, PropertyDefinition property)
         {
             BasicType = property.BasicType;

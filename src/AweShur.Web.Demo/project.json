@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "dependencies": {
-    "AweShur.Core": "1.0.10",
-    "AweShur.Web": "1.0.10",
+    "AweShur.Core": "1.0.18",
+    "AweShur.Web": "1.0.18",
     "Newtonsoft.Json": "9.0.1",
     "Microsoft.AspNetCore.Diagnostics": "1.0.0",
     "Microsoft.AspNetCore.Razor.Tools": {
