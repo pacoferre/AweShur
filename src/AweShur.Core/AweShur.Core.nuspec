@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
     <metadata>
         <id>AweShur.Core</id>
-        <version>1.0.18</version>
+        <version>1.0.25</version>
         <title>AweShur Core</title>
         <authors>Paco Ferre</authors>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>

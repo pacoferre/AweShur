@@ -30,7 +30,7 @@ namespace AweShur.Core.Specialized
 
         protected string[] opcCampoOtros;
 
-        public N2M(string tableName) : base(tableName)
+        public N2M(string objectName) : base(objectName)
         {
         }
 

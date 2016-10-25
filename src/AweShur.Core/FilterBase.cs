@@ -142,6 +142,60 @@ namespace AweShur.Core
             dataView.FromClause = Decorator.TableNameEncapsulated;
         }
 
+        public virtual string GetFinalSQLQuery(DataView dataView, string whereClause, object param, int order,
+            SortDirection sortDirection, int fromRecord, int rowCount)
+        {
+            // {SelectColumns} {FromClause} {WhereClause} {OrderBy} {FromRecord} {RowCount}
+            string sql = dataView.query;
+            string orderBy = dataView.firstOrderBy;
+            string where = dataView.PreWhere;
+
+            if (dataView.visibleColumns[order].OrderBy != "" && !dataView.visibleColumns[order].Hidden)
+            {
+                orderBy = dataView.visibleColumns[order].OrderBy;
+
+                //if (visibleColumns.Count > order + 1)
+                //{
+                //    orderBy += "," + visibleColumns[order + 1].OrderBy;
+                //}
+            }
+
+            if (dataView.PreOrderBy != "")
+            {
+                orderBy = dataView.PreOrderBy + (orderBy == "" ? "" : ", " + orderBy);
+            }
+
+            if (dataView.PostOrderBy != "" && !orderBy.Contains(dataView.PostOrderBy))
+            {
+                orderBy += (orderBy == "" ? "" : ", " + dataView.PostOrderBy);
+            }
+
+            if (sortDirection == SortDirection.Descending)
+            {
+                if (orderBy != "")
+                {
+                    orderBy = orderBy.Replace(",", " DESC ,");
+                    orderBy += " DESC";
+                }
+            }
+
+            if (where == "")
+            {
+                where = whereClause;
+            }
+            else
+            {
+                where = "(" + where + ")" + (whereClause == "" ? "" : " AND " + whereClause);
+            }
+
+            sql = sql.Replace("{OrderBy}", orderBy)
+                .Replace("{WhereClause}", (where == "" ? "" : "WHERE " + where))
+                .Replace("{FromRecord}", fromRecord.ToString())
+                .Replace("{RowCount}", rowCount.ToString());
+
+            return sql;
+        }
+
         public virtual byte[] Serialize()
         {
             JObject obj = ToJObject();

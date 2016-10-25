@@ -8,9 +8,10 @@ namespace AweShur.Core.Security
 {
     public class AppUserNoDBDecorator : AweShur.Core.Security.AppUserDecorator
     {
-        public override void SetProperties(string tableName, int dbNumber)
+        public override void SetProperties(string objectName, int dbNumber)
         {
-            this.objectName = tableName;
+            this.objectName = objectName;
+            this.tableName = BusinessBaseProvider.GetDBTableFor(objectName);
 
             SetCustomProperties();
         }
@@ -73,7 +74,7 @@ namespace AweShur.Core.Security
 
     public class AppUserNoDB: AweShur.Core.Security.AppUser
     {
-        public AppUserNoDB() : base("AppUserNoDB", true)
+        public AppUserNoDB() : base(true)
         {
         }
 

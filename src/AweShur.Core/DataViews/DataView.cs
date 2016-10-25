@@ -9,6 +9,9 @@ namespace AweShur.Core.DataViews
     public interface IDataViewSetter
     {
         void SetDataView(DataView dataView);
+
+        string GetFinalSQLQuery(DataView dataView, string whereClause, object param, int order, SortDirection sortDirection,
+            int fromRecord, int rowCount);
     }
 
     public class DataView
@@ -22,15 +25,17 @@ namespace AweShur.Core.DataViews
 
         private DB currentDB = null;
 
-        private List<DataViewColumn> visibleColumns;
+        public List<DataViewColumn> visibleColumns;
         private string selectNamedColumns = "";
         private string selectColumns = "";
-        private string query = "";
-        private string firstOrderBy = "";
+        public string query = "";
+        public string firstOrderBy = "";
+        protected IDataViewSetter setter;
 
         public DataView(IDataViewSetter setter)
         {
-            setter.SetDataView(this);
+            this.setter = setter;
+            this.setter.SetDataView(this);
 
             InternalSet();
         }
@@ -114,53 +119,7 @@ namespace AweShur.Core.DataViews
         public IEnumerable<dynamic> Get(string whereClause, object param, int order, SortDirection sortDirection, 
             int fromRecord, int rowCount)
         {
-            // {SelectColumns} {FromClause} {WhereClause} {OrderBy} {FromRecord} {RowCount}
-            string sql = query;
-            string orderBy = firstOrderBy;
-            string where = PreWhere;
-
-            if (visibleColumns[order].OrderBy != "" && !visibleColumns[order].Hidden)
-            {
-                orderBy = visibleColumns[order].OrderBy;
-
-                //if (visibleColumns.Count > order + 1)
-                //{
-                //    orderBy += "," + visibleColumns[order + 1].OrderBy;
-                //}
-            }
-
-            if (PreOrderBy != "")
-            {
-                orderBy = PreOrderBy + (orderBy == "" ? "" : ", " + orderBy);
-            }
-
-            if (PostOrderBy != "" && !orderBy.Contains(PostOrderBy))
-            {
-                orderBy += (orderBy == "" ? "" : ", " + PostOrderBy);
-            }
-
-            if (sortDirection == SortDirection.Descending)
-            {
-                if (orderBy != "")
-                {
-                    orderBy = orderBy.Replace(",", " DESC ,");
-                    orderBy += " DESC";
-                }
-            }
-
-            if (where == "")
-            {
-                where = whereClause;
-            }
-            else
-            {
-                where = "(" + where + ")" + (whereClause == "" ? "" : " AND " + whereClause);
-            }
-
-            sql = sql.Replace("{OrderBy}", orderBy)
-                .Replace("{WhereClause}", (where == "" ? "" : "WHERE " + where))
-                .Replace("{FromRecord}", fromRecord.ToString())
-                .Replace("{RowCount}", rowCount.ToString());
+            string sql = setter.GetFinalSQLQuery(this, whereClause, param, order, sortDirection, fromRecord, rowCount);
 
             return currentDB.Query(sql, param);
         }

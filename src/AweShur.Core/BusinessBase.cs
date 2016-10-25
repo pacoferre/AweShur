@@ -14,15 +14,20 @@ namespace AweShur.Core
         protected BusinessBaseDecorator decorator = null;
         protected DataItem dataItem = null;
 
-        public BusinessBase(string tableName, bool noDB)
+        public BusinessBase(bool noDB)
         {
-            decorator = BusinessBaseProvider.Instance.GetDecorator(tableName, 0);
+            decorator = BusinessBaseProvider.Instance.GetDecorator(this.ToString().Split('.').Last(), 0);
             dataItem = Decorator.New(this);
         }
 
-        public BusinessBase(string tableName, int dbNumber = 0)
+        public BusinessBase(string objectName = "", int dbNumber = 0)
         {
-            decorator = BusinessBaseProvider.Instance.GetDecorator(tableName, dbNumber);
+            if (objectName == "")
+            {
+                objectName = this.ToString().Split('.').Last();
+            }
+
+            decorator = BusinessBaseProvider.Instance.GetDecorator(objectName, dbNumber);
             dataItem = Decorator.New(this);
 
             lazyDB = new Lazy<DB>(() => DB.InstanceNumber(dbNumber));

@@ -63,7 +63,7 @@
             },
             _filterDialogClosed: function (event) {
                 if (event.target === this.getDialog()) {
-                    this.fire('awsl-closefilter', { ok: event.detail.confirmed });
+                    this.fire('awsl-closefilter', { ok: !event.detail.canceled });
                 }
 
                 event.stopPropagation();

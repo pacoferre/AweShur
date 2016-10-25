@@ -56,6 +56,7 @@
                     value: false
                 }
             },
+            spinner: null,
             wasAttached: false,
             firstResponse: false,
             refreshPending: false,
@@ -86,6 +87,8 @@
                 }
             },
             _handleResponse: function (event) {
+                this.spinner.active = false;
+                this.spinner.hidden = true;
                 this.toserver.first = false;
 
                 this.set("items", event.detail.response.result);
@@ -119,13 +122,39 @@
                 this.fire('awsl-list-ready')
             },
             _handleError: function (event) {
+                this.spinner.active = false;
+                this.spinner.hidden = true;
                 debugger;
+            },
+            insertSpinner: function() 
+            {
+                if (this.getItemsList().parentNode === this) {
+                    if (Polymer.dom(this).childNodes.length == 0) {
+                        this.async(this.insertSpinner, 100);
+                    }
+                    else {
+                        Polymer.dom(this).insertBefore(this.spinner, Polymer.dom(this).childNodes[0]);
+                    }
+                }
+                else {
+                    Polymer.dom(this.getItemsList().parentNode).insertBefore(this.spinner, this.getItemsList());
+                }
             },
             attached: function () {
                 if (this.wasAttached) {
                     return;
                 }
                 this.wasAttached = true;
+
+                this.spinner = document.createElement('paper-spinner');
+
+                this.spinner.style.position= 'absolute';
+                this.spinner.style.zIndex= 100000;
+                this.spinner.style.left = '50%';
+                this.spinner.style.top = '150px';
+                this.spinner.hidden = true;
+
+                this.insertSpinner();
 
                 this.ajaxlist = document.createElement('iron-ajax');
 
@@ -160,14 +189,16 @@
                 if (select.length > 0) {
                     var index = select[0];
 
-                    reallythis._selectedItemChangedNotify(reallythis.items[index][0], select);
+                    if (reallythis.items[index] !== undefined) {
+                        reallythis._selectedItemChangedNotify(reallythis.items[index][0], select);
 
-                    reallythis.fire('awsl-select-item', {
-                        key: reallythis.items[index][0],
-                        item: reallythis.items[index],
-                        select: select,
-                        items: reallythis.items
-                    })
+                        reallythis.fire('awsl-select-item', {
+                            key: reallythis.items[index][0],
+                            item: reallythis.items[index],
+                            select: select,
+                            items: reallythis.items
+                        });
+                    }
                 }
                 else
                 {
@@ -254,6 +285,8 @@
                 }
             },
             _doRequest: function () {
+                this.spinner.hidden = false;
+                this.spinner.active = true;
                 this.toserver.data = {};
                 this.toserver.filterName = this.filterName;
 

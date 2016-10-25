@@ -15,6 +15,7 @@ namespace AweShur.Core
     public class BusinessBaseProvider
     {
         public static Dictionary<string, string> TableSchemas { get; set; } = new Dictionary<string, string>();
+        public static Dictionary<string, string> ObjectToDBTable { get; set; } = new Dictionary<string, string>();
 
         public Func<string, int, BusinessBase> DefaultBusinessBase =
             (objectName, dbNumber) => new BusinessBase(objectName, dbNumber);
@@ -51,6 +52,16 @@ namespace AweShur.Core
             {
                 return HttpContextAccessor.HttpContext;
             }
+        }
+
+        public static string GetDBTableFor(string objectName)
+        {
+            if (ObjectToDBTable.Keys.Contains(objectName))
+            {
+                return ObjectToDBTable[objectName];
+            }
+
+            return objectName;
         }
 
         public virtual void RegisterBusinessCreators()
@@ -104,19 +115,19 @@ namespace AweShur.Core
                 ));
         }
 
-        private BusinessBaseDecorator GetDecoratorInternal(string tableName, int dbNumber)
+        private BusinessBaseDecorator GetDecoratorInternal(string objectName, int dbNumber)
         {
             BusinessBaseDecorator decorator;
 
-            if (decorators.ContainsKey(tableName))
+            if (decorators.ContainsKey(objectName))
             {
-                decorator = decorators[tableName].Invoke();
+                decorator = decorators[objectName].Invoke();
             }
             else
             {
                 decorator = DefaultBusinessBaseDecorator();
             }
-            decorator.SetProperties(tableName, dbNumber);
+            decorator.SetProperties(objectName, dbNumber);
 
             return decorator;
         }

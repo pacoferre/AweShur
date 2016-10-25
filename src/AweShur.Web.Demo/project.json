@@ -1,8 +1,6 @@
 {
   "version": "1.0.0",
   "dependencies": {
-    "AweShur.Core": "1.0.18",
-    "AweShur.Web": "1.0.18",
     "Newtonsoft.Json": "9.0.1",
     "Microsoft.AspNetCore.Diagnostics": "1.0.0",
     "Microsoft.AspNetCore.Razor.Tools": {
@@ -28,7 +26,9 @@
       "version": "1.0.1"
     },
     "Microsoft.AspNetCore.Mvc": "1.0.1",
-    "StackExchange.Redis": "1.1.605"
+    "StackExchange.Redis": "1.1.605",
+    "AweShur.Core": "1.0.25",
+    "AweShur.Web": "1.0.25"
   },
 
   "tools": {

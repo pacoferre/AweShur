@@ -80,10 +80,13 @@ namespace AweShur.Core
                 fieldNameLookup.TryGetValue(name, out result)) ? result : -1;
         }
 
-        public virtual void SetProperties(string tableName, int dbNumber)
+        public virtual void SetProperties(string objectName, int dbNumber)
         {
+            string tableName = BusinessBaseProvider.GetDBTableFor(objectName);
+
             this.dbNumber = dbNumber;
-            objectName = tableName;
+            this.objectName = objectName;
+
             dialect = DB.InstanceNumber(dbNumber).Dialect;
             this.tableName = tableName;
             tableNameEncapsulated = dialect.Encapsulate(dialect.GetFullTableName(tableName));

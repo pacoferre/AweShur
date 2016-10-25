@@ -22,12 +22,12 @@ namespace AweShur.Core.Security
 
     public partial class AppUser : BusinessBase
     {
-        public AppUser() : base("AppUser")
+        public AppUser()
         {
 
         }
 
-        public AppUser(string tableName, bool noDB) : base(tableName, noDB)
+        public AppUser(bool noDB) : base(noDB)
         {
         }
 
