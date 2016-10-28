@@ -21,7 +21,7 @@
                 --app-datepicker-button-color: #4285f4;
             }
         </style>
-        <paper-input label="[[label]]" always-float-label="[[alwaysFloatLabel]]" id="inputDate" readonly on-tap="_openCalendar">
+        <paper-input label="[[label]]" always-float-label="[[alwaysFloatLabel]]" no-label-float="[[noLabelFloat]]" id="inputDate" readonly on-tap="_openCalendar">
             <paper-icon-button suffix hidden="[[noedit]]" on-tap="_openCalendar" icon="icons:today" alt="calendar" title="calendar">
             </paper-icon-button>
             <paper-icon-button suffix hidden="[[_hideClear(noedit,noclear)]]" on-tap="_clear" icon="clear" alt="clear" title="clear">

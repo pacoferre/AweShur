@@ -30,6 +30,10 @@
                 isSearch: {
                     type: Boolean,
                     value: false
+                },
+                noAllSearch: {
+                    type: Boolean,
+                    value: false
                 }
             },
             listItemsLoaded: false,
@@ -49,7 +53,7 @@
             setItems: function (newItems) {
                 this.listItemsLoaded = true;
 
-                if (this.isSearch) {
+                if (this.isSearch && !this.noAllSearch) {
                     this.listItems = newItems;
 
                     // First element is Id.
