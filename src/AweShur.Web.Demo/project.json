@@ -27,8 +27,8 @@
     },
     "Microsoft.AspNetCore.Mvc": "1.0.1",
     "StackExchange.Redis": "1.1.605",
-    "AweShur.Core": "1.0.25",
-    "AweShur.Web": "1.0.25"
+    "AweShur.Core": "1.0.28",
+    "AweShur.Web": "1.0.28"
   },
 
   "tools": {

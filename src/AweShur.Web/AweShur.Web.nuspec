@@ -2,14 +2,14 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
     <metadata>
         <id>AweShur.Web</id>
-        <version>1.0.25</version>
+        <version>1.0.28</version>
         <title>AweShur Web</title>
         <authors>Paco Ferre</authors>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <description>ASP.NET components and helpers for AweShur.</description>
         <dependencies>
             <group targetFramework=".NETFramework4.6">
-                <dependency id="AweShur.Core" version="1.0.25" />
+                <dependency id="AweShur.Core" version="1.0.27" />
                 <dependency id="Microsoft.AspNetCore.Mvc" version="1.0.1" />
                 <dependency id="Microsoft.AspNetCore.Mvc.ViewFeatures" version="1.0.1" />
                 <dependency id="NETStandard.Library" version="1.6.0" />

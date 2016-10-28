@@ -1,8 +1,8 @@
 {
-  "version": "1.0.25",
+  "version": "1.0.28",
 
   "dependencies": {
-    "AweShur.Core": "1.0.25",
+    "AweShur.Core": "1.0.28",
     "Microsoft.AspNetCore.Mvc": "1.0.1",
     "Microsoft.AspNetCore.Mvc.ViewFeatures": "1.0.1",
     "NETStandard.Library": "1.6.0",

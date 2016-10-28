@@ -67,7 +67,9 @@
                 'awsl-closefilter': '_closeFilter',
             },
             _filterReady: function () {
-                this.refresh();
+                if (this.refreshPending) {
+                    this.refresh();
+                }
             },
             refresh: function () {
                 if (this.lastTitle !== undefined && this.lastTitle != "")
@@ -75,11 +77,24 @@
                     this.fire('awsl-set-title', { title: this.lastTitle });
                 }
                 if (this.wasAttached) {
-                    this._doRequest();
-                    if (this.items !== undefined) {
-                        this.async(function () {
-                            this.set("items", []);
-                        });
+                    var filterPending = false;
+
+                    if (this.getFilter() != null)
+                    {
+                        filterPending = (this.getFilter().thefilter == null);
+                    }
+
+                    if (filterPending) {
+                        this.refreshPending = true;
+                    }
+                    else {
+                        this.refreshPending = false;
+                        this._doRequest();
+                        if (this.items !== undefined) {
+                            this.async(function () {
+                                this.set("items", []);
+                            });
+                        }
                     }
                 }
                 else {
@@ -176,8 +191,13 @@
                     this.customizeItemsList();
                 }
 
-                if (this.refreshPending && this.getFilter() == null) {
-                    this.refresh();
+                if (this.refreshPending && this.getFilter() != null) {
+                    if (this.getFilter().thefilter == null) {
+                        this.refreshPending = true;
+                    }
+                    else {
+                        this.refresh();
+                    }
                 }
             },
             _selectedItemChanged: function (event) {
