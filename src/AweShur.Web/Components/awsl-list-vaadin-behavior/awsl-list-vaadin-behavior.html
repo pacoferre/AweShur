@@ -310,6 +310,14 @@
                 this.toserver.data = {};
                 this.toserver.filterName = this.filterName;
 
+                if (this.getFilter() != null) {
+                    var thefilter = this.getFilter().thefilter;
+
+                    if (thefilter == null || thefilter == undefined) {
+                        this.async(this._doRequest, 10);
+                        return;
+                    }
+                }
                 this._setToServerFilter();
 
                 this.ajaxlist.body = this.toserver;
@@ -318,16 +326,12 @@
             _setToServerFilter: function () {
                 if (this.getFilter() != null) {
                     var thefilter = this.getFilter().thefilter;
-
-                    if (thefilter == null || thefilter == undefined) {
-                        this.async(this._doRequest, 10);
-                        return;
-                    }
-                    else {
-                        this.getFilter().thefilter.setFilter(this.toserver);
-                        this.toserver.topRecords = this.getFilter().topRecords;
-                    }
+                    this.getFilter().thefilter.setFilter(this.toserver);
+                    this.addToServerFilterFields();
+                    this.toserver.topRecords = this.getFilter().topRecords;
                 }
+            },
+            addToServerFilterFields: function () {
             }
         };
     })();
