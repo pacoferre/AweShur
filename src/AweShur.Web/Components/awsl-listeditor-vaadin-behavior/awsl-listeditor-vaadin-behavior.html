@@ -30,7 +30,8 @@
             },
             settingRouteKey: false,
             listeners: {
-                'awsl-set-route-key': '_setRouteKey'
+                'awsl-set-route-key': '_setRouteKey',
+                'awsl-prevnextinfo': '_prevnextInfo'
             },
             _selectedItemChangedNotify: function (key) {
                 this.key = key;
@@ -50,6 +51,32 @@
             _onSaved: function () {
                 this.refresh();
             },
+            _prevnextInfo: function(event) {
+                if (this.items !== undefined)
+                {
+                    var indexFound = -1;
+
+                    for (var index = 0; index < this.items.length; ++index)
+                    {
+                        if (this.items[index][0] == event.detail.key)
+                        {
+                            indexFound = index;
+                            break;
+                        }
+                    }
+
+                    if (indexFound > 0)
+                    {
+                        event.detail.prevNextInfo.prevHidden = false;
+                        event.detail.prevNextInfo.keyPrev = this.items[indexFound - 1][0];
+                    }
+                    if (indexFound >= 0 && indexFound < this.items.length - 1)
+                    {
+                        event.detail.prevNextInfo.nextHidden = false;
+                        event.detail.prevNextInfo.keyNext = this.items[indexFound + 1][0];
+                    }
+                }
+            }
         };
 
         AWSLBehaviors.ListEditorVaadinBehavior = [AWSLBehaviors.ListVaadinBehavior, AWSLBehaviors.ListEditorVaadinBehaviorImpl]

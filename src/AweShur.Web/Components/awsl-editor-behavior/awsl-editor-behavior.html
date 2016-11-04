@@ -64,6 +64,8 @@
             pendingLoad: false,
             gettingDataFromServer: false,
             listeners: {
+                'awsl-prev': '_goKey',
+                'awsl-next': '_goKey',
                 'awsl-refresh': 'refresh',
                 'awsl-new': '_onNew',
                 'awsl-delete': '_onDelete',
@@ -107,6 +109,11 @@
             },
             refresh: function () {
                 this.load();
+            },
+            _goKey: function (event)
+            {
+                this.load(event.detail.key);
+                this.fire('awsl-set-route-key', { key: event.detail.key });
             },
             load: function (newKey) {
                 if (newKey !== undefined) {
@@ -221,6 +228,11 @@
                         this.theelement.setData(this.toserver.root);
                     }
 
+                    this.fire('awsl-editorsenddata', {
+                        action: action,
+                        toserver: this.toserver
+                    });
+
                     this.ajax.body = this.toserver;
                     this.ajax.generateRequest();
 
@@ -282,9 +294,9 @@
 
                         if (fromServer.action == "ok") {
                             this.fire('saved');
-                        }
-                        if (fromServer.wasDeleting) {
-                            this.fire('close');
+                            if (fromServer.wasDeleting) {
+                                this.fire('close');
+                            }
                         }
                     }
 

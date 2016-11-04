@@ -13,7 +13,12 @@
                 var okHidden = false;
                 var okIcon = "done";
                 var clearHidden = false;
-
+                var prevnextInfoNeeded = fromServer.action == "load";
+                var prevNextInfo = {
+                    prevHidden: this.$.prev !== undefined ? this.$.prev.disabled : false,
+                    nextHidden: this.$.next !== undefined ? this.$.next.disabled : false
+                };
+                
                 if (fromServer.isNew) {
                     newHidden = true;
                     refreshHidden = true;
@@ -21,8 +26,13 @@
                     okHidden = false;
                     okIcon = "done";
                     clearHidden = false;
+                    prevNextInfo.prevHidden = true;
+                    prevNextInfo.nextHidden = true;
+                    prevnextInfoNeeded = false;
                 }
                 else {
+                    prevnextInfoNeeded = fromServer.action == "load" || fromServer.action == "ok";
+
                     newHidden = fromServer.isNew;
                     refreshHidden = fromServer.isNew;
 
@@ -52,6 +62,24 @@
                 }
                 if (this.$.clear !== undefined)
                     this.$.clear.hidden = clearHidden;
+
+                if (prevnextInfoNeeded && this.$.prev !== undefined && this.$.next !== undefined)
+                {
+                    prevNextInfo.prevHidden = true;
+                    prevNextInfo.nextHidden = true;
+                    prevNextInfo.keyPrev = '';
+                    prevNextInfo.keyNext = '';
+
+                    this.fire('awsl-prevnextinfo', { key: fromServer.keyObject, prevNextInfo: prevNextInfo })
+
+                    this.keyPrev = prevNextInfo.keyPrev;
+                    this.keyNext = prevNextInfo.keyNext;
+                }
+
+                if (this.$.prev !== undefined)
+                    this.$.prev.disabled = prevNextInfo.prevHidden;
+                if (this.$.next !== undefined)
+                    this.$.next.disabled = prevNextInfo.nextHidden;
             },
             _onRefresh: function()
             {
@@ -73,6 +101,14 @@
             _onClose: function () {
                 this.fire('awsl-close');
             },
+            keyPrev: '',
+            keyNext: '',
+            _onPrev: function () {
+                this.fire('awsl-prev', { key: this.keyPrev });
+            },
+            _onNext: function () {
+                this.fire('awsl-next', { key: this.keyNext });
+            }
         };
     })();
 </script>

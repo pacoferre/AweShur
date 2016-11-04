@@ -1820,7 +1820,7 @@
           "lib/net46/System.Xml.XPath.XDocument.dll": {}
         }
       },
-      "AweShur.Core/1.0.27": {
+      "AweShur.Core/1.0.31": {
         "type": "project",
         "framework": ".NETFramework,Version=v4.6",
         "dependencies": {
@@ -4686,7 +4686,7 @@
           "lib/netstandard1.3/System.Xml.XPath.XDocument.dll": {}
         }
       },
-      "AweShur.Core/1.0.27": {
+      "AweShur.Core/1.0.31": {
         "type": "project",
         "framework": ".NETStandard,Version=v1.6",
         "dependencies": {
@@ -9771,7 +9771,7 @@
         "ref/xamarinwatchos10/_._"
       ]
     },
-    "AweShur.Core/1.0.27": {
+    "AweShur.Core/1.0.31": {
       "type": "project",
       "path": "../AweShur.Core/project.json",
       "msbuildProject": "../AweShur.Core/AweShur.Core.xproj"
@@ -9779,7 +9779,7 @@
   },
   "projectFileDependencyGroups": {
     "": [
-      "AweShur.Core >= 1.0.27",
+      "AweShur.Core >= 1.0.31",
       "Microsoft.AspNetCore.Mvc >= 1.0.1",
       "Microsoft.AspNetCore.Mvc.ViewFeatures >= 1.0.1",
       "NETStandard.Library >= 1.6.0",
