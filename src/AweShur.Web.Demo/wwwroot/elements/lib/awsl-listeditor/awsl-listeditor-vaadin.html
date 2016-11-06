@@ -46,7 +46,6 @@
                 <div id="listContent">
                     <awsl-list-toolbar on-awsl-new="_onNew" fastsearch="{{fastsearch}}" items-count="[[itemsCount]]"></awsl-list-toolbar>
                     <vaadin-grid id="itemsList" items="[[items]]">
-                        <content></content>
                     </vaadin-grid>
                 </div>
             </neon-animatable>
@@ -120,6 +119,9 @@
                 if (this.$.pages.selected == 0) {
                     event.stopPropagation();
                 }
+            },
+            customizeItemsList: function () {
+                this.parentElement.customizeItemsList(this.$.itemsList);
             }
         });
     </script>

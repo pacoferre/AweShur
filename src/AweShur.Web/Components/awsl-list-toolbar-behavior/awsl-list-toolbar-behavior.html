@@ -16,9 +16,12 @@
                 itemsCount: {
                     type: Number,
                     value: 0
+                },
+                largeScreen: {
+                    type: Boolean
                 }
             },
-            _onRefresh: function()
+            _onRefresh: function ()
             {
                 this.fire('awsl-refresh');
             },
@@ -30,6 +33,9 @@
             {
                 this.fire('awsl-openfilter');
             },
+            _onExcel: function () {
+                this.fire('awsl-downloadxlsx');
+            }
         };
     })();
 </script>

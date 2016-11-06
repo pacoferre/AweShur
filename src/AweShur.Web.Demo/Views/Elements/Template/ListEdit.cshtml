@@ -1,10 +1,9 @@
 ﻿@{
     bool error = false;
-    bool firstOrder = false;
     string msgError = "";
     AweShur.Web.CRUDLocationItem item = null;
     int? idappuser = AppUser.IDAppUser(Context);
-    List<DataViewColumn> columns = null;
+    DataView dataView = null;
 
     try
     {
@@ -19,8 +18,8 @@
             item = AweShur.Web.CRUDLocations.Item(eref);
         }
 
-        columns = BusinessBaseProvider.Instance.GetFilter(Context,
-                item.ObjectName).GetEmpty().VisibleColumns;
+        dataView = BusinessBaseProvider.Instance.GetFilter(Context,
+            item.ObjectName).GetEmpty();
     }
     catch (Exception exp)
     {
@@ -44,11 +43,10 @@
         }
         else
         {
-            <awsl-listeditor-vaadin oname="[[oname]]" route="{{route}}" path="[[name]]" title="" id="le"
-                edithref='@(item.edithref + "/" + idappuser)' editelement="@item.editelement"
-                filterhref='@(item.filterhref + "/" + idappuser)' filterelement="@item.filterelement"
-                title-search="Filter">
-				@Html.Partial("~/Views/Elements/Template/PartialColumns.cshtml", columns)
+            <awsl-listeditor-vaadin oname="[[oname]]" route="{{route}}" path="[[name]]" id="le"
+                                    edithref='@(item.edithref + "/" + idappuser)' editelement="@item.editelement"
+                                    filterhref='@(item.filterhref + "/" + idappuser)' filterelement="@item.filterelement"
+                                    title-search="Filter">
             </awsl-listeditor-vaadin>
         }
     </template>
@@ -68,6 +66,9 @@
         {
             this.$.le.refresh();
         },
+        customizeItemsList: function (itemsList) {
+            @Html.JavascriptVaadinGridColumns("itemsList", dataView)
+        }
         //listeners: {
         //    'awsl-editorsenddata': '_test'
         //},

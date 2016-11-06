@@ -5,6 +5,11 @@
 
     (function () {
         AWSLBehaviors.ToolBarBehavior = {
+            properties: {
+                largeScreen: {
+                    type: Boolean
+                }
+            },
             setToolBar: function(fromServer)
             {
                 var newHidden = false;

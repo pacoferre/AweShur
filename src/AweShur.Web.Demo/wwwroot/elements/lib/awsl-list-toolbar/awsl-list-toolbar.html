@@ -4,10 +4,10 @@
 <link rel="import" href="../../../lib/iron-icons/iron-icons.html">
 <link rel="import" href="../../../lib/paper-input/paper-input.html">
 <link rel="import" href="../../../lib/iron-collapse/iron-collapse.html">
-
 <link rel="import" href="../../../AWSLib/awsl-list-toolbar-behavior">
 <link rel="import" href="../../../lib/iron-flex-layout/iron-flex-layout.html">
-
+<link rel="import" href="../../../lib/iron-media-query/iron-media-query.html">
+<link rel="import" href="../../../AWSLib/awsl-jsontoxlsx">
 <dom-module id="awsl-list-toolbar">
     <template>
         <style>
@@ -15,27 +15,35 @@
                 @apply(--layout-flex);
             }
 
-            paper-icon-button {
-                --paper-icon-button-ink-color: white;
-            }
-
-            paper-icon-button + [main-title] {
-                margin-left: 24px;
+            paper-button {
+                min-width: unset;
+                padding: 8px;
+                margin: 0px;
             }
             
             paper-input {
                 @apply(--layout-self-end);
-                --paper-input-container-color: white;
-                --paper-input-container-input-color: white;
-                --paper-input-container-focus-color: white;
             }
         </style>
+        <iron-media-query query="(min-width: 900px)" query-matches="{{largeScreen}}"></iron-media-query>
 
         <app-toolbar id="tool" style="height:48px">
-            <paper-icon-button id="refresh" icon="refresh" on-tap="_onRefresh"></paper-icon-button>
-            <paper-icon-button id="openfilter" icon="filter-list" on-tap="_onOpenFilter"></paper-icon-button>
-            <paper-icon-button id="new" icon="add" on-tap="_onNew">+</paper-icon-button>
-            <span>[[itemsCount]] row/s</span>
+            <paper-button on-tap="_onExcel">
+                <iron-icon icon="file-download"></iron-icon>
+                <span hidden="[[!largeScreen]]">Excel</span>
+            </paper-button>
+            <paper-button id="refresh" on-tap="_onRefresh">
+                <iron-icon icon="refresh"></iron-icon>
+                <span hidden="[[!largeScreen]]">Refresh</span>
+            </paper-button>
+            <paper-button id="openfilter" on-tap="_onOpenFilter">
+                <iron-icon icon="filter-list"></iron-icon>
+                <span hidden="[[!largeScreen]]">Filter</span>
+            </paper-button>
+            <paper-button id="new" on-tap="_onNew">
+                <iron-icon icon="add"></iron-icon>
+                <span hidden="[[!largeScreen]]">Add</span>
+            </paper-button>
             <span main-title class="sp"></span>
             <iron-collapse id="cosearch" horizontal>
                 <div class="content">
@@ -45,6 +53,7 @@
                 </div>
             </iron-collapse>
             <paper-icon-button icon="search" on-tap="_Search"></paper-icon-button>
+            <span>[[itemsCount]] row/s</span>
         </app-toolbar>
     </template>
     <script>

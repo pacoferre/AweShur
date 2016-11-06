@@ -427,6 +427,8 @@ namespace AweShur.Core
                     }
                     else
                     {
+                        value = value.NoNullDouble().ToString();
+
                         try
                         {
                             if (Double.Parse(value) == 0)

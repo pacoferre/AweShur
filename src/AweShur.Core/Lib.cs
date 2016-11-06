@@ -134,13 +134,7 @@ namespace AweShur.Core
                 }
                 else
                 {
-                    try
-                    {
-                        res = long.Parse(number.ToString());
-                    }
-                    catch
-                    {
-                    }
+                    long.TryParse(number.ToString(), out res);
                 }
             }
 
@@ -153,19 +147,13 @@ namespace AweShur.Core
 
             if (number != null)
             {
-                try
+                if (number is Int16)
                 {
                     res = (Int16)number;
                 }
-                catch
+                else
                 {
-                    try
-                    {
-                        res = System.Int16.Parse(number.ToString());
-                    }
-                    catch
-                    {
-                    }
+                    System.Int16.TryParse(number.ToString(), out res);
                 }
             }
 
@@ -258,13 +246,7 @@ namespace AweShur.Core
                 }
                 else
                 {
-                    try
-                    {
-                        res = System.Double.Parse(Numerize(number.ToString()));
-                    }
-                    catch
-                    {
-                    }
+                    Double.TryParse(Numerize(number.ToString()), out res);
                 }
             }
 
@@ -283,13 +265,7 @@ namespace AweShur.Core
                 }
                 else
                 {
-                    try
-                    {
-                        res = Convert.ToSingle(Numerize(number.ToString()));
-                    }
-                    catch
-                    {
-                    }
+                    Single.TryParse(Numerize(number.ToString()), out res);
                 }
             }
 
@@ -309,13 +285,7 @@ namespace AweShur.Core
                 }
                 else
                 {
-                    try
-                    {
-                        res = System.Decimal.Parse(Numerize(number.ToString()));
-                    }
-                    catch
-                    {
-                    }
+                    Decimal.TryParse(Numerize(number.ToString()), out res);
                 }
             }
 

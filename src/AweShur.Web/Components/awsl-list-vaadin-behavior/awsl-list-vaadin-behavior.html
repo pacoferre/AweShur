@@ -60,11 +60,13 @@
             wasAttached: false,
             firstResponse: false,
             refreshPending: false,
+            jsontoxls: null,
             listeners: {
                 'awsl-refresh': 'refresh',
                 'awsl-filterready': '_filterReady',
                 'awsl-openfilter': '_openFilter',
                 'awsl-closefilter': '_closeFilter',
+                'awsl-downloadxlsx': '_downloadxlsx',
             },
             _filterReady: function () {
                 if (this.refreshPending) {
@@ -170,7 +172,7 @@
                 this.spinner.hidden = true;
 
                 this.insertSpinner();
-
+                 
                 this.ajaxlist = document.createElement('iron-ajax');
 
                 this.ajaxlist.method = 'POST';
@@ -259,6 +261,7 @@
                     if (this.items !== undefined && this.items.length > 0) {
                         var sortOrder = evt.detail.value;
                         var grid = this;
+                        var lastColumn = this.items[0].length - 1;
 
                         function _compare(a, b) {
                             return (a < b ? -1 : a > b ? 1 : 0);
@@ -268,7 +271,16 @@
                             return sortOrder.map(function (sort) {
                                 var col = grid.columns[sort.column];
                                 var prop = sort.column; // col.name ||  in original vaadin_grid, not here.
-                                return (sort.direction === 'asc' ? 1 : -1) * _compare(a[prop], b[prop]);
+
+                                if (prop < lastColumn)
+                                {
+                                    return (sort.direction === 'asc' ? 1 : -1)
+                                        * _compare((a[prop] == null ? '' : a[prop]) + (a[prop + 1] == null ? '' : a[prop + 1]),
+                                        (b[prop] == null ? '' : b[prop]) + (b[prop + 1] == null ? '' : b[prop + 1]));
+                                }
+
+                                return (sort.direction === 'asc' ? 1 : -1)
+                                    * _compare(a[prop] == null ? '' : a[prop], b[prop] == null ? '' : b[prop]);
                             }.bind(this)).reduce(function firstNonZeroValue(p, n) {
                                 return p ? p : n;
                             }, 0);
@@ -332,6 +344,25 @@
                 }
             },
             addToServerFilterFields: function () {
+            },
+            _downloadxlsx: function () {
+                var itemsList = this.getItemsList();
+                var colMatch = [];
+
+                if (this.jsontoxls == null)
+                {
+                    this.jsontoxls = document.createElement('awsl-jsontoxlsx');
+                }
+
+                for (var index in itemsList.columns)
+                {
+                    var col = itemsList.columns[index];
+
+                    colMatch.push({ show: col.hidable || !col.hidden, name: col.name });
+                }
+
+                this.jsontoxls.downloadJson(itemsList.items, colMatch, this.lastTitle + '.xml',
+                    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
             }
         };
     })();

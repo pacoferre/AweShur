@@ -7,113 +7,109 @@
     <script>
     Polymer({
         is: "awsl-jsontoxlsx",
-        emitXmlHeader: function (colNames) {
-            var headerRow = '<ss:Row>\n';
-            for (var colName in colNames) {
-                headerRow += '<ss:Cell>\n';
-                headerRow += '<ss:Data ss:Type="String">';
-                headerRow += colName + '</ss:Data>\n';
-                headerRow += '</ss:Cell>\n';
+        emitXmlHeader: function (colMatch) {
+            var headerRow = '<Row ss:StyleID="1">\n';
+            for (var index = 0; index < colMatch.length; ++index) {
+                var col = colMatch[index];
+
+                if (col.show) {
+                    headerRow += '<Cell><Data ss:Type="String">' + col.name + '</Data></Cell>\n';
+                }
             }
-            headerRow += '</ss:Row>\n';
-            return '<?xml version="1.0" ?>\n' +
-                   '<ss:Workbook xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet">\n' +
-            '<ss:Worksheet ss:Name="Sheet1">\n' +
-                '<ss:Table>\n\n' + headerRow;
+            headerRow += '</Row>\n';
+            return '\uFEFF<?xml version="1.0" ?>\n<?mso-application progid="Excel.Sheet"?>\n' +
+                '<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"\n' +
+                'xmlns:o="urn:schemas-microsoft-com:office:office"\n' +
+                'xmlns:x="urn:schemas-microsoft-com:office:excel"\n' +
+                'xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"\n' +
+                'xmlns:html="http://www.w3.org/TR/REC-html40">\n' +
+                '<ExcelWorkbook xmlns="urn:schemas-microsoft-com:office:excel">\n' +
+                '<ProtectStructure>False</ProtectStructure>\n' +
+                '<ProtectWindows>False</ProtectWindows>\n' +
+                '</ExcelWorkbook>\n' +
+                '<Styles><Style ss:ID="1"><Font ss:Bold="1"/></Style></Styles>\n' +
+                '<Worksheet ss:Name="Sheet1">\n' +
+                '<Table>\n' + headerRow;
         },
 
         emitXmlFooter: function () {
-            return '\n </ss:Table>\n' +
-                '</ss:Worksheet>\n' + '</ss:Workbook>\n';
+            return '</Table>\n</Worksheet>\n</Workbook>\n';
         },
 
-        jsonToSsXml: function (jsonObject, colNames) {
+        jsonToSsXml: function (jsonObject, colMatch) {
             var row;
             var col;
             var xml;
             var data = typeof jsonObject != "object" ? JSON.parse(jsonObject) : jsonObject;
-            var types = [];
 
             if (data.length > 0)
             {
-                for (col in data[0]) {
-                    types.push(typeof data[0][col]);
+                for (col = 0; col < data[0].length; ++col) {
+                    var type = typeof data[0][col];
+
+                    if (type == "number") {
+                        type = "Number";
+                    }
+                    else if (type == "string") {
+                        type = "String";
+                    }
+                    else if (type == "date") {
+                        type = "Date";
+                    }
+                    else {
+                        type = "String";
+                    }
+
+                    colMatch[col].type = type;
                 }
             }
 
-            xml = emitXmlHeader(colNames);
+            xml = this.emitXmlHeader(colMatch);
 
             for (row = 0; row < data.length; row++) {
-                xml += '<ss:Row>\n';
+                xml += '<Row>\n';
 
-                for (col in data[row]) {
-                    xml += '<ss:Cell>\n';
-                    xml += '<ss:Data ss:Type="' + types[col] + '">';
-                    xml += data[row][col] + '</ss:Data>\n';
-                    xml += '</ss:Cell>\n';
+                for (col = 0; col < data[row].length; ++col) {
+                    var match = colMatch[col];
+
+                    if (match.show) {
+                        xml += '<Cell><Data ss:Type="' + match.type + '">'
+                            + (data[row][col] == null ? '' : data[row][col])
+                            + '</Data></Cell>\n';
+                    }
                 }
 
-                xml += '</ss:Row>\n';
+                xml += '</Row>\n';
             }
 
-            xml += emitXmlFooter();
+            xml += this.emitXmlFooter();
 
             return xml;
+        },
+
+        downloadJson: function (json, colMatch, filename, contentType) {
+            this.download(this.jsonToSsXml(json, colMatch), filename, contentType);
         },
 
         download: function (content, filename, contentType) {
             if (!contentType) contentType = 'application/octet-stream';
 
-            var a = this.$.dln;
             var blob = new Blob([content], {
                 'type': contentType
             });
-            a.href = window.URL.createObjectURL(blob);
-            a.download = filename;
-            window.navigator.msSaveOrOpenBlob(blob, filename);
+
+            if (window.navigator.msSaveOrOpenBlob) {
+                window.navigator.msSaveOrOpenBlob(blob, filename);
+            }
+            else {
+                var a = this.$.dln;
+
+                a.href = window.URL.createObjectURL(blob);
+                a.download = filename;
+
+                a.click();
+            }
         }
     });
     </script>
 </dom-module>
-
-
-
-
-
-
-
-
-// Test script to generate a file from JavaScript such
-// that MS Excel will honor non-ASCII characters.
-
-testJson = [
-    {
-        "name": "Tony Peña",
-        "city": "New York",
-        "country": "United States",
-        "birthdate": "1978-03-15",
-        "amount": 42
-
-    },
-    {
-        "name": "Ζαλώνης Thessaloniki",
-        "city": "Athens",
-        "country": "Greece",
-        "birthdate": "1987-11-23",
-        "amount": 42
-    }
-];
-
-// Simple type mapping; dates can be hard
-// and I would prefer to simply use `datevalue`
-// ... you could even add the formula in here.
-testTypes = {
-    "name": "String",
-    "city": "String",
-    "country": "String",
-    "birthdate": "String",
-    "amount": "Number"
-},
-
-
-download(jsonToSsXml(testJson), 'test.xls', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
