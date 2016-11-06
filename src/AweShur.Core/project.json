@@ -12,7 +12,7 @@
     "System.Xml.XmlDocument": "4.0.1",
     "System.Data.Common": "4.1.0",
     "Microsoft.AspNetCore.Mvc": "1.0.1",
-    "StackExchange.Redis": "1.1.605"
+    "StackExchange.Redis": "1.1.608"
   },
   "frameworks": {
     "net46": {

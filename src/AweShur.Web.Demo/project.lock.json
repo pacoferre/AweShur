@@ -3,7 +3,7 @@
   "version": 2,
   "targets": {
     ".NETCoreApp,Version=v1.0": {
-      "BundlerMinifier.Core/2.2.281": {
+      "BundlerMinifier.Core/2.2.301": {
         "type": "package",
         "dependencies": {
           "Microsoft.NETCore.App": "1.0.0",
@@ -1983,7 +1983,7 @@
           }
         }
       },
-      "StackExchange.Redis/1.1.605": {
+      "StackExchange.Redis/1.1.608": {
         "type": "package",
         "dependencies": {
           "System.Collections": "4.0.11",
@@ -4004,7 +4004,7 @@
           "lib/netstandard1.3/System.Xml.XPath.XDocument.dll": {}
         }
       },
-      "AweShur.Core/1.0.31": {
+      "AweShur.Core/1.0.32": {
         "type": "project",
         "framework": ".NETStandard,Version=v1.6",
         "dependencies": {
@@ -4012,7 +4012,7 @@
           "Microsoft.AspNetCore.Mvc": "1.0.1",
           "NETStandard.Library": "1.6.0",
           "Newtonsoft.Json": "9.0.1",
-          "StackExchange.Redis": "1.1.605",
+          "StackExchange.Redis": "1.1.608",
           "System.Collections.NonGeneric": "4.0.1",
           "System.Data.Common": "4.1.0",
           "System.Dynamic.Runtime": "4.0.11",
@@ -4028,16 +4028,16 @@
           "netstandard1.6/AweShur.Core.dll": {}
         }
       },
-      "AweShur.Web/1.0.31": {
+      "AweShur.Web/1.0.32": {
         "type": "project",
         "framework": ".NETStandard,Version=v1.6",
         "dependencies": {
-          "AweShur.Core": "1.0.31",
+          "AweShur.Core": "1.0.32",
           "Microsoft.AspNetCore.Mvc": "1.0.1",
           "Microsoft.AspNetCore.Mvc.ViewFeatures": "1.0.1",
           "NETStandard.Library": "1.6.0",
           "Newtonsoft.Json": "9.0.1",
-          "StackExchange.Redis": "1.1.605"
+          "StackExchange.Redis": "1.1.608"
         },
         "compile": {
           "netstandard1.6/AweShur.Web.dll": {}
@@ -4049,12 +4049,12 @@
     }
   },
   "libraries": {
-    "BundlerMinifier.Core/2.2.281": {
-      "sha512": "cUiOJT4rjubD9tOsLo0ruPqfLEy5GUByj9JZ2fVlU5uR4QYTIN//BpeQfsmBwIU/GWrpVJqYsyX474Bm0U3XHQ==",
+    "BundlerMinifier.Core/2.2.301": {
+      "sha512": "7vWVrVzO8a9NbdJN/ydYl3pjdt7+VTyGqO5ot2NKi7PGwCQt/H1Jckz0q131y8JbOmdXk/MYvN5U4UFhXUWxOw==",
       "type": "package",
-      "path": "BundlerMinifier.Core/2.2.281",
+      "path": "BundlerMinifier.Core/2.2.301",
       "files": [
-        "BundlerMinifier.Core.2.2.281.nupkg.sha512",
+        "BundlerMinifier.Core.2.2.301.nupkg.sha512",
         "BundlerMinifier.Core.nuspec",
         "lib/net452/dotnet-bundle.exe",
         "lib/netcoreapp1.0/dotnet-bundle.dll",
@@ -5673,12 +5673,12 @@
         "runtimes/win7-x86/native/sni.dll"
       ]
     },
-    "StackExchange.Redis/1.1.605": {
-      "sha512": "3yGtfr2ihBESynl8A1Ynydk+/TEpZZsaXEPf47x48t7mwX5c+1rqtndLEnRIWDcENJKFixaWn03h1amVJcnl1Q==",
+    "StackExchange.Redis/1.1.608": {
+      "sha512": "SXorfrt0kXU1ueYRvdZcZ87da7o75j0LTrOtRD7xbD1b/AhnL9nTohmHfz4Ob7ENwf7ecxl1L3vmSET3nemz7w==",
       "type": "package",
-      "path": "StackExchange.Redis/1.1.605",
+      "path": "StackExchange.Redis/1.1.608",
       "files": [
-        "StackExchange.Redis.1.1.605.nupkg.sha512",
+        "StackExchange.Redis.1.1.608.nupkg.sha512",
         "StackExchange.Redis.nuspec",
         "lib/net40/StackExchange.Redis.dll",
         "lib/net40/StackExchange.Redis.xml",
@@ -10299,12 +10299,12 @@
         "ref/xamarinwatchos10/_._"
       ]
     },
-    "AweShur.Core/1.0.31": {
+    "AweShur.Core/1.0.32": {
       "type": "project",
       "path": "../AweShur.Core/project.json",
       "msbuildProject": "../AweShur.Core/AweShur.Core.xproj"
     },
-    "AweShur.Web/1.0.31": {
+    "AweShur.Web/1.0.32": {
       "type": "project",
       "path": "../AweShur.Web/project.json",
       "msbuildProject": "../AweShur.Web/AweShur.Web.xproj"
@@ -10312,9 +10312,9 @@
   },
   "projectFileDependencyGroups": {
     "": [
-      "AweShur.Core >= 1.0.31",
-      "AweShur.Web >= 1.0.31",
-      "BundlerMinifier.Core >= 2.2.281",
+      "AweShur.Core >= 1.0.32",
+      "AweShur.Web >= 1.0.32",
+      "BundlerMinifier.Core >= 2.2.301",
       "Microsoft.AspNetCore.Diagnostics >= 1.0.0",
       "Microsoft.AspNetCore.Mvc >= 1.0.1",
       "Microsoft.AspNetCore.Razor.Tools >= 1.0.0-preview2-final",
@@ -10331,7 +10331,7 @@
       "Microsoft.NETCore.App >= 1.0.1",
       "Microsoft.VisualStudio.Web.BrowserLink.Loader >= 14.0.0",
       "Newtonsoft.Json >= 9.0.1",
-      "StackExchange.Redis >= 1.1.605",
+      "StackExchange.Redis >= 1.1.608",
       "System.Data.SqlClient >= 4.1.0",
       "System.Threading.Tasks.Extensions >= 4.0.0"
     ],
