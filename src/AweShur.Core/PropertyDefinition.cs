@@ -427,7 +427,7 @@ namespace AweShur.Core
                     }
                     else
                     {
-                        value = value.NoNullDouble().ToString();
+                        //value = value.NoNullDouble().ToString();
 
                         try
                         {

@@ -257,10 +257,11 @@
                         el.afterGetData(fromServer);
                     }
                 }
+
+                this.fire('awsl-get-additional-data');
             },
             setData: function (toServer) {
                 for (var el, i = 0; el = this.elements[i], i < this.elements.length; i++) {
-
                     if (el.isCollection !== undefined)
                     {
                         el.setChildData(toServer);
@@ -271,6 +272,7 @@
                     }
                 }
 
+                this.fire('awsl-set-additional-data');
             },
             clearData: function() {
                 for (var el, i = 0; el = this.elements[i], i < this.elements.length; i++) {
@@ -278,6 +280,8 @@
                         el.clearData();
                     }
                 }
+
+                this.fire('awsl-clear-data');
             },
 
             setRootEditor: function ()

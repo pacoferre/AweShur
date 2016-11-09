@@ -9,16 +9,25 @@
                 for (var el, i = 0; el = this.elements[i], i < this.elements.length; i++) {
                     el.getData(fromServer, undefined);
                 }
+                this.afterGetFilter(fromServer);
             },
             setFilter: function (toServer) {
                 for (var el, i = 0; el = this.elements[i], i < this.elements.length; i++) {
                     el.setData(toServer);
                 }
+                this.afterSetFilter(toServer);
             },
             clearFilter: function (toServer) {
                 for (var el, i = 0; el = this.elements[i], i < this.elements.length; i++) {
                     el.clearData();
                 }
+                this.afterClearFilter(toServer);
+            },
+            afterGetFilter: function (fromServer) {
+            },
+            afterSetFilter: function (toServer) {
+            },
+            afterClearFilter: function (toServer) {
             }
         };
 

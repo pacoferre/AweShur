@@ -1,5 +1,5 @@
 {
-  "version": "1.0.32",
+  "version": "1.0.38",
   "dependencies": {
     "Microsoft.AspNetCore.Cryptography.KeyDerivation": "1.0.0",
     "NETStandard.Library": "1.6.0",

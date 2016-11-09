@@ -25,10 +25,10 @@
       "version": "1.0.1"
     },
     "Microsoft.AspNetCore.Mvc": "1.0.1",
-    "AweShur.Core": "1.0.32",
-    "AweShur.Web": "1.0.32",
     "BundlerMinifier.Core": "2.2.301",
-    "StackExchange.Redis": "1.1.608"
+    "StackExchange.Redis": "1.1.608",
+    "AweShur.Core": "1.0.38",
+    "AweShur.Web": "1.0.38"
   },
 
   "tools": {

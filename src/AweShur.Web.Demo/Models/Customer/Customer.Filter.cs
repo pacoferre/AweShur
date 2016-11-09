@@ -24,6 +24,9 @@ CustomerType ON Customer.idCustomerType = CustomerType.idCustomerType";
             dataView.Columns.Insert(1, new DataViewColumn("CustomerType.name", "Type"));
             dataView.Columns.Add(new DataViewColumn(Decorator.TableNameEncapsulated,
                 Decorator.Properties["address"]));
+
+            dataView.Columns.Add(new DataViewColumn(Decorator.TableNameEncapsulated,
+                Decorator.Properties["nextCall"]));
         }
     }
 }

@@ -100,7 +100,7 @@ namespace AweShur.Core
 
                     AfterReadFromDB();
                 }
-                catch
+                catch(Exception exp)
                 {
                     readed = false;
                 }

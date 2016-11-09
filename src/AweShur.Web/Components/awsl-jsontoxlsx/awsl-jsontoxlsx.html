@@ -9,14 +9,28 @@
         is: "awsl-jsontoxlsx",
         emitXmlHeader: function (colMatch) {
             var headerRow = '<Row ss:StyleID="1">\n';
+            var hasDateTime = false;
+            var dateTimeStyle = '';
+
             for (var index = 0; index < colMatch.length; ++index) {
                 var col = colMatch[index];
 
                 if (col.show) {
                     headerRow += '<Cell><Data ss:Type="String">' + col.name + '</Data></Cell>\n';
                 }
+
+                if (col.type == "DateTime")
+                {
+                    hasDateTime = true;
+                }
             }
             headerRow += '</Row>\n';
+
+            if (hasDateTime)
+            {
+                dateTimeStyle = '<Style ss:ID="dt"><NumberFormat ss:Format="Short Date"/></Style>';
+            }
+
             return '\uFEFF<?xml version="1.0" ?>\n<?mso-application progid="Excel.Sheet"?>\n' +
                 '<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"\n' +
                 'xmlns:o="urn:schemas-microsoft-com:office:office"\n' +
@@ -27,7 +41,7 @@
                 '<ProtectStructure>False</ProtectStructure>\n' +
                 '<ProtectWindows>False</ProtectWindows>\n' +
                 '</ExcelWorkbook>\n' +
-                '<Styles><Style ss:ID="1"><Font ss:Bold="1"/></Style></Styles>\n' +
+                '<Styles><Style ss:ID="1"><Font ss:Bold="1"/></Style>' + dateTimeStyle + '</Styles>\n' +
                 '<Worksheet ss:Name="Sheet1">\n' +
                 '<Table>\n' + headerRow;
         },
@@ -45,16 +59,32 @@
             if (data.length > 0)
             {
                 for (col = 0; col < data[0].length; ++col) {
-                    var type = typeof data[0][col];
+                    var index = 0;
+                    var cellValue;
+
+                    do {
+                        cellValue = data[index][col];
+                        index++;
+                    } while (cellValue == null && index < data.length)
+
+                    var type = typeof cellValue;
 
                     if (type == "number") {
                         type = "Number";
                     }
                     else if (type == "string") {
                         type = "String";
+
+                        if (cellValue > '1960' && cellValue.indexOf('-') == 4 && cellValue.indexOf('T') == 10) {
+                            var testTime = (new Date(cellValue)).getTime();
+
+                            if (testTime === testTime) {
+                                type = "DateTime";
+                            }
+                        }
                     }
                     else if (type == "date") {
-                        type = "Date";
+                        type = "DateTime";
                     }
                     else {
                         type = "String";
@@ -73,9 +103,21 @@
                     var match = colMatch[col];
 
                     if (match.show) {
-                        xml += '<Cell><Data ss:Type="' + match.type + '">'
-                            + (data[row][col] == null ? '' : data[row][col])
-                            + '</Data></Cell>\n';
+                        if (match.type == 'DateTime') {
+                            if (data[row][col] != null) {
+                                xml += '<Cell ss:StyleID="dt"><Data ss:Type="' + match.type + '">'
+                                    + data[row][col] + '</Data></Cell>\n';
+                            }
+                            else
+                            {
+                                xml += '<Cell ss:StyleID="dt" />\n';
+                            }
+                        }
+                        else {
+                            xml += '<Cell><Data ss:Type="' + match.type + '">'
+                                + (data[row][col] == null ? '' : data[row][col])
+                                + '</Data></Cell>\n';
+                        }
                     }
                 }
 

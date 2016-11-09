@@ -2,14 +2,14 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
     <metadata>
         <id>AweShur.Core</id>
-        <version>1.0.32</version>
+        <version>1.0.38</version>
         <title>AweShur Core</title>
         <authors>Paco Ferre</authors>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <description>Core system for AweShur.</description>
         <dependencies>
             <group targetFramework=".NETFramework4.6">
-                <dependency id="StackExchange.Redis" version="1.1.605" />
+                <dependency id="StackExchange.Redis" version="1.1.608" />
                 <dependency id="Microsoft.AspNetCore.Cryptography.KeyDerivation" version="1.0.0" />
                 <dependency id="Microsoft.AspNetCore.Mvc" version="1.0.1" />
                 <dependency id="NETStandard.Library" version="1.6.0" />
