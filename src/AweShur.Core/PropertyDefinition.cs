@@ -567,6 +567,7 @@ namespace AweShur.Core
                     if (operation == "")
                     {
                         operation = "LIKE";
+                        obj = "%" + obj + "%";
                     }
                 }
                 else if (Type == PropertyInputType.checkbox || BasicType == BasicType.Bit)

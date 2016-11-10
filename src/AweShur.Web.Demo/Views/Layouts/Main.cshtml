@@ -66,6 +66,8 @@
                     <a name="Customer" href="/#/Customer">Customers</a>
                     <a name="CustomerType" href="/#/CustomerType">Customer types</a>
                     <a name="CustomerRanking" href="/#/CustomerRanking">Customer ranking</a>
+                    <a name="Project" href="/#/Project">Projects</a>
+                    <a name="ProjectTask" href="/#/ProjectTask">Project Tasks</a>
                     @if (currentUser["su"].NoNullBool())
                     {
                     <a name="User" href="/#/User">Users</a>
@@ -86,6 +88,8 @@
                     <app-customer name="Customer" oname="Customer" route="{{subroute}}"><paper-spinner active></paper-spinner></app-customer>
                     <app-customertype name="CustomerType" oname="CustomerType" route="{{subroute}}"><paper-spinner active></paper-spinner></app-customertype>
                     <app-customerranking name="CustomerRanking" oname="CustomerRanking" route="{{subroute}}"><paper-spinner active></paper-spinner></app-customerranking>
+                    <app-project name="Project" oname="Project" route="{{subroute}}"><paper-spinner active></paper-spinner></app-project>
+                    <app-projecttask name="ProjectTask" oname="ProjectTask" route="{{subroute}}"><paper-spinner active></paper-spinner></app-projecttask>
                     @if (currentUser["su"].NoNullBool())
                     {
                     <app-user name="User" oname="AppUser" route="{{subroute}}"><paper-spinner active></paper-spinner></app-user>

@@ -27,8 +27,8 @@
     "Microsoft.AspNetCore.Mvc": "1.0.1",
     "BundlerMinifier.Core": "2.2.301",
     "StackExchange.Redis": "1.1.608",
-    "AweShur.Core": "1.0.40",
-    "AweShur.Web": "1.0.40"
+    "AweShur.Core": "1.0.41",
+    "AweShur.Web": "1.0.41"
   },
 
   "tools": {
