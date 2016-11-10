@@ -35,37 +35,10 @@ namespace AweShur.Web.Controllers
         [HttpPost]
         public ListModelToClient List([FromBody]ListModelFromClient request)
         {
-            ListModelToClient resp = new ListModelToClient();
+            ListModelToClient resp;
             FilterBase filter = BusinessBaseProvider.Instance.GetFilter(HttpContext, request.oname, request.filterName);
 
-            filter.FastSearchActivated = request.dofastsearch;
-            filter.FastSearch = request.fastsearch;
-            if (!request.first)
-            {
-                filter.Filter = request.data;
-                filter.topRecords = request.topRecords;
-            }
-
-            if (filter.Filter == null)
-            {
-                filter.Filter = request.data;
-                filter.Clear();
-            }
-
-            if (request.sortDir != "asc" && request.sortDir != "desc")
-            {
-                request.sortDir = "asc";
-            }
-
-            resp.plural = filter.Decorator.Plural;
-            resp.data = filter.Filter;
-            resp.result = Dapper.SqlMapper.ToList(filter.Get(request.sortIndex, 
-                (request.sortDir == "asc" ? SortDirection.Ascending : SortDirection.Descending),
-                0, 0));
-            resp.fastsearch = filter.FastSearch;
-            resp.sortIndex = request.sortIndex;
-            resp.sortDir = request.sortDir;
-            resp.topRecords = filter.topRecords;
+            resp = filter.ProcessRequestAndCreateResponse(HttpContext, request);
 
             BusinessBaseProvider.StoreFilter(HttpContext, filter, request.oname, request.filterName);
 

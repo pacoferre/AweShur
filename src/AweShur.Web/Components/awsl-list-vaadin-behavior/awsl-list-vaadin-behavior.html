@@ -136,7 +136,12 @@
 
                 this.firstResponse = true;
 
-                this.fire('awsl-list-ready')
+                if (this.getListToolbar() != null)
+                {
+                    this.getListToolbar().setToolBar(event.detail.response);
+                }
+
+                this.fire('awsl-list-ready', { response: event.detail.response });
             },
             _handleError: function (event) {
                 this.spinner.active = false;
@@ -237,6 +242,9 @@
                 return null;
             },
             getFilter: function () {
+                return null;
+            },
+            getListToolbar: function () {
                 return null;
             },
             customizeItemsList: function () {

@@ -54,7 +54,7 @@ namespace AweShur.Core
         public bool IsDBField { get; } = false;
 
         public bool IsNullable { get; } = false;
-        public bool IsComputed { get; } = false;
+        public bool IsComputed { get; set; } = false;
         public bool IsIdentity { get; } = false;
         public bool IsPrimaryKey { get; } = false;
         public bool IsReadOnly { get; set; } = false;
@@ -159,6 +159,8 @@ namespace AweShur.Core
             }
 
             IsPrimaryKey = isPrimaryKey;
+
+            NoChecking = true;
         }
 
         public string InputType

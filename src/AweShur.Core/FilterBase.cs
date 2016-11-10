@@ -1,4 +1,5 @@
 ﻿using AweShur.Core.DataViews;
+using AweShur.Core.REST;
 using Dapper;
 using Newtonsoft.Json.Linq;
 using System;
@@ -9,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace AweShur.Core
 {
-    public class FilterBase : IDataViewSetter
+    public partial class FilterBase : IDataViewSetter
     {
         private Lazy<DB> lazyDB;
 

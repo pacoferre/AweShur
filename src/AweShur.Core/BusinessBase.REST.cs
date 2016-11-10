@@ -118,7 +118,14 @@ namespace AweShur.Core
 
             model.action = fromClient.action;
 
+            SetExtraToClientResponse(model);
+
             return model;
+        }
+
+        protected virtual void SetExtraToClientResponse(ModelToClient model)
+        {
+
         }
 
         private void ProcessCollectionsFromClient(HttpContext context, ModelFromClient fromClient, ModelToClient model)

@@ -55,6 +55,13 @@
                     }
                 }
 
+                if (!fromServer.permisson.delete) {
+                    deleteHidden = true;
+                }
+                if (!fromServer.permisson.add) {
+                    newHidden = true;
+                }
+
                 if (this.$.new !== undefined)
                     this.$.new.hidden = newHidden;
                 if (this.$.refresh !== undefined)

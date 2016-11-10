@@ -87,9 +87,9 @@ namespace AweShur.Core.REST
 
     public class BusinessObjectPermisson
     {
-        public bool modify { get; set; }
-        public bool delete { get; set; }
-        public bool add { get; set; }
+        public bool modify { get; set; } = true;
+        public bool delete { get; set; } = true;
+        public bool add { get; set; } = true;
     }
 
     public class BusinessTool

@@ -19,7 +19,7 @@
         }
 
         dataView = BusinessBaseProvider.Instance.GetFilter(Context,
-            item.ObjectName).GetEmpty();
+            item.ObjectName, item.FilterName).GetEmpty();
     }
     catch (Exception exp)
     {

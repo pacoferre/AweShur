@@ -35,7 +35,17 @@
             },
             _onExcel: function () {
                 this.fire('awsl-downloadxlsx');
-            }
+            },
+            setToolBar: function (fromServer) {
+                var newHidden = false;
+
+                if (!fromServer.permisson.add) {
+                    newHidden = true;
+                }
+
+                if (this.$.new !== undefined)
+                    this.$.new.hidden = newHidden;
+            },
         };
     })();
 </script>

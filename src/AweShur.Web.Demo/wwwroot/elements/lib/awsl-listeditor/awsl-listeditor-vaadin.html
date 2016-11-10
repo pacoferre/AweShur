@@ -44,7 +44,7 @@
         <neon-animated-pages id="pages" class="flex" entry-animation="slide-from-right-animation" exit-animation="slide-left-animation">
             <neon-animatable>
                 <div id="listContent">
-                    <awsl-list-toolbar on-awsl-new="_onNew" fastsearch="{{fastsearch}}" items-count="[[itemsCount]]"></awsl-list-toolbar>
+                    <awsl-list-toolbar id="tool" on-awsl-new="_onNew" fastsearch="{{fastsearch}}" items-count="[[itemsCount]]"></awsl-list-toolbar>
                     <vaadin-grid id="itemsList" items="[[items]]">
                     </vaadin-grid>
                 </div>
@@ -97,6 +97,9 @@
             },
             getFilter: function () {
                 return this.$.filter;
+            },
+            getListToolbar: function () {
+                return this.$.tool;
             },
             reset: function () {
                 if (this.$.pages.selected != 0) {
