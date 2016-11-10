@@ -39,7 +39,6 @@
                             sequence: 0,
                             action: "",
                             dataNames: [],
-                            listNames: [],
                             root: {
                                 key: "",
                                 data: {},
@@ -217,7 +216,6 @@
                         this.theelement.setRootEditor();
                         this.theelement.setInitChildren(this.toserver.root.children);
                         this.toserver.dataNames = this.theelement.dataNames;
-                        this.toserver.listNames = this.theelement.listNames;
                     }
                     else if (action == "changed") {
                         //this.toserver.root.data = {};

@@ -23,10 +23,6 @@
                     type: Array,
                     value: function () { return []; }
                 },
-                listNames: {
-                    type: Array,
-                    value: function () { return []; }
-                },
                 listItems: {
                     type: Array,
                     value: function () { return []; }
@@ -297,6 +293,8 @@
                         this._merge(el.dataNames);
                     }
                 }
+
+                this.fire('awsl-initialize-element');
             },
 
             setInitChildren: function (childrenToServer) {
