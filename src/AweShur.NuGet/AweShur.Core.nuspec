@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
     <metadata>
         <id>AweShur.Core</id>
-        <version>1.0.42</version>
+        <version>1.0.43</version>
         <title>AweShur Core</title>
         <authors>Paco Ferre</authors>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
@@ -25,7 +25,7 @@
         </dependencies>
     </metadata>
     <files>
-        <file src="bin\Release\net46\AweShur.Core.dll" target="lib\net46\AweShur.Core.dll" />
-        <file src="bin\Release\net46\AweShur.Core.pdb" target="lib\net46\AweShur.Core.pdb" />
+        <file src="..\AweShur.Core\bin\Release\net46\AweShur.Core.dll" target="lib\net46\AweShur.Core.dll" />
+        <file src="..\AweShur.Core\bin\Release\net46\AweShur.Core.pdb" target="lib\net46\AweShur.Core.pdb" />
     </files>
 </package>
