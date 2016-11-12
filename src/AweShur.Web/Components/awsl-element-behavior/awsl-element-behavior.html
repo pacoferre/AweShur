@@ -254,7 +254,7 @@
                     }
                 }
 
-                this.fire('awsl-get-additional-data');
+                this.fire('awsl-get-additional-data', { fromServer: fromServer });
             },
             setData: function (toServer) {
                 for (var el, i = 0; el = this.elements[i], i < this.elements.length; i++) {
@@ -268,7 +268,7 @@
                     }
                 }
 
-                this.fire('awsl-set-additional-data');
+                this.fire('awsl-set-additional-data', { toServer: toServer });
             },
             clearData: function() {
                 for (var el, i = 0; el = this.elements[i], i < this.elements.length; i++) {

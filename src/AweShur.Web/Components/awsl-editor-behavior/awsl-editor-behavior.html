@@ -156,7 +156,12 @@
                     this.lastChangedElement = elementWithDataFieldName;
 
                     // Must be better.
-                    var posibleCollection = elementWithDataFieldName.containerElement.containerElement;
+                    var posibleCollection = null;
+
+                    if (elementWithDataFieldName.containerElement !== undefined
+                        && elementWithDataFieldName.containerElement != null) {
+                        posibleCollection = elementWithDataFieldName.containerElement.containerElement;
+                    }
 
                     if (posibleCollection == null || posibleCollection.isCollection === undefined)
                     {
