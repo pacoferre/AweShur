@@ -27,8 +27,8 @@ namespace AweShur.Core
         private ConcurrentDictionary<string, Lazy<BusinessBaseDecorator>>
             decoratorsCreators = new ConcurrentDictionary<string, Lazy<BusinessBaseDecorator>>();
         public static BusinessBaseProvider Instance { get; private set; }
-        private static IHttpContextAccessor HttpContextAccessor;
-        private static ConnectionMultiplexer TheCache;
+        private static IHttpContextAccessor HttpContextAccessor = null;
+        private static ConnectionMultiplexer TheCache = null;
         public static ListProvider ListProvider { get; private set; }
 
         public static void Configure(IHttpContextAccessor httpContextAccessor, ConnectionMultiplexer theCache,
@@ -50,7 +50,7 @@ namespace AweShur.Core
         {
             get
             {
-                return HttpContextAccessor.HttpContext;
+                return HttpContextAccessor?.HttpContext;
             }
         }
 

@@ -36,27 +36,6 @@
     <script src="~/lib/moment/min/moment.min.js"></script>
     <script src="~/lib/moment/locale/es.js"></script>
     <link rel="stylesheet" href="~/css/main.css" />
-
-    <script>
-        (function () {
-            if ('registerElement' in document
-                && 'import' in document.createElement('link')
-                && 'content' in document.createElement('template')) {
-                // platform is good!
-            } else {
-                // polyfill the platform!
-                var e = document.createElement('script');
-                e.src = '/lib/webcomponentsjs/webcomponents-lite.min.js';
-                document.body.appendChild(e);
-            }
-            moment.locale('es');
-            moment.Util = {
-                dateFormat: new Intl.DateTimeFormat("es-ES"),
-                numberFormat: new Intl.NumberFormat("es-ES"),
-                moneyFormat: new Intl.NumberFormat("es-ES", { style: "currency", currency: "EUR" })
-            };
-        })();
-    </script>
 </head>
 <body unresolved class="fullbleed layout vertical">
 
@@ -69,6 +48,30 @@
         <script src="~/js/app.min.js" asp-append-version="true"></script>
     </environment>*@
 
+    <script>
+        //Polymer = {
+        //    lazyRegister: !1,
+        //    dom: "shadow"
+        //};
+
+        (function () {
+            if ("registerElement" in document
+                && "import" in document.createElement("link")
+                && "content" in document.createElement("template"))
+                ;
+            else {
+                var e = document.createElement("script");
+                e.src = '/lib/webcomponentsjs/webcomponents-lite.min.js';
+                document.body.appendChild(e)
+            }
+            moment.locale('es');
+            moment.Util = {
+                dateFormat: new Intl.DateTimeFormat("es-ES"),
+                numberFormat: new Intl.NumberFormat("es-ES"),
+                moneyFormat: new Intl.NumberFormat("es-ES", { style: "currency", currency: "EUR" })
+            };
+        })();
+    </script>
     @RenderSection("scripts", required: false)
 </body>
 </html>

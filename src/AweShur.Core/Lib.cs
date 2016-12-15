@@ -187,7 +187,7 @@ namespace AweShur.Core
 
         public static string Numerize(string number)
         {
-            string res = "";
+            string res = number;
 
             Numerize(ref res);
 

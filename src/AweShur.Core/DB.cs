@@ -7,6 +7,7 @@ using System.Data;
 using System.Threading;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
+using System.Collections.Concurrent;
 
 namespace AweShur.Core
 {
@@ -59,25 +60,34 @@ namespace AweShur.Core
             }
         }
 
+        private static ConcurrentDictionary<int, DB> nonWebInstance = new ConcurrentDictionary<int, DB>();
+
         public static DB InstanceNumber(int dbNumber)
         {
             string key = "DB_" + dbNumber.ToString();
             HttpContext context = BusinessBaseProvider.HttpContext;
 
-            if (context.Items[key] == null)
+            if (context == null)
             {
-                lock (context)
+                return nonWebInstance.GetOrAdd(dbNumber, (num) => new DB(num));
+            }
+            else
+            {
+                if (context.Items[key] == null)
                 {
-                    if (context.Items[key] == null)
+                    lock (context)
                     {
-                        DB d = new DB(dbNumber);
+                        if (context.Items[key] == null)
+                        {
+                            DB d = new DB(dbNumber);
 
-                        context.Items[key] = d;
+                            context.Items[key] = d;
+                        }
                     }
                 }
-            }
 
-            return (DB)context.Items[key];
+                return (DB)context.Items[key];
+            }
         }
 
         private void OpenConnection()
@@ -91,6 +101,11 @@ namespace AweShur.Core
             {
                 conn.Open();
             }
+        }
+
+        public void SetDefaultTimeOut(int seconds)
+        {
+            secondsTimeOut = seconds;
         }
 
         private void CloseConnection()

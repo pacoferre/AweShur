@@ -135,7 +135,8 @@ namespace AweShur.Core
 
             if (firstStringProperty == null)
             {
-                firstStringProperty = ListProperties.Find(prop => prop.BasicType == BasicType.Text && !prop.IsIdentity);
+                firstStringProperty = ListProperties.Find(prop => prop.BasicType == BasicType.Text
+                    && !prop.IsPrimaryKey && !prop.IsIdentity);
             }
 
             names = Properties.Keys.ToArray();
