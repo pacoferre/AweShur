@@ -1,0 +1,65 @@
+﻿<link rel="import" href="../../../lib/polymer/polymer.html">
+<link rel="import" href="../../../lib/app-layout/app-toolbar/app-toolbar.html">
+<link rel="import" href="../../../lib/paper-button/paper-button.html">
+<link rel="import" href="../../../lib/iron-icons/iron-icons.html">
+<link rel="import" href="../../../lib/iron-icon/iron-icon.html">
+<link rel="import" href="../../../lib/iron-media-query/iron-media-query.html">
+<link rel="import" href="../../../AWSLib/awsl-toolbar-behavior">
+<dom-module id="awsl-texttoolbar">
+    <template>
+        <style include="shared-styles"></style>
+        <style>
+            .sp {
+                @apply(--layout-flex);
+            }
+            paper-button {
+                min-width: unset;
+                padding: 8px;
+                margin: 0px;
+            }
+        </style>
+        <iron-media-query query="(min-width: 1200px)" query-matches="{{largeScreen}}"></iron-media-query>
+
+        <app-toolbar id="tool">
+            <paper-button on-tap="_onClose">
+                <iron-icon icon="arrow-back"></iron-icon>
+                <span hidden="[[!largeScreen]]">Back</span>
+            </paper-button>
+            <paper-button id="prev" on-tap="_onPrev">
+                <iron-icon icon="arrow-upward"></iron-icon>
+                <span hidden="[[!largeScreen]]">Previous</span>
+            </paper-button>
+            <paper-button id="next" on-tap="_onNext">
+                <iron-icon icon="arrow-downward"></iron-icon>
+                <span hidden="[[!largeScreen]]">Next</span>
+            </paper-button>
+            <!--<paper-button id="refresh" on-tap="_onRefresh">
+                <iron-icon icon="refresh"></iron-icon>
+                <span hidden="[[!largeScreen]]">Refresh</span>
+            </paper-button>-->
+            <paper-button id="new" on-tap="_onNew">
+                <iron-icon icon="add"></iron-icon>
+                <span hidden="[[!largeScreen]]">Add</span>
+            </paper-button>
+            <paper-button id="delete" on-tap="_onDelete">
+                <iron-icon icon="delete"></iron-icon>
+                <span hidden="[[!largeScreen]]">Delete</span>
+            </paper-button>
+            <span main-title class="sp"></span>
+            <paper-button id="ok" on-tap="_onOK">
+                <iron-icon icon="done"></iron-icon>
+                <span hidden="[[!largeScreen]]">Ok</span>
+            </paper-button>
+            <paper-button id="clear" on-tap="_onClear">
+                <iron-icon icon="close"></iron-icon>
+                <span hidden="[[!largeScreen]]">Cancel</span>
+            </paper-button>
+        </app-toolbar>
+    </template>
+    <script>
+    Polymer({
+        is: 'awsl-texttoolbar',
+        behaviors: [AWSLBehaviors.ToolBarBehavior],
+    });
+    </script>
+</dom-module>
