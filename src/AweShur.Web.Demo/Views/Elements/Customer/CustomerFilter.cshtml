@@ -1,0 +1,24 @@
+﻿@model BusinessBaseDecorator
+@{
+    Layout = "_CRUDLayout";
+
+    int? idappuser = AppUser.IDAppUser(Context);
+}
+
+<dom-module id="aswd-customerfilter">
+    <template>
+        <style include="shared-styles"></style>
+        <div class="searchinputs">
+            @Html.PolSearch(Model, "idCustomerType")
+            @Html.PolSearch(Model, "idCustomerRanking")
+            @Html.PolSearch(Model, "name")
+            @Html.PolSearch(Model, "address")
+        </div>
+    </template>
+    <script>
+    Polymer({
+        is: 'aswd-customerfilter',
+        behaviors: AWSLBehaviors.FilterElementBehavior,
+    });
+    </script>
+</dom-module>
