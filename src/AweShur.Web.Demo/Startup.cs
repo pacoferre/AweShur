@@ -47,7 +47,7 @@ namespace AweShur.Web.Demo
 
                 if (minutes == 0)
                 {
-                    minutes = 10;
+                    minutes = 20;
                 }
 
                 o.IdleTimeout = TimeSpan.FromMinutes(minutes);
@@ -94,7 +94,7 @@ namespace AweShur.Web.Demo
                 app.ApplicationServices.GetRequiredService<IHttpContextAccessor>(),
                 redis, new AweShurDemoProvider(), Configuration);
 
-            CRUDLocations.ComponentsPrefix = "aswd";
+            AweShur.Web. CRUDLocations.ComponentsPrefix = "aswd";
             CRUDLocations.Locations = new Dictionary<string, CRUDLocationItem>
             {
                 { "Customer", new CRUDLocationItem { Folder = "Customer" } },
