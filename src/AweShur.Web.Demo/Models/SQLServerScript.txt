@@ -1,10 +1,73 @@
-﻿/****** Object:  Table [dbo].[AppUser]    Script Date: 29/07/2016 0:56:58 ******/
+﻿/****** Object:  Table [dbo].[Project]    Script Date: 17/12/2016 12:06:28 ******/
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
 
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[Project]') AND type in (N'U'))
+BEGIN
+CREATE TABLE [dbo].[Project](
+	[idProject] [int] IDENTITY(1,1) NOT NULL,
+	[description] [nvarchar](100) NOT NULL,
+ CONSTRAINT [PK_Project] PRIMARY KEY CLUSTERED 
+(
+	[idProject] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+END
+GO
+
+/****** Object:  Table [dbo].[CustomerType]    Script Date: 17/12/2016 12:06:29 ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[CustomerType]') AND type in (N'U'))
+BEGIN
+CREATE TABLE [dbo].[CustomerType](
+	[idCustomerType] [int] IDENTITY(1,1) NOT NULL,
+	[name] [nvarchar](40) NOT NULL,
+ CONSTRAINT [PK_CustomerType] PRIMARY KEY CLUSTERED 
+(
+	[idCustomerType] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+END
+GO
+
+/****** Object:  Table [dbo].[CustomerRanking]    Script Date: 17/12/2016 12:06:29 ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[CustomerRanking]') AND type in (N'U'))
+BEGIN
+CREATE TABLE [dbo].[CustomerRanking](
+	[idCustomerRanking] [int] IDENTITY(1,1) NOT NULL,
+	[name] [nvarchar](50) NOT NULL,
+	[value] [int] NULL,
+ CONSTRAINT [PK_CustomerRanking] PRIMARY KEY CLUSTERED 
+(
+	[idCustomerRanking] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+END
+GO
+
+/****** Object:  Table [dbo].[AppUser]    Script Date: 17/12/2016 12:06:29 ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[AppUser]') AND type in (N'U'))
+BEGIN
 CREATE TABLE [dbo].[AppUser](
 	[idAppUser] [int] IDENTITY(1,1) NOT NULL,
 	[email] [nvarchar](200) NOT NULL,
@@ -18,59 +81,49 @@ CREATE TABLE [dbo].[AppUser](
 	[idAppUser] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
-
+END
 GO
 
-/****** Object:  Table [dbo].[CustomerType]    Script Date: 29/07/2016 0:56:58 ******/
+/****** Object:  Table [dbo].[ProjectTask]    Script Date: 17/12/2016 12:06:29 ******/
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
 
-CREATE TABLE [dbo].[CustomerType](
-	[idCustomerType] [int] IDENTITY(1,1) NOT NULL,
-	[name] [nvarchar](40) NOT NULL,
- CONSTRAINT [PK_CustomerType] PRIMARY KEY CLUSTERED 
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[ProjectTask]') AND type in (N'U'))
+BEGIN
+CREATE TABLE [dbo].[ProjectTask](
+	[idProjectTask] [int] IDENTITY(1,1) NOT NULL,
+	[idProject] [int] NOT NULL,
+	[idAppUser] [int] NOT NULL,
+	[description] [nvarchar](200) NOT NULL,
+	[taskStart] [datetime] NOT NULL,
+	[hours] [int] NOT NULL,
+	[overtimeNotes] [text] NULL,
+ CONSTRAINT [PK_ProjectTask] PRIMARY KEY CLUSTERED 
 (
-	[idCustomerType] ASC
+	[idProjectTask] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY]
-
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+END
 GO
 
-/****** Object:  Table [dbo].[CustomerRanking]    Script Date: 29/07/2016 0:56:58 ******/
+/****** Object:  Table [dbo].[Customer]    Script Date: 17/12/2016 12:06:29 ******/
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
 
-CREATE TABLE [dbo].[CustomerRanking](
-	[idCustomerRanking] [int] IDENTITY(1,1) NOT NULL,
-	[name] [nvarchar](50) NOT NULL,
-	[value] [int] NULL,
- CONSTRAINT [PK_CustomerRanking] PRIMARY KEY CLUSTERED 
-(
-	[idCustomerRanking] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY]
-
-GO
-
-/****** Object:  Table [dbo].[Customer]    Script Date: 29/07/2016 0:56:58 ******/
-SET ANSI_NULLS ON
-GO
-
-SET QUOTED_IDENTIFIER ON
-GO
-
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[Customer]') AND type in (N'U'))
+BEGIN
 CREATE TABLE [dbo].[Customer](
 	[idCustomer] [int] IDENTITY(1,1) NOT NULL,
 	[idCustomerType] [int] NOT NULL,
 	[idCustomerRanking] [int] NULL,
 	[name] [nvarchar](200) NOT NULL,
-	[creationDate] [date] NOT NULL CONSTRAINT [DF_Customer_CreationDate]  DEFAULT (getdate()),
+	[creationDate] [date] NOT NULL,
 	[memo] [ntext] NOT NULL,
 	[nextCall] [date] NULL,
 	[address] [nvarchar](100) NULL,
@@ -79,38 +132,110 @@ CREATE TABLE [dbo].[Customer](
 	[idCustomer] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+END
+GO
 
+/****** Object:  Table [dbo].[Contact]    Script Date: 17/12/2016 12:06:29 ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[Contact]') AND type in (N'U'))
+BEGIN
+CREATE TABLE [dbo].[Contact](
+	[idContact] [int] IDENTITY(1,1) NOT NULL,
+	[idCustomer] [int] NOT NULL,
+	[name] [nvarchar](30) NOT NULL,
+	[surname] [nvarchar](100) NOT NULL,
+	[email] [nvarchar](200) NULL,
+ CONSTRAINT [PK_Contact] PRIMARY KEY CLUSTERED 
+(
+	[idContact] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+END
 GO
 
 SET ANSI_PADDING ON
 
 GO
 
-/****** Object:  Index [IX_AppUser]    Script Date: 29/07/2016 0:56:58 ******/
+/****** Object:  Index [IX_AppUser]    Script Date: 17/12/2016 12:06:29 ******/
+IF NOT EXISTS (SELECT * FROM sys.indexes WHERE object_id = OBJECT_ID(N'[dbo].[AppUser]') AND name = N'IX_AppUser')
 CREATE UNIQUE NONCLUSTERED INDEX [IX_AppUser] ON [dbo].[AppUser]
 (
 	[email] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 GO
 
-/****** Object:  Index [IX_Customer]    Script Date: 29/07/2016 0:56:58 ******/
+/****** Object:  Index [IX_Customer]    Script Date: 17/12/2016 12:06:29 ******/
+IF NOT EXISTS (SELECT * FROM sys.indexes WHERE object_id = OBJECT_ID(N'[dbo].[Customer]') AND name = N'IX_Customer')
 CREATE NONCLUSTERED INDEX [IX_Customer] ON [dbo].[Customer]
 (
 	[idCustomerType] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 GO
 
+/****** Object:  Index [IX_Contact]    Script Date: 17/12/2016 12:06:29 ******/
+IF NOT EXISTS (SELECT * FROM sys.indexes WHERE object_id = OBJECT_ID(N'[dbo].[Contact]') AND name = N'IX_Contact')
+CREATE NONCLUSTERED INDEX [IX_Contact] ON [dbo].[Contact]
+(
+	[idCustomer] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+GO
+
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[DF_Customer_CreationDate]') AND type = 'D')
+BEGIN
+ALTER TABLE [dbo].[Customer] ADD  CONSTRAINT [DF_Customer_CreationDate]  DEFAULT (getdate()) FOR [creationDate]
+END
+
+GO
+
+IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'[dbo].[FK_ProjectTask_AppUser]') AND parent_object_id = OBJECT_ID(N'[dbo].[ProjectTask]'))
+ALTER TABLE [dbo].[ProjectTask]  WITH CHECK ADD  CONSTRAINT [FK_ProjectTask_AppUser] FOREIGN KEY([idAppUser])
+REFERENCES [dbo].[AppUser] ([idAppUser])
+GO
+
+IF  EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'[dbo].[FK_ProjectTask_AppUser]') AND parent_object_id = OBJECT_ID(N'[dbo].[ProjectTask]'))
+ALTER TABLE [dbo].[ProjectTask] CHECK CONSTRAINT [FK_ProjectTask_AppUser]
+GO
+
+IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'[dbo].[FK_ProjectTask_Project]') AND parent_object_id = OBJECT_ID(N'[dbo].[ProjectTask]'))
+ALTER TABLE [dbo].[ProjectTask]  WITH CHECK ADD  CONSTRAINT [FK_ProjectTask_Project] FOREIGN KEY([idProject])
+REFERENCES [dbo].[Project] ([idProject])
+GO
+
+IF  EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'[dbo].[FK_ProjectTask_Project]') AND parent_object_id = OBJECT_ID(N'[dbo].[ProjectTask]'))
+ALTER TABLE [dbo].[ProjectTask] CHECK CONSTRAINT [FK_ProjectTask_Project]
+GO
+
+IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'[dbo].[FK_Customer_CustomerRanking]') AND parent_object_id = OBJECT_ID(N'[dbo].[Customer]'))
 ALTER TABLE [dbo].[Customer]  WITH CHECK ADD  CONSTRAINT [FK_Customer_CustomerRanking] FOREIGN KEY([idCustomerRanking])
 REFERENCES [dbo].[CustomerRanking] ([idCustomerRanking])
 GO
 
+IF  EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'[dbo].[FK_Customer_CustomerRanking]') AND parent_object_id = OBJECT_ID(N'[dbo].[Customer]'))
 ALTER TABLE [dbo].[Customer] CHECK CONSTRAINT [FK_Customer_CustomerRanking]
 GO
 
+IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'[dbo].[FK_Customer_CustomerType]') AND parent_object_id = OBJECT_ID(N'[dbo].[Customer]'))
 ALTER TABLE [dbo].[Customer]  WITH CHECK ADD  CONSTRAINT [FK_Customer_CustomerType] FOREIGN KEY([idCustomerType])
 REFERENCES [dbo].[CustomerType] ([idCustomerType])
 GO
 
+IF  EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'[dbo].[FK_Customer_CustomerType]') AND parent_object_id = OBJECT_ID(N'[dbo].[Customer]'))
 ALTER TABLE [dbo].[Customer] CHECK CONSTRAINT [FK_Customer_CustomerType]
 GO
+
+IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'[dbo].[FK_Contact_Customer]') AND parent_object_id = OBJECT_ID(N'[dbo].[Contact]'))
+ALTER TABLE [dbo].[Contact]  WITH CHECK ADD  CONSTRAINT [FK_Contact_Customer] FOREIGN KEY([idCustomer])
+REFERENCES [dbo].[Customer] ([idCustomer])
+GO
+
+IF  EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'[dbo].[FK_Contact_Customer]') AND parent_object_id = OBJECT_ID(N'[dbo].[Contact]'))
+ALTER TABLE [dbo].[Contact] CHECK CONSTRAINT [FK_Contact_Customer]
+GO
+
 
