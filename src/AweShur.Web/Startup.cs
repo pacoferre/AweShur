@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Routing;
+using System.Reflection;
 
 namespace AweShur.Web
 {
@@ -43,6 +44,11 @@ namespace AweShur.Web
                 name: "AWSLib",
                 template: "AWSLib/{component}",
                 defaults: new { controller = "Elements", action = "AWSLib" });
+        }
+
+        public static Assembly GetThisAssembly()
+        {
+            return Assembly.GetEntryAssembly();
         }
     }
 }
