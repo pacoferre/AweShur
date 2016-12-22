@@ -1,25 +1,26 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
-    <metadata>
-        <id>AweShur.Web</id>
-        <version>1.0.49</version>
-        <title>AweShur Web</title>
-        <authors>Paco Ferre</authors>
-        <requireLicenseAcceptance>false</requireLicenseAcceptance>
-        <description>ASP.NET components and helpers for AweShur.</description>
-        <dependencies>
-            <group targetFramework=".NETFramework4.6">
-                <dependency id="AweShur.Core" version="1.0.49" />
-                <dependency id="Microsoft.AspNetCore.Mvc" version="1.0.1" />
-                <dependency id="Microsoft.AspNetCore.Mvc.ViewFeatures" version="1.0.1" />
-                <dependency id="NETStandard.Library" version="1.6.0" />
-                <dependency id="Newtonsoft.Json" version="9.0.1" />
-                <dependency id="StackExchange.Redis" version="1.1.608" />
-            </group>
-        </dependencies>
-    </metadata>
-    <files>
-        <file src="..\AweShur.Web\bin\Release\net46\AweShur.Web.dll" target="lib\net46\AweShur.Web.dll" />
-        <file src="..\AweShur.Web\bin\Release\net46\AweShur.Web.pdb" target="lib\net46\AweShur.Web.pdb" />
-    </files>
+  <metadata>
+    <id>AweShur.Web</id>
+    <version>2.0.1</version>
+    <title>AweShur Web</title>
+    <authors>Paco Ferre</authors>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>ASP.NET components and helpers for AweShur.</description>
+    <dependencies>
+      <group targetFramework="netstandard1.6">
+        <dependency id="AweShur.Core" version="2.0.1" />
+        <dependency id="Microsoft.AspNetCore.Mvc" version="1.1.0" />
+        <dependency id="Microsoft.AspNetCore.Mvc.ViewFeatures" version="1.1.0" />
+        <dependency id="Microsoft.AspNetCore.Http.Extensions" version="1.1.0" />
+        <dependency id="NETStandard.Library" version="1.6.1" />
+        <dependency id="Newtonsoft.Json" version="9.0.1" />
+        <dependency id="StackExchange.Redis" version="1.1.608" />
+      </group>
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="..\AweShur.Web\bin\Release\netstandard1.6\AweShur.Web.dll" target="lib\netstandard1.6\AweShur.Web.dll" />
+    <file src="..\AweShur.Web\bin\Release\netstandard1.6\AweShur.Web.pdb" target="lib\netstandard1.6\AweShur.Web.pdb" />
+  </files>
 </package>
