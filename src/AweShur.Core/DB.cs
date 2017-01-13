@@ -269,6 +269,12 @@ namespace AweShur.Core
 
             CloseConnection();
         }
+        public async void ReadBusinessObjectAsync(BusinessBase obj)
+        {
+            BusinessBaseDecorator def = obj.Decorator;
+
+            await conn.ReadBusinessObjectAsync(obj, def.SelectQuery, def.GetPrimaryKeyParameters(obj), trans);
+        }
 
         public void ReadBusinessCollection(BusinessCollectionBase col)
         {
@@ -277,6 +283,10 @@ namespace AweShur.Core
             conn.ReadBusinessCollection(col, trans);
 
             CloseConnection();
+        }
+        public async void ReadBusinessCollectionAsync(BusinessCollectionBase col)
+        {
+            await conn.ReadBusinessCollectionAsync(col, trans);
         }
 
         public void StoreBusinessObject(BusinessBase obj)
@@ -298,7 +308,7 @@ namespace AweShur.Core
 
                     if (result == null)
                     {
-                        throw new Exception("Error insering new " + obj.Description);
+                        throw new Exception("Error inserting new " + obj.Description);
                     }
 
                     obj.IsNew = false;
@@ -316,7 +326,7 @@ namespace AweShur.Core
                 {
                     if (conn.Execute(def.InsertQuery, def.GetInsertParameters(obj), trans) != 1)
                     {
-                        throw new Exception("Error insering new " + obj.Description);
+                        throw new Exception("Error inserting new " + obj.Description);
                     }
                     obj.IsNew = false;
                 }

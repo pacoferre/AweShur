@@ -210,6 +210,7 @@ namespace Dapper
 
             #endregion
 
+            #region AweShur
             public object[] Values
             {
                 get
@@ -217,6 +218,7 @@ namespace Dapper
                     return values;
                 }
             }
+            #endregion
         }
     }
 }

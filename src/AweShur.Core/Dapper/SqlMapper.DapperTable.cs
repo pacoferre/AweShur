@@ -5,20 +5,6 @@ namespace Dapper
 {
     partial class SqlMapper
     {
-        public static List<object[]> ToList(IEnumerable<dynamic> data)
-        {
-            List<object[]> resp = new List<object[]>(100);
-
-            foreach (dynamic item in data)
-            {
-                DapperRow row = (DapperRow)item;
-
-                resp.Add(row.Values);
-            }
-
-            return resp;
-        }
-
         private sealed class DapperTable
         {
             string[] fieldNames;

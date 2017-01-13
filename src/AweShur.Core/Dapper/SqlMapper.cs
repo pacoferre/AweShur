@@ -123,7 +123,7 @@ namespace Dapper
         }
 
         /// <summary>
-        /// Return a count of all the cached queries by dapper
+        /// Return a count of all the cached queries by Dapper
         /// </summary>
         /// <returns></returns>
         public static int GetCachedSQLCount()
@@ -132,7 +132,7 @@ namespace Dapper
         }
 
         /// <summary>
-        /// Return a list of all the queries cached by dapper
+        /// Return a list of all the queries cached by Dapper
         /// </summary>
         /// <param name="ignoreHitCountAbove"></param>
         /// <returns></returns>
@@ -237,8 +237,6 @@ namespace Dapper
             AddTypeHandlerImpl(typeof(XmlDocument), new XmlDocumentHandler(), clone);
             AddTypeHandlerImpl(typeof(XDocument), new XDocumentHandler(), clone);
             AddTypeHandlerImpl(typeof(XElement), new XElementHandler(), clone);
-
-            allowedCommandBehaviors = DefaultAllowedCommandBehaviors;
         }
 #if !COREFX
         [MethodImpl(MethodImplOptions.NoInlining)]
@@ -913,7 +911,7 @@ namespace Dapper
             }
             catch (ArgumentException ex)
             { // thanks, Sqlite!
-                if (DisableCommandBehaviorOptimizations(behavior, ex))
+                if (Settings.DisableCommandBehaviorOptimizations(behavior, ex))
                 {
                     // we can retry; this time it will have different flags
                     return cmd.ExecuteReader(GetBehavior(wasClosed, behavior));
@@ -1325,25 +1323,10 @@ namespace Dapper
                 }
             }
         }
-        const CommandBehavior DefaultAllowedCommandBehaviors = ~((CommandBehavior)0);
-        static CommandBehavior allowedCommandBehaviors = DefaultAllowedCommandBehaviors;
-        private static bool DisableCommandBehaviorOptimizations(CommandBehavior behavior, Exception ex)
-        {
-            if(allowedCommandBehaviors == DefaultAllowedCommandBehaviors
-                && (behavior & (CommandBehavior.SingleResult | CommandBehavior.SingleRow)) != 0)
-            {
-                if (ex.Message.Contains(nameof(CommandBehavior.SingleResult))
-                    || ex.Message.Contains(nameof(CommandBehavior.SingleRow)))
-                { // some providers just just allow these, so: try again without them and stop issuing them
-                    allowedCommandBehaviors = ~(CommandBehavior.SingleResult | CommandBehavior.SingleRow);
-                    return true;
-                }
-            }
-            return false;
-        }
+
         private static CommandBehavior GetBehavior(bool close, CommandBehavior @default)
         {
-            return (close ? (@default | CommandBehavior.CloseConnection) : @default) & allowedCommandBehaviors;
+            return (close ? (@default | CommandBehavior.CloseConnection) : @default) & Settings.AllowedCommandBehaviors;
         }
         static IEnumerable<TReturn> MultiMapImpl<TReturn>(this IDbConnection cnn, CommandDefinition command, Type[] types, Func<object[], TReturn> map, string splitOn, IDataReader reader, Identity identity, bool finalize)
         {
@@ -1647,6 +1630,7 @@ namespace Dapper
 
         private static Func<IDataReader, object> GetDeserializer(Type type, IDataReader reader, int startBound, int length, bool returnNullIfFirstMissing)
         {
+
             // dynamic is passed in as Object ... by c# design
             if (type == typeof(object)
                 || type == typeof(DapperRow))
@@ -1831,7 +1815,9 @@ namespace Dapper
             return intoBlock == 0 ? 0 : (padFactor - intoBlock);
         }
 
-        private static string GetInListRegex(string name) => @"([?@:]" + Regex.Escape(name) + @")(?!\w)(\s+(?i)unknown(?-i))?";
+        private static string GetInListRegex(string name, bool byPosition) => byPosition
+            ? (@"(\?)" + Regex.Escape(name) + @"\?(?!\w)(\s+(?i)unknown(?-i))?")
+            : (@"([?@:]" + Regex.Escape(name) + @")(?!\w)(\s+(?i)unknown(?-i))?");
         /// <summary>
         /// Internal use only
         /// </summary>
@@ -1854,6 +1840,7 @@ namespace Dapper
             }
             else
             {
+                bool byPosition = ShouldPassByPosition(command.CommandText);
                 var list = value as IEnumerable;
                 var count = 0;
                 bool isString = value is IEnumerable<string>;
@@ -1862,7 +1849,7 @@ namespace Dapper
 
                 int splitAt = SqlMapper.Settings.InListStringSplitCount;
                 bool viaSplit = splitAt >= 0
-                    && TryStringSplit(ref list, splitAt, namePrefix, command);
+                    && TryStringSplit(ref list, splitAt, namePrefix, command, byPosition);
 
                 if (list != null && !viaSplit)
                 {
@@ -1934,7 +1921,7 @@ namespace Dapper
                 }
                 else
                 {
-                    var regexIncludingUnknown = GetInListRegex(namePrefix);
+                    var regexIncludingUnknown = GetInListRegex(namePrefix, byPosition);
                     if (count == 0)
                     {
                         command.CommandText = Regex.Replace(command.CommandText, regexIncludingUnknown, match =>
@@ -1974,10 +1961,13 @@ namespace Dapper
                             }
                             else
                             {
-                                var sb = GetStringBuilder().Append('(').Append(variableName).Append(1);
+
+                                var sb = GetStringBuilder().Append('(').Append(variableName);
+                                if(!byPosition) sb.Append(1);
                                 for (int i = 2; i <= count; i++)
                                 {
-                                    sb.Append(',').Append(variableName).Append(i);
+                                    sb.Append(',').Append(variableName);
+                                    if (!byPosition) sb.Append(i);
                                 }
                                 return sb.Append(')').__ToStringRecycle();
                             }
@@ -1987,20 +1977,20 @@ namespace Dapper
             }
         }
 
-        private static bool TryStringSplit(ref IEnumerable list, int splitAt, string namePrefix, IDbCommand command)
+        private static bool TryStringSplit(ref IEnumerable list, int splitAt, string namePrefix, IDbCommand command, bool byPosition)
         {
             if (list == null || splitAt < 0) return false;
-            if (list is IEnumerable<int>) return TryStringSplit<int>(ref list, splitAt, namePrefix, command, "int not null",
+            if (list is IEnumerable<int>) return TryStringSplit<int>(ref list, splitAt, namePrefix, command, "int", byPosition,
                 (sb, i) => sb.Append(i.ToString(CultureInfo.InvariantCulture)));
-            if (list is IEnumerable<long>) return TryStringSplit<long>(ref list, splitAt, namePrefix, command, "bigint not null",
+            if (list is IEnumerable<long>) return TryStringSplit<long>(ref list, splitAt, namePrefix, command, "bigint", byPosition,
                 (sb, i) => sb.Append(i.ToString(CultureInfo.InvariantCulture)));
-            if (list is IEnumerable<short>) return TryStringSplit<short>(ref list, splitAt, namePrefix, command, "smallint not null",
+            if (list is IEnumerable<short>) return TryStringSplit<short>(ref list, splitAt, namePrefix, command, "smallint", byPosition,
                 (sb, i) => sb.Append(i.ToString(CultureInfo.InvariantCulture)));            
-            if (list is IEnumerable<byte>) return TryStringSplit<byte>(ref list, splitAt, namePrefix, command, "tinyint not null",
+            if (list is IEnumerable<byte>) return TryStringSplit<byte>(ref list, splitAt, namePrefix, command, "tinyint", byPosition,
                 (sb, i) => sb.Append(i.ToString(CultureInfo.InvariantCulture)));
             return false;
         }
-        private static bool TryStringSplit<T>(ref IEnumerable list, int splitAt, string namePrefix, IDbCommand command, string colType,
+        private static bool TryStringSplit<T>(ref IEnumerable list, int splitAt, string namePrefix, IDbCommand command, string colType, bool byPosition,
             Action<StringBuilder, T> append)
         {
             ICollection<T> typed = list as ICollection<T>; 
@@ -2012,7 +2002,7 @@ namespace Dapper
             if (typed.Count < splitAt) return false;
             
             string varName = null;
-            var regexIncludingUnknown = GetInListRegex(namePrefix);
+            var regexIncludingUnknown = GetInListRegex(namePrefix, byPosition);
             var sql = Regex.Replace(command.CommandText, regexIncludingUnknown, match =>
             {
                 var variableName = match.Groups[1].Value;
@@ -2024,12 +2014,12 @@ namespace Dapper
                 else
                 {
                     varName = variableName;
-                    return $"(select val from {variableName}_TSS)";
+                    return "(select cast([value] as " + colType + ") from string_split(" + variableName + ",','))";
                 }
             }, RegexOptions.IgnoreCase | RegexOptions.Multiline | RegexOptions.CultureInvariant);
             if (varName == null) return false; // couldn't resolve the var!
 
-            command.CommandText = $"declare {varName}_TSS table(val {colType});insert {varName}_TSS (val) select value from string_split({varName},',');" + sql;
+            command.CommandText = sql;
             var concatenatedParam = command.CreateParameter();
             concatenatedParam.ParameterName = namePrefix;
             concatenatedParam.DbType = DbType.AnsiString;
@@ -2091,13 +2081,13 @@ namespace Dapper
         }
         private static IEnumerable<PropertyInfo> FilterParameters(IEnumerable<PropertyInfo> parameters, string sql)
         {
-            return parameters.Where(p => Regex.IsMatch(sql, @"[?@:]" + p.Name + "([^a-z0-9_]+|$)", RegexOptions.IgnoreCase | RegexOptions.Multiline | RegexOptions.CultureInvariant));
+            return parameters.Where(p => Regex.IsMatch(sql, @"[?@:]" + p.Name + @"([^\p{L}\p{N}_]+|$)", RegexOptions.IgnoreCase | RegexOptions.Multiline | RegexOptions.CultureInvariant));
         }
 
         // look for ? / @ / : *by itself*
-        static readonly Regex smellsLikeOleDb = new Regex(@"(?<![a-z0-9@_])[?@:](?![a-z0-9@_])", RegexOptions.IgnoreCase | RegexOptions.Multiline | RegexOptions.CultureInvariant | RegexOptions.Compiled),
-            literalTokens = new Regex(@"(?<![a-z0-9_])\{=([a-z0-9_]+)\}", RegexOptions.IgnoreCase | RegexOptions.Multiline | RegexOptions.CultureInvariant | RegexOptions.Compiled),
-            pseudoPositional = new Regex(@"\?([a-z_][a-z0-9_]*)\?", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
+        static readonly Regex smellsLikeOleDb = new Regex(@"(?<![\p{L}\p{N}@_])[?@:](?![\p{L}\p{N}@_])", RegexOptions.IgnoreCase | RegexOptions.Multiline | RegexOptions.CultureInvariant | RegexOptions.Compiled),
+            literalTokens = new Regex(@"(?<![\p{L}\p{N}_])\{=([\p{L}\p{N}_]+)\}", RegexOptions.IgnoreCase | RegexOptions.Multiline | RegexOptions.CultureInvariant | RegexOptions.Compiled),
+            pseudoPositional = new Regex(@"\?([\p{L}_][\p{L}\p{N}_]*)\?", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
 
 
 
@@ -2237,7 +2227,7 @@ namespace Dapper
             {
                 filterParams = !smellsLikeOleDb.IsMatch(identity.sql);
             }
-            var dm = new DynamicMethod($"ParamInfo{Guid.NewGuid()}", null, new[] { typeof(IDbCommand), typeof(object) }, type, true);
+            var dm = new DynamicMethod("ParamInfo" + Guid.NewGuid().ToString(), null, new[] { typeof(IDbCommand), typeof(object) }, type, true);
 
             var il = dm.GetILGenerator();
 
@@ -2897,7 +2887,7 @@ namespace Dapper
         )
         {
             var returnType = type.IsValueType() ? typeof(object) : type;
-            var dm = new DynamicMethod($"Deserialize{Guid.NewGuid()}", returnType, new[] { typeof(IDataReader) }, type, true);
+            var dm = new DynamicMethod("Deserialize" + Guid.NewGuid().ToString(), returnType, new[] { typeof(IDataReader) }, type, true);
             var il = dm.GetILGenerator();
             il.DeclareLocal(typeof(int));
             il.DeclareLocal(type);
@@ -2971,7 +2961,7 @@ namespace Dapper
                     var ctor = typeMap.FindConstructor(names, types);
                     if (ctor == null)
                     {
-                        string proposedTypes = $"({string.Join(", ", types.Select((t, i) => t.FullName + " " + names[i]).ToArray())})";
+                        string proposedTypes = "(" + string.Join(", ", types.Select((t, i) => t.FullName + " " + names[i]).ToArray()) + ")";
                         throw new InvalidOperationException($"A parameterless default constructor or one matching signature {proposedTypes} is required for {type.FullName} materialization");
                     }
 
@@ -3097,7 +3087,7 @@ namespace Dapper
                                 }
                                 else
                                 {
-                                    il.Emit(OpCodes.Unbox_Any, unboxType); // stack is now [target][target][typed-value]
+                                     il.Emit(OpCodes.Unbox_Any, unboxType); // stack is now [target][target][typed-value]
                                 }
                             }
                             else
@@ -3535,6 +3525,21 @@ namespace Dapper
         }
 
         #region AweShur
+        public static List<object[]> ToList(IEnumerable<dynamic> data)
+        {
+            List<object[]> resp = new List<object[]>(100);
+
+            foreach (dynamic item in data)
+            {
+                DapperRow row = (DapperRow)item;
+
+                resp.Add(row.Values);
+            }
+
+            return resp;
+        }
+
+
         public static void ReadBusinessObject(
                     this IDbConnection cnn, BusinessBase obj, string sql, object param = null, IDbTransaction transaction = null, int? commandTimeout = null, CommandType? commandType = null
                 )
