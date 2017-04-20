@@ -39,12 +39,12 @@
             },
             _onShowMessage: function (msg) {
                 this.$.toastOk.text = msg.detail;
-                this.$.toastOk.fitInto = msg.target;
+                //this.$.toastOk.fitInto = msg.target;
                 this.$.toastOk.open();
             },
             _onShowError: function (msg) {
                 this.$.toastError.text = msg.detail;
-                this.$.toastError.fitInto = msg.target;
+                //this.$.toastError.fitInto = msg.target;
                 this.$.toastError.open();
             },
             _getlist: function (target) {

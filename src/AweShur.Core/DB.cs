@@ -269,12 +269,12 @@ namespace AweShur.Core
 
             CloseConnection();
         }
-        public async void ReadBusinessObjectAsync(BusinessBase obj)
-        {
-            BusinessBaseDecorator def = obj.Decorator;
+        //public async void ReadBusinessObjectAsync(BusinessBase obj)
+        //{
+        //    BusinessBaseDecorator def = obj.Decorator;
 
-            await conn.ReadBusinessObjectAsync(obj, def.SelectQuery, def.GetPrimaryKeyParameters(obj), trans);
-        }
+        //    await conn.ReadBusinessObjectAsync(obj, def.SelectQuery, def.GetPrimaryKeyParameters(obj), trans);
+        //}
 
         public void ReadBusinessCollection(BusinessCollectionBase col)
         {
@@ -284,10 +284,10 @@ namespace AweShur.Core
 
             CloseConnection();
         }
-        public async void ReadBusinessCollectionAsync(BusinessCollectionBase col)
-        {
-            await conn.ReadBusinessCollectionAsync(col, trans);
-        }
+        //public async void ReadBusinessCollectionAsync(BusinessCollectionBase col)
+        //{
+        //    await conn.ReadBusinessCollectionAsync(col, trans);
+        //}
 
         public void StoreBusinessObject(BusinessBase obj)
         {

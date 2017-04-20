@@ -69,6 +69,7 @@ namespace AweShur.Core
         public string Label { get; set; } = "";
         public bool LabelIsFieldName { get; set; } = false;
         public string Format { get; set; } = "";
+        public string ClientFormat { get; set; } = "";
         public string Pattern { get; set; } = "";
         public int MaxLength { get; set; } = 0;
         public bool Required { get; set; } = false;
@@ -131,6 +132,7 @@ namespace AweShur.Core
             else if (BasicType == BasicType.DateTime)
             {
                 Type = PropertyInputType.date;
+                ClientFormat = DefaultDateClientFormat;
             }
 
             if (FieldName.Length > 1)
@@ -147,6 +149,15 @@ namespace AweShur.Core
 
             DataType = dataType;
             BasicType = DBDialect.GetBasicType(DataType);
+            if (BasicType == BasicType.Bit)
+            {
+                inputType = PropertyInputType.checkbox;
+            }
+            else if (BasicType == BasicType.DateTime)
+            {
+                Type = PropertyInputType.date;
+                ClientFormat = DefaultDateClientFormat;
+            }
 
             if (Label == "")
             {
@@ -211,6 +222,8 @@ namespace AweShur.Core
                 }
             }
         }
+
+        public static string DefaultDateClientFormat { get; set; } = "L";
 
         public string GetValue(BusinessBase obj)
         {

@@ -140,6 +140,11 @@ namespace AweShur.Web.Helpers
                 {
                     input.Attributes["noclear"] = "";
                 }
+
+                if (def.Type == PropertyInputType.date)
+                {
+                    input.Attributes["format"] = def.ClientFormat;
+                }
             }
             else
             {
@@ -333,6 +338,8 @@ namespace AweShur.Web.Helpers
                 input = new TagBuilder("awsl-date");
 
                 AddLinkImport(page, "/AWSLib/awsl-date");
+
+                input.Attributes["format"] = def.ClientFormat;
             }
             else
             {

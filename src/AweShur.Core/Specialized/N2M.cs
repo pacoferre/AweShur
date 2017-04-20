@@ -36,6 +36,10 @@ namespace AweShur.Core.Specialized
 
         public override string GenerateKey(object[] dataItemValues)
         {
+            //if (Parent != null && Parent.Parent != null)
+            //{
+            //    return Parent.Parent.Key + "_" + this[externalFieldNameM].ToString();
+            //}
             return this[externalFieldNameM].ToString();
         }
 

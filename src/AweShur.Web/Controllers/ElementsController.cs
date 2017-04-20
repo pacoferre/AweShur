@@ -46,11 +46,11 @@ namespace AweShur.Web.Controllers
 
         public IActionResult LoadTemplate(string component, int? id)
         {
-            return PartialView("~/Views/Elements/Template/" + component + ".cshtml");
+            return PartialView("~/Views/Elements/Template/" + component.Replace("_", "/") + ".cshtml");
         }
         public IActionResult LoadLayout(string component, int? id)
         {
-            return PartialView("~/Views/Layouts/" + component + ".cshtml");
+            return PartialView("~/Views/Layouts/" + component.Replace("_", "/") + ".cshtml");
         }
 
         public IActionResult Load(string component, string objectName, int? id)

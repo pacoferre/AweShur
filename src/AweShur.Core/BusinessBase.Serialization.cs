@@ -17,7 +17,7 @@ namespace AweShur.Core
             return Encoding.Unicode.GetBytes(obj.ToString(Newtonsoft.Json.Formatting.None));
         }
 
-        public JObject ToJObject()
+        public virtual JObject ToJObject()
         {
             JObject obj = new JObject();
 
@@ -39,7 +39,7 @@ namespace AweShur.Core
             FromJObject(obj);
         }
 
-        public void FromJObject(JObject obj)
+        public virtual void FromJObject(JObject obj)
         {
             dataItem.FromJObject((JObject)obj["t"]);
 

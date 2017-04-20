@@ -43,5 +43,33 @@ namespace AweShur.Web.Controllers
                 result = valid
             });
         }
+
+        public class ChangePasswordObject
+        {
+            public string actual;
+            public string newPassword;
+        }
+
+        [HttpPost]
+        public JsonResult ChangePassword([FromBody]ChangePasswordObject passwordInfo)
+        {
+            try
+            {
+                bool valid = AppUser.GetAppUser(HttpContext).ChangePassword(passwordInfo.actual, passwordInfo.newPassword);
+
+                return new JsonResult(new
+                {
+                    result = valid
+                });
+            }
+            catch(Exception ex)
+            {
+                return new JsonResult(new
+                {
+                    result = false,
+                    message = ex.Message
+                });
+            }
+        }
     }
 }

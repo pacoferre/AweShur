@@ -17,6 +17,7 @@ namespace AweShur.Core.Security
             Properties["email"].IsOnlyOnNew = true;
             Properties["email"].Type = PropertyInputType.email;
             Properties["password"].Type = PropertyInputType.password;
+
         }
     }
 
@@ -64,6 +65,10 @@ namespace AweShur.Core.Security
                 if (property == "password")
                 {
                     return "";
+                }
+                if (property == "checkpassword")
+                {
+                    return base["password"];
                 }
                 return base[property];
             }

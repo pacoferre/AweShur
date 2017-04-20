@@ -88,9 +88,39 @@ namespace AweShur.Core.Security
                 valid = true;
             }
 
-            //LogUserEntry(ref user, login);
+            PostLogin(email, usu, valid);
 
             return valid;
+        }
+
+        public virtual void PostLogin(string email, AppUser user, bool valid)
+        {
+
+        }
+
+        public virtual bool ChangePassword(string actual, string newPassword)
+        {
+            ReadFromDB();
+
+            string enc = PasswordDerivedString(this[0].NoNullString(), actual);
+
+            if (enc == this["checkpassword"].NoNullString() && CheckStrength(newPassword))
+            {
+                this["password"] = newPassword;
+
+                StoreToDB();
+            }
+            else
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        protected virtual bool CheckStrength(string password)
+        {
+            return true;
         }
 
         public static string PasswordDerivedString(string idAppUser, string password)
@@ -128,14 +158,19 @@ namespace AweShur.Core.Security
             return GetAppUser(BusinessBaseProvider.HttpContext);
         }
 
+        private static object currentUserLock = new object();
+
         public static AppUser GetAppUser(HttpContext context)
         {
             int idAppUser = context.Session.GetInt32(CurrentUserIDSessionKey).NoNullInt();
 
             if (idAppUser > 0)
             {
-                return (AppUser)BusinessBaseProvider.RetreiveObject(context, 
-                    UseAppUserNoDB ? "AppUserNoDB" : "AppUser", idAppUser.ToString());
+                lock (currentUserLock)
+                {
+                    return (AppUser)BusinessBaseProvider.RetreiveObject(context,
+                        UseAppUserNoDB ? "AppUserNoDB" : "AppUser", idAppUser.ToString());
+                }
             }
 
             return null;

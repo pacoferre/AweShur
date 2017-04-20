@@ -12,7 +12,7 @@
             var hasDateTime = false;
             var dateTimeStyle = '';
 
-            for (var index = 0; index < colMatch.length; ++index) {
+            for (var index in colMatch) {
                 var col = colMatch[index];
 
                 if (col.show) {
@@ -102,7 +102,7 @@
                 for (col = 0; col < data[row].length; ++col) {
                     var match = colMatch[col];
 
-                    if (match.show) {
+                    if (match !== undefined && match.show) {
                         if (match.type == 'DateTime') {
                             if (data[row][col] != null) {
                                 xml += '<Cell ss:StyleID="dt"><Data ss:Type="' + match.type + '">'
@@ -131,6 +131,89 @@
 
         downloadJson: function (json, colMatch, filename, contentType) {
             this.download(this.jsonToSsXml(json, colMatch), filename, contentType);
+        },
+
+        jsonToSsXmlNotArray: function (jsonObject, colMatch) {
+            var row;
+            var col;
+            var xml;
+            var data = jsonObject;
+
+            if (data.length > 0) {
+                for (col in data[0]) {
+                    if (colMatch[col] !== undefined) {
+                        var index = 0;
+                        var cellValue;
+
+                        do {
+                            cellValue = data[index][col];
+                            index++;
+                        } while (cellValue == null && index < data.length)
+
+                        var type = typeof cellValue;
+
+                        if (type == "number") {
+                            type = "Number";
+                        }
+                        else if (type == "string") {
+                            type = "String";
+
+                            if (cellValue > '1960' && cellValue.indexOf('-') == 4 && cellValue.indexOf('T') == 10) {
+                                var testTime = (new Date(cellValue)).getTime();
+
+                                if (testTime === testTime) {
+                                    type = "DateTime";
+                                }
+                            }
+                        }
+                        else if (type == "date") {
+                            type = "DateTime";
+                        }
+                        else {
+                            type = "String";
+                        }
+
+                        colMatch[col].type = type;
+                    }
+                }
+            }
+
+            xml = this.emitXmlHeader(colMatch);
+
+            for (row = 0; row < data.length; row++) {
+                xml += '<Row>\n';
+
+                for (col in data[row]) {
+                    var match = colMatch[col];
+
+                    if (match !== undefined && match.show) {
+                        if (match.type == 'DateTime') {
+                            if (data[row][col] != null) {
+                                xml += '<Cell ss:StyleID="dt"><Data ss:Type="' + match.type + '">'
+                                    + data[row][col] + '</Data></Cell>\n';
+                            }
+                            else {
+                                xml += '<Cell ss:StyleID="dt" />\n';
+                            }
+                        }
+                        else {
+                            xml += '<Cell><Data ss:Type="' + match.type + '">'
+                                + (data[row][col] == null ? '' : data[row][col])
+                                + '</Data></Cell>\n';
+                        }
+                    }
+                }
+
+                xml += '</Row>\n';
+            }
+
+            xml += this.emitXmlFooter();
+
+            return xml;
+        },
+
+        downloadJsonNotArray: function (json, colMatch, filename, contentType) {
+            this.download(this.jsonToSsXmlNotArray(json, colMatch), filename, contentType);
         },
 
         download: function (content, filename, contentType) {
