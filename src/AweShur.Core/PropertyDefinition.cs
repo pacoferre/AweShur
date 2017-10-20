@@ -545,7 +545,7 @@ namespace AweShur.Core
 
                         return false;
                     }
-                    if (BasicType == BasicType.Number && value.NoNullInt() == 0)
+                    if (BasicType == BasicType.Number && value == null)
                     {
                         if (ListObjectName != "")
                         {

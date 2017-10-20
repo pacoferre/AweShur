@@ -1,5 +1,5 @@
 {
-  "name": "AweShur.Web.Demo",
+  "name": "aweshur.web.demo",
   "private": true,
   "dependencies": {
     "polymer": "1.7.0",
@@ -10,11 +10,11 @@
     "app-elements": "PolymerElements/app-elements#0.10.0",
     "app-layout": "PolymerElements/app-layout#0.10.6",
     "platinum-sw": "PolymerElements/platinum-sw#1.3.0",
-    "jv-datepicker": "^2.7.3",
-    "vaadin-grid": "https://github.com/vaadin/vaadin-grid.git#master",
-    "vaadin-upload": "^1.0.1",
-    "vaadin-combo-box": "^1.1.3",
-    "vaadin-date-picker": "^1.1.3",
-    "moment": "^2.14.1"
+    "jv-datepicker": "2.7.3",
+    "vaadin-grid": "1.2.2",
+    "vaadin-upload": "1.0.1",
+    "vaadin-combo-box": "1.1.3",
+    "vaadin-date-picker": "1.1.3",
+    "moment": "2.14.1"
   }
 }

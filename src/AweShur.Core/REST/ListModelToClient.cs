@@ -8,7 +8,7 @@ namespace AweShur.Core.REST
     public class ListModelToClient
     {
         public string plural { get; set; }
-        public BusinessObjectPermisson permisson = new BusinessObjectPermisson();
+        public BusinessObjectPermission permission = new BusinessObjectPermission();
         public List<object[]> result { get; set; }
         public string fastsearch { get; set; } = "";
         public int sortIndex { get; set; } = 1;

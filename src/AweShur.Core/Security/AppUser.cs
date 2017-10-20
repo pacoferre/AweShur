@@ -18,6 +18,13 @@ namespace AweShur.Core.Security
             Properties["email"].Type = PropertyInputType.email;
             Properties["password"].Type = PropertyInputType.password;
 
+            if (Properties.ContainsKey("passwordResetDays"))
+            {
+                Properties["passwordResetDays"].Label = "Password maximum age (days)";
+                Properties["passwordResetDays"].IsReadOnly = false;
+                Properties["passwordResetDays"].IsComputed = false;
+                Properties["passwordResetDays"].DefaultValue = 30;
+            }
         }
     }
 
@@ -40,7 +47,7 @@ namespace AweShur.Core.Security
             }
         }
 
-        private string newPassword = null;
+        protected string newPassword = null;
 
         public override bool Validate()
         {
@@ -64,7 +71,7 @@ namespace AweShur.Core.Security
             {
                 if (property == "password")
                 {
-                    return "";
+                    return newPassword??"";
                 }
                 if (property == "checkpassword")
                 {

@@ -49,7 +49,7 @@ namespace AweShur.Core.REST
         public bool refreshAll { get; set; } = false;
         public bool refreshAllLists { get; set; }
 
-        public BusinessObjectPermisson permisson = new BusinessObjectPermisson();
+        public BusinessObjectPermission permission = new BusinessObjectPermission();
 
         public Dictionary<string, List<ModelToClient>> collections;
 
@@ -85,7 +85,7 @@ namespace AweShur.Core.REST
         }
     }
 
-    public class BusinessObjectPermisson
+    public class BusinessObjectPermission
     {
         public bool modify { get; set; } = true;
         public bool delete { get; set; } = true;

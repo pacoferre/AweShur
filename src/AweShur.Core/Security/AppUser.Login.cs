@@ -15,6 +15,47 @@ namespace AweShur.Core.Security
         internal static string CurrentUserIDSessionKey = "USER_ID";
         public static byte[] SALT;
 
+        public static bool LoginWindowsWithoutDomain(HttpContext context)
+        {
+            string login = GetLoginWithOutDomain(context);
+            int idAppUser = DB.Instance.QueryFirstOrDefault<int>(@"SELECT idAppUser FROM AppUser
+WHERE (email = @email) AND (deactivated = 0)", new { email = login });
+            AppUser usu = (AppUser)BusinessBaseProvider.Instance.CreateObject("AppUser");
+            bool valid = false;
+
+            if (idAppUser > 0)
+            {
+                valid = true;
+
+                usu.ReadFromDB(idAppUser);
+                SetAppUser(usu, context);
+
+                usu.PostLogin(login, usu, valid);
+            }
+            else
+            {
+                usu.PostLogin(login, null, valid);
+            }
+
+            return valid;
+        }
+
+        private static string GetLoginWithOutDomain(HttpContext context)
+        {
+            string login = context.User.Identity.Name;
+
+            if (login.Contains("\\"))
+            {
+                login = login.Split('\\')[1];
+            }
+            if (login.Contains("@"))
+            {
+                login = login.Split('@')[0];
+            }
+
+            return login;
+        }
+
         public static bool Login(string email, string password, HttpContext context)
         {
             AppUser theUser = (AppUser)BusinessBaseProvider.Instance.CreateObject("AppUser");
@@ -118,6 +159,24 @@ namespace AweShur.Core.Security
             return true;
         }
 
+        public virtual bool ChangePasswordBlind(string newPassword)
+        {
+            ReadFromDB();
+
+            if (CheckStrength(newPassword))
+            {
+                this["password"] = newPassword;
+
+                StoreToDB();
+            }
+            else
+            {
+                return false;
+            }
+
+            return true;
+        }
+
         protected virtual bool CheckStrength(string password)
         {
             return true;
@@ -174,6 +233,12 @@ namespace AweShur.Core.Security
             }
 
             return null;
+        }
+
+        public static void StoreAppUser(AppUser user)
+        {
+            BusinessBaseProvider.StoreObject(user,
+                UseAppUserNoDB ? "AppUserNoDB" : "AppUser");
         }
     }
 }
