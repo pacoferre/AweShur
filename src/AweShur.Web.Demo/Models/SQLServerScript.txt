@@ -1,4 +1,4 @@
-﻿/****** Object:  Table [dbo].[Project]    Script Date: 17/12/2016 12:06:28 ******/
+﻿/****** Object:  Table [dbo].[Project]    Script Date: 20/10/2017 22:24:48 ******/
 SET ANSI_NULLS ON
 GO
 
@@ -18,7 +18,7 @@ CREATE TABLE [dbo].[Project](
 END
 GO
 
-/****** Object:  Table [dbo].[CustomerType]    Script Date: 17/12/2016 12:06:29 ******/
+/****** Object:  Table [dbo].[CustomerType]    Script Date: 20/10/2017 22:24:48 ******/
 SET ANSI_NULLS ON
 GO
 
@@ -38,7 +38,7 @@ CREATE TABLE [dbo].[CustomerType](
 END
 GO
 
-/****** Object:  Table [dbo].[CustomerRanking]    Script Date: 17/12/2016 12:06:29 ******/
+/****** Object:  Table [dbo].[CustomerRanking]    Script Date: 20/10/2017 22:24:48 ******/
 SET ANSI_NULLS ON
 GO
 
@@ -59,7 +59,7 @@ CREATE TABLE [dbo].[CustomerRanking](
 END
 GO
 
-/****** Object:  Table [dbo].[AppUser]    Script Date: 17/12/2016 12:06:29 ******/
+/****** Object:  Table [dbo].[AppUser]    Script Date: 20/10/2017 22:24:48 ******/
 SET ANSI_NULLS ON
 GO
 
@@ -84,7 +84,7 @@ CREATE TABLE [dbo].[AppUser](
 END
 GO
 
-/****** Object:  Table [dbo].[ProjectTask]    Script Date: 17/12/2016 12:06:29 ******/
+/****** Object:  Table [dbo].[ProjectTask]    Script Date: 20/10/2017 22:24:48 ******/
 SET ANSI_NULLS ON
 GO
 
@@ -109,7 +109,7 @@ CREATE TABLE [dbo].[ProjectTask](
 END
 GO
 
-/****** Object:  Table [dbo].[Customer]    Script Date: 17/12/2016 12:06:29 ******/
+/****** Object:  Table [dbo].[Customer]    Script Date: 20/10/2017 22:24:48 ******/
 SET ANSI_NULLS ON
 GO
 
@@ -127,6 +127,7 @@ CREATE TABLE [dbo].[Customer](
 	[memo] [ntext] NOT NULL,
 	[nextCall] [date] NULL,
 	[address] [nvarchar](100) NULL,
+	[age] [int] NULL,
  CONSTRAINT [PK_Customer] PRIMARY KEY CLUSTERED 
 (
 	[idCustomer] ASC
@@ -135,7 +136,7 @@ CREATE TABLE [dbo].[Customer](
 END
 GO
 
-/****** Object:  Table [dbo].[Contact]    Script Date: 17/12/2016 12:06:29 ******/
+/****** Object:  Table [dbo].[Contact]    Script Date: 20/10/2017 22:24:48 ******/
 SET ANSI_NULLS ON
 GO
 
@@ -162,7 +163,7 @@ SET ANSI_PADDING ON
 
 GO
 
-/****** Object:  Index [IX_AppUser]    Script Date: 17/12/2016 12:06:29 ******/
+/****** Object:  Index [IX_AppUser]    Script Date: 20/10/2017 22:24:48 ******/
 IF NOT EXISTS (SELECT * FROM sys.indexes WHERE object_id = OBJECT_ID(N'[dbo].[AppUser]') AND name = N'IX_AppUser')
 CREATE UNIQUE NONCLUSTERED INDEX [IX_AppUser] ON [dbo].[AppUser]
 (
@@ -170,7 +171,7 @@ CREATE UNIQUE NONCLUSTERED INDEX [IX_AppUser] ON [dbo].[AppUser]
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 GO
 
-/****** Object:  Index [IX_Customer]    Script Date: 17/12/2016 12:06:29 ******/
+/****** Object:  Index [IX_Customer]    Script Date: 20/10/2017 22:24:48 ******/
 IF NOT EXISTS (SELECT * FROM sys.indexes WHERE object_id = OBJECT_ID(N'[dbo].[Customer]') AND name = N'IX_Customer')
 CREATE NONCLUSTERED INDEX [IX_Customer] ON [dbo].[Customer]
 (
@@ -178,7 +179,7 @@ CREATE NONCLUSTERED INDEX [IX_Customer] ON [dbo].[Customer]
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 GO
 
-/****** Object:  Index [IX_Contact]    Script Date: 17/12/2016 12:06:29 ******/
+/****** Object:  Index [IX_Contact]    Script Date: 20/10/2017 22:24:48 ******/
 IF NOT EXISTS (SELECT * FROM sys.indexes WHERE object_id = OBJECT_ID(N'[dbo].[Contact]') AND name = N'IX_Contact')
 CREATE NONCLUSTERED INDEX [IX_Contact] ON [dbo].[Contact]
 (
