@@ -253,3 +253,5 @@ paket-files/
 *.sln.iml
 /src/AweShur.Web
 /src/AweShur.Web.Demo
+.scannerwork/.sonar_lock
+.scannerwork/report-task.txt
